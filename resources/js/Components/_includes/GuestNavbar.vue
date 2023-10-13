@@ -74,8 +74,7 @@ const showLogin = usePage().props.showLogin
 
 let navigation = [
     { name: 'Overview', href: "#", current: route().current('index') },
-    { name: 'Features', href: "#", current: route().current('features') },
-    { name: 'Pricing', href: "#", current: route().current('pricing') },
+    { name: 'About', href: "#", current: route().current('about') },
 
 ]
 

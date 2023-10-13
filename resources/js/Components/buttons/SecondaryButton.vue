@@ -33,7 +33,7 @@ export default {
         },
 
         baseClasses(){
-            return "rounded-md font-semibold text-dark-light2 shadow-sm bg-light-dark hover:bg-light-dark2 dark:bg-dark-light dark:text-light dark:hover:bg-dark-light2";
+            return "rounded-md font-semibold shadow-sm bg-secondary hover:bg-secondary-600";
         }
 
     }

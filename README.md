@@ -129,13 +129,13 @@ docker run -d -p 80:80 --name my-app \
 
 #### Volume mounting
 
-In a Dockerized environment, volume mounting is often used to ensure that certain data persists beyond the life of a container or to share data between the host and container. In the case of LaraVellous, you may want to volume mount the storage folder to ensure that any uploaded files, logs, or other persistent data are kept intact across container restarts or rebuilds.
+In a Dockerized environment, volume mounting is often used to ensure that certain data persists beyond the life of a container or to share data between the host and container. In the case of Dave, you may want to volume mount the storage folder to ensure that any uploaded files, logs, or other persistent data are kept intact across container restarts or rebuilds.
 
 ```bash
-docker run -d -p 3000:80 --name laravellous \
-    -v /path/to/laravellous/storage:/var/www/html/storage \
+docker run -d -p 3000:80 --name dave \
+    -v /path/to/dave/storage:/var/www/html/storage \
     # Other env variables and options etc...
-    laravellous-prod-image
+    dave-prod-image
 
 ```
 
@@ -145,11 +145,11 @@ For development and troubleshooting, Laravel Sail is generally recommended. Howe
 
 ### Building the Docker Image
 
-You can build a Docker image of your application using the `docker build` command. Be sure to specify the target stage in the Dockerfile and tag the image. The following command builds the image for the `test` stage and tags the image as `laravellous-test-image`:
+You can build a Docker image of your application using the `docker build` command. Be sure to specify the target stage in the Dockerfile and tag the image. The following command builds the image for the `test` stage and tags the image as `dave-test-image`:
 
 ```bash
-docker build --target test -t laravellous-test-image . # Build the testing image
-docker build --target prod -t laravellous-prod-image . # Build the production image (will start nginx, php-fpm etc)
+docker build --target test -t dave-test-image . # Build the testing image
+docker build --target prod -t dave-prod-image . # Build the production image (will start nginx, php-fpm etc)
 ```
 
 **_NOTE:_** Running docker build with no target specified will produce an image that is not optimized for it's environment and may cause unexpected behavior
@@ -163,7 +163,7 @@ Here is an example of how to run the image:
 Testing
 
 ```bash
-docker run --name laravellous-tests laravellous-test-image # Run the testing image (this will execute the artisan test suite)
+docker run --name dave-tests dave-test-image # Run the testing image (this will execute the artisan test suite)
 ```
 
 Production
@@ -178,15 +178,15 @@ chmod -R 777 /var/www/html/database/database.sqlite
 Then run this docker run command:
 
 ```bash
-docker run -d -p 3000:80 --name laravellous \
-    -e APP_NAME=LaraVellous \
+docker run -d -p 3000:80 --name dave \
+    -e APP_NAME=dave \
     -e APP_ENV=production \
     -e APP_KEY=base64:NHZpNnVnM2p0b2VmZnV6MDN1ZDJmeWt1bDJpemlxeDA= \
     -e DB_CONNECTION=sqlite_testing \
     -e ADMIN_NAME=Bob \
     -e ADMIN_EMAIL=bob@gmail.com \
     -e ADMIN_PASSWORD=password \
-    laravellous-prod-image
+    dave-prod-image
 ```
 
 **_NOTE:_** This prod script will copy **ALL** the environment variables in the current that do not contain spaces or newlines

@@ -33,7 +33,7 @@ export default {
         },
 
         baseClasses(){
-            return "inline-flex items-center rounded-md bg-primary font-semibold text-white shadow-sm hover:bg-primary-dark";
+            return "inline-flex items-center rounded-md bg-primary font-semibold text-white shadow-sm hover:bg-primary-600";
         }
 
     }

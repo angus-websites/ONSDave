@@ -1,20 +1,20 @@
-# LaraVellous
+# ONS Dave
 
 ## Overview
-LaraVellous is a template for Laravel applications.
+Dave is the Daily Attendance & Validation Engine, a Laravel application to allow employees to track their working hours and managers to validate them.
 
 ## Run Locally (Laravel Sail)
 
 Clone the project
 
 ```bash
-git clone git@github.com:angus-boilerplates/LaraVellous.git
+git clone https://github.com/angus-websites/ONSDave.git
 ```
 
 Go to the project directory
 
 ```bash
-cd LaraVellous
+cd ONSDave
 ```
 
 Setup Laravel Sail

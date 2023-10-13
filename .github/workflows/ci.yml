@@ -1,13 +1,13 @@
 name: CI Pipeline
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
   pull_request:
     branches:
       - main
 
 env:
-  IMAGE_NAME: laravellous-test-image # Needs to be lowercase
+  IMAGE_NAME: dave-test-image # Needs to be lowercase
   REGISTRY: ghcr.io
 
 jobs:

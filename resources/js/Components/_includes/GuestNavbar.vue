@@ -1,13 +1,13 @@
 <template>
   <Disclosure as="nav" class="shadow sm:shadow-none" v-slot="{ open }">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 py-3">
       <div class="flex h-16 justify-between">
 
         <!-- Logo and links -->
         <div class="flex gap-x-5">
           <div class="flex flex-shrink-0 items-center">
-            <TextLogo class="h-6 dark:hidden" />
-            <TextLogoForDarkMode class="h-6 hidden dark:block" />
+            <TextLogo class="h-14 dark:hidden" />
+            <TextLogoForDarkMode class="h-14 hidden dark:block" />
 
           </div>
           <div class="hidden sm:ml-6 sm:flex sm:space-x-8">

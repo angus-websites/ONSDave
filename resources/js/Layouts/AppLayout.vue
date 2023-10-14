@@ -29,8 +29,8 @@ const logout = () => {
 
 let navigation = [
     { name: 'Dashboard', href: route('dashboard'), current: route().current('dashboard') },
-    { name: 'Today', href: "#", current: route().current('wishlists.index') },
-    { name: 'History', href: "#", current: route().current('friends') },
+    { name: 'Today', href: route('today'), current: route().current('today') },
+    { name: 'History', href: route('history'), current: route().current('history') },
 ]
 </script>
 

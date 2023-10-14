@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\TodayController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StorageController;
@@ -37,4 +39,11 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    // Today
+    Route::get('/today', [TodayController::class, 'index'])->name('today');
+
+    // History
+    Route::get('/history', [HistoryController::class, 'index'])->name('history');
+
 });

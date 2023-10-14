@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2 class="h3">14th October</h2>
+        <h2 class="h3">{{  displayedDate }}</h2>
         <div class="lg:grid lg:grid-cols-12 lg:gap-x-16">
 
             <!-- Calendar -->
@@ -28,9 +28,37 @@
 
                 </div>
                 <div class="isolate mt-2 grid grid-cols-7 gap-px rounded-lg bg-gray-200 text-sm shadow ring-1 ring-gray-200">
-                    <button v-for="(day, dayIdx) in days"  :key="day.date" type="button" :class="['py-1.5 hover:bg-gray-100 focus:z-10', day.isCurrentMonth ? 'bg-white' : 'bg-gray-50', (day.isSelected || day.isToday) && 'font-semibold', day.isSelected && 'text-white', !day.isSelected && day.isCurrentMonth && !day.isToday && 'text-gray-900', !day.isSelected && !day.isCurrentMonth && !day.isToday && 'text-gray-400', day.isToday && !day.isSelected && 'text-indigo-600', dayIdx === 0 && 'rounded-tl-lg', dayIdx === 6 && 'rounded-tr-lg', dayIdx === days.length - 7 && 'rounded-bl-lg', dayIdx === days.length - 1 && 'rounded-br-lg']">
-                        <time :datetime="day.date" :class="['mx-auto flex h-7 w-7 items-center justify-center rounded-full', day.isSelected && day.isToday && 'bg-indigo-600', day.isSelected && !day.isToday && 'bg-gray-900']">{{ day.date.split('-').pop().replace(/^0/, '') }}</time>
+                    <button
+                        v-for="(day, dayIdx) in days"
+                        @click="handleDayClick(day)"
+                        role="gridcell"
+                        :aria-selected="day.isSelected ? 'true' : 'false'"
+                        :key="day.date"
+                        type="button"
+                        :class="[
+        'py-1.5 hover:bg-gray-100 focus:z-10',
+        day.isCurrentMonth ? 'bg-white' : 'bg-gray-50',
+        (day.isSelected || day.isToday) && 'font-semibold',
+        day.isSelected && 'text-white',
+        !day.isSelected && day.isCurrentMonth && !day.isToday && 'text-gray-900',
+        !day.isSelected && !day.isCurrentMonth && !day.isToday && 'text-gray-400',
+        day.isToday && !day.isSelected && 'text-indigo-600',
+        day.isToday && 'current-day',
+        dayIdx === 0 && 'rounded-tl-lg',
+        dayIdx === 6 && 'rounded-tr-lg',
+        dayIdx === days.length - 7 && 'rounded-bl-lg',
+        dayIdx === days.length - 1 && 'rounded-br-lg'
+    ]"
+                        :aria-label="day.isToday ? 'Today' : null"
+                    >
+                        <time
+                            :datetime="day.date"
+                            :class="['mx-auto flex h-7 w-7 items-center justify-center rounded-full', day.isSelected && day.isToday && 'bg-indigo-600', day.isSelected && !day.isToday && 'bg-gray-900']"
+                        >
+                            {{ day.date.split('-').pop().replace(/^0/, '') }}
+                        </time>
                     </button>
+
                 </div>
                 <button type="button" class="mt-8 w-full rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600" @click="goToToday">Go to Today</button>
             </div>
@@ -113,10 +141,15 @@ const entries = [
 const today = ref(new Date());
 const currentMonth = ref(today.value.getMonth());
 const currentYear = ref(today.value.getFullYear());
-
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
 const currentMonthAndYearName = computed(() => `${monthNames[currentMonth.value]} ${currentYear.value}`);
+
+const selectedDate = ref(today.value);
+
+const displayedDate = computed(() => {
+    const options = { day: 'numeric', month: 'long' };
+    return selectedDate.value ? selectedDate.value.toLocaleDateString(undefined, options) : today.value.toLocaleDateString(undefined, options);
+});
 
 
 function getDaysInMonth(month, year) {
@@ -126,8 +159,15 @@ function getDaysInMonth(month, year) {
 function goToToday() {
     currentMonth.value = today.value.getMonth();
     currentYear.value = today.value.getFullYear();
+    selectedDate.value = today.value;
     days.value = generateDays(currentMonth.value, currentYear.value);
 }
+
+function handleDayClick(day) {
+    selectedDate.value = new Date(day.date);
+    days.value = generateDays(currentMonth.value, currentYear.value);  // refresh days
+}
+
 
 
 
@@ -145,7 +185,8 @@ function generateDays(month, year) {
     // Add the days of the current month
     for (let i = 1; i <= getDaysInMonth(month, year); i++) {
         let isToday = i === today.value.getDate() && month === today.value.getMonth() && year === today.value.getFullYear();
-        days.push({ date: `${year}-${month + 1}-${i}`, isCurrentMonth: true, isToday: isToday });
+        let isSelected = selectedDate.value && i === selectedDate.value.getDate() && month === selectedDate.value.getMonth() && year === selectedDate.value.getFullYear();
+        days.push({ date: `${year}-${month + 1}-${i}`, isCurrentMonth: true, isToday: isToday, isSelected: isSelected });
     }
 
     // Add days from the next month to fill up the grid

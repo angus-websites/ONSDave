@@ -44,7 +44,7 @@
                             day.isSelected && 'text-white',
                             !day.isSelected && day.isCurrentMonth && !day.isToday && 'text-gray-900',
                             !day.isSelected && !day.isCurrentMonth && !day.isToday && 'text-gray-400',
-                            day.isToday && !day.isSelected && 'text-indigo-600',
+                            day.isToday && !day.isSelected && 'text-accent-600',
                             day.isToday && 'current-day',
                             dayIdx === 0 && 'rounded-tl-lg',
                             dayIdx === 6 && 'rounded-tr-lg',
@@ -56,14 +56,14 @@
                         <span v-if="getDayStatus(day.date) === 'leave'" class="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-600"></span>
                         <time
                             :datetime="day.date"
-                            :class="['mx-auto flex h-7 w-7 items-center justify-center rounded-full', day.isSelected && day.isToday && 'bg-indigo-600', day.isSelected && !day.isToday && 'bg-gray-900']"
+                            :class="['mx-auto flex h-7 w-7 items-center justify-center rounded-full', day.isSelected && day.isToday && 'bg-accent-600', day.isSelected && !day.isToday && 'bg-gray-900']"
                         >
                             {{ day.date.split('-').pop().replace(/^0/, '') }}
                         </time>
                     </button>
 
                 </div>
-                <button type="button" class="mt-8 w-full rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600" @click="goToToday">Go to Today</button>
+                <SecondaryButton @click="goToToday" class="mt-8">Today</SecondaryButton>
             </div>
 
             <!-- Timesheet section -->
@@ -117,6 +117,13 @@
                     </table>
                 </div>
                 </div>
+
+                <!-- Button -->
+                <div class="">
+                    <PrimaryButton class="mt-7">
+                        New entry
+                    </PrimaryButton>
+                </div>
             </div>
         </div>
     </div>
@@ -133,6 +140,8 @@ import {
 } from '@heroicons/vue/20/solid'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import MultiMessage from "@/Components/messages/MultiMessage.vue";
+import PrimaryButton from "@/Components/buttons/PrimaryButton.vue";
+import SecondaryButton from "@/Components/buttons/SecondaryButton.vue";
 
 const entries = [
     {

@@ -26,11 +26,17 @@ const switchToTeam = (team) => {
 const logout = () => {
     router.post(route('logout'));
 };
+
+let navigation = [
+    { name: 'Dashboard', href: route('dashboard'), current: route().current('dashboard') },
+    { name: 'Today', href: route('today'), current: route().current('today') },
+    { name: 'History', href: route('history'), current: route().current('history') },
+]
 </script>
 
 <template>
     <MasterLayout :title="title">
-        <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+        <nav class="bg-surface-100 dark:bg-surface-800 border-b border-gray-100 dark:border-gray-700">
             <!-- Primary Navigation Menu -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
@@ -44,8 +50,8 @@ const logout = () => {
 
                         <!-- Navigation Links -->
                         <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                            <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                Dashboard
+                            <NavLink v-for="item in navigation" :href="item.href" :active="item.current">
+                                {{ item.name }}
                             </NavLink>
                         </div>
                     </div>
@@ -189,8 +195,8 @@ const logout = () => {
             <!-- Responsive Navigation Menu -->
             <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
                 <div class="pt-2 pb-3 space-y-1">
-                    <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                        Dashboard
+                    <ResponsiveNavLink v-for="item in navigation" :href="item.href" :active="item.current">
+                        {{ item.name }}
                     </ResponsiveNavLink>
                 </div>
 
@@ -272,7 +278,7 @@ const logout = () => {
         </nav>
 
         <!-- Page Heading -->
-        <header v-if="$slots.header" class="bg-white dark:bg-gray-800 shadow">
+        <header v-if="$slots.header" class="bg-surface-100 dark:bg-surface-800 shadow">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                 <slot name="header" />
             </div>

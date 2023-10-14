@@ -40,6 +40,8 @@ cp .env.example .env
 ```
 Run Laravel Sail (Development server)
 
+**_TIP:_**  Add `./vendor/bin/sail` as an alias to `sail` on your machine to make this command easier to run
+
 ```bash
 ./vendor/bin/sail up
 ```
@@ -58,6 +60,12 @@ Migrate the database
 ./vendor/bin/sail php artisan migrate
 ```
 
+Seed the database
+
+```bash
+./vendor/bin/sail php artisan db:seed
+```
+
 Install NPM dependancies
 
 ```bash
@@ -71,6 +79,12 @@ Run Vite
 ```
 
 Visit [Localhost](http://localhost/)
+
+To login as an admin, use the credentials from the `.env` file. The default credentials are:
+
+- **Email:** example@gmail.com
+- **Password:** password
+
 
 ## Configuration
 

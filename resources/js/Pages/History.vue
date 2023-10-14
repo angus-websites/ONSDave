@@ -5,15 +5,15 @@ import PageContainer from "@/Components/_util/PageContainer.vue";
 </script>
 
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="History">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Dashboard
+                History
             </h2>
         </template>
 
         <PageContainer>
-            <p class="dark:text-white">Dashboard</p>
+            <p class="dark:text-white">History page</p>
         </PageContainer>
     </AppLayout>
 </template>

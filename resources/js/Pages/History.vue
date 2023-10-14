@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PageContainer from "@/Components/_util/PageContainer.vue";
+import HistoryCalendar from "@/Components/calendar/HistoryCalendar.vue";
 
 </script>
 
@@ -13,7 +14,7 @@ import PageContainer from "@/Components/_util/PageContainer.vue";
         </template>
 
         <PageContainer>
-            <p class="dark:text-white">History page</p>
+            <HistoryCalendar />
         </PageContainer>
     </AppLayout>
 </template>

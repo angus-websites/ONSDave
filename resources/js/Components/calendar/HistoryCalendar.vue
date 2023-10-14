@@ -63,15 +63,21 @@
                 <button type="button" class="mt-8 w-full rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600" @click="goToToday">Go to Today</button>
             </div>
 
-            <!-- Timsheet section -->
+            <!-- Timesheet section -->
             <div class="mt-10 lg:col-span-7 xl:col-span-7">
 
-                <!-- Day stats -->
-                <div class="py-5 text-center">
-                   <p>Total worked time: 8h 15</p>
+                <!-- No entries -->
+                <div v-if="entries.length < 1">
+                    <MultiMessage message="No entries for this day" type="info" />
                 </div>
-                <!-- Entries table -->
-                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <!-- Display entries -->
+                <div v-else>
+                    <!-- Day stats -->
+                    <div class="py-5 text-center">
+                       <p>Total worked time: 8h 15</p>
+                    </div>
+                    <!-- Entries table -->
+                    <div class="relative overflow-x-auto shadow-md dark:shadow-none sm:rounded-lg">
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -107,7 +113,7 @@
                         </tbody>
                     </table>
                 </div>
-
+                </div>
             </div>
         </div>
     </div>
@@ -123,6 +129,7 @@ import {
     MapPinIcon,
 } from '@heroicons/vue/20/solid'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import MultiMessage from "@/Components/messages/MultiMessage.vue";
 
 const entries = [
     {

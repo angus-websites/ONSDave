@@ -1,5 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import PageContainer from "@/Components/_util/PageContainer.vue";
 </script>
 
 <template>
@@ -10,12 +11,8 @@ import AppLayout from '@/Layouts/AppLayout.vue';
             </h2>
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <p class="dark:text-white">The today page</p>
-                </div>
-            </div>
-        </div>
+        <PageContainer>
+            <p class="dark:text-white">The today page</p>
+        </PageContainer>
     </AppLayout>
 </template>

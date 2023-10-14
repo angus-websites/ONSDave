@@ -35,22 +35,22 @@
                         :aria-selected="day.isSelected ? 'true' : 'false'"
                         :key="day.date"
                         type="button"
-                        :class="[
-        'py-1.5 hover:bg-gray-100 focus:z-10',
-        day.isCurrentMonth ? 'bg-white' : 'bg-gray-50',
-        (day.isSelected || day.isToday) && 'font-semibold',
-        day.isSelected && 'text-white',
-        !day.isSelected && day.isCurrentMonth && !day.isToday && 'text-gray-900',
-        !day.isSelected && !day.isCurrentMonth && !day.isToday && 'text-gray-400',
-        day.isToday && !day.isSelected && 'text-indigo-600',
-        day.isToday && 'current-day',
-        dayIdx === 0 && 'rounded-tl-lg',
-        dayIdx === 6 && 'rounded-tr-lg',
-        dayIdx === days.length - 7 && 'rounded-bl-lg',
-        dayIdx === days.length - 1 && 'rounded-br-lg'
-    ]"
+                        :tabindex="day.isCurrentMonth ? '0' : '-1'"
                         :aria-label="day.isToday ? 'Today' : null"
-                    >
+                        :class="[
+                            'py-1.5 focus:z-10',
+                            day.isCurrentMonth ? 'bg-white cursor-pointer hover:bg-gray-100' : 'bg-gray-50 cursor-default',
+                            (day.isSelected || day.isToday) && 'font-semibold',
+                            day.isSelected && 'text-white',
+                            !day.isSelected && day.isCurrentMonth && !day.isToday && 'text-gray-900',
+                            !day.isSelected && !day.isCurrentMonth && !day.isToday && 'text-gray-400',
+                            day.isToday && !day.isSelected && 'text-indigo-600',
+                            day.isToday && 'current-day',
+                            dayIdx === 0 && 'rounded-tl-lg',
+                            dayIdx === 6 && 'rounded-tr-lg',
+                            dayIdx === days.length - 7 && 'rounded-bl-lg',
+                            dayIdx === days.length - 1 && 'rounded-br-lg'
+                        ]">
                         <time
                             :datetime="day.date"
                             :class="['mx-auto flex h-7 w-7 items-center justify-center rounded-full', day.isSelected && day.isToday && 'bg-indigo-600', day.isSelected && !day.isToday && 'bg-gray-900']"
@@ -170,12 +170,14 @@ function goToToday() {
     days.value = generateDays(currentMonth.value, currentYear.value);
 }
 
+
 function handleDayClick(day) {
-    selectedDate.value = new Date(day.date);
-    days.value = generateDays(currentMonth.value, currentYear.value);  // refresh days
+    // Check if the day is from the current month before selecting it
+    if (day.isCurrentMonth) {
+        selectedDate.value = new Date(day.date);
+        days.value = generateDays(currentMonth.value, currentYear.value);  // refresh days
+    }
 }
-
-
 
 
 function generateDays(month, year) {

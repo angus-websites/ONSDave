@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2 class="h3">{{  displayedDate }}</h2>
+        <h2 class="h3">{{  displayedDate }} <small class="text-base">{{ displayedMonthYear }}</small></h2>
         <div class="lg:grid lg:grid-cols-12 lg:gap-x-16">
 
             <!-- Calendar -->
@@ -38,7 +38,7 @@
                         :tabindex="day.isCurrentMonth ? '0' : '-1'"
                         :aria-label="day.isToday ? 'Today' : null"
                         :class="[
-                            'py-1.5 focus:z-10',
+                            'py-1.5 focus:z-10 relative',
                             day.isCurrentMonth ? 'bg-white cursor-pointer hover:bg-gray-100' : 'bg-gray-50 cursor-default',
                             (day.isSelected || day.isToday) && 'font-semibold',
                             day.isSelected && 'text-white',
@@ -51,6 +51,9 @@
                             dayIdx === days.length - 7 && 'rounded-bl-lg',
                             dayIdx === days.length - 1 && 'rounded-br-lg'
                         ]">
+                        <!-- The tiny dot -->
+                        <span v-if="getDayStatus(day.date) === 'worked'" class="absolute top-1 right-1 w-2 h-2 rounded-full bg-green-600"></span>
+                        <span v-if="getDayStatus(day.date) === 'leave'" class="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-600"></span>
                         <time
                             :datetime="day.date"
                             :class="['mx-auto flex h-7 w-7 items-center justify-center rounded-full', day.isSelected && day.isToday && 'bg-indigo-600', day.isSelected && !day.isToday && 'bg-gray-900']"
@@ -145,6 +148,21 @@ const entries = [
         duration: '4h 15m'
     },
 ]
+
+const daysStatus = [
+    { date: '2023-10-10', type: 'worked' },
+    { date: '2023-10-11', type: 'worked' },
+    { date: '2023-10-12', type: 'leave' },
+
+];
+
+const getDayStatus = (date) => {
+    const dayInfo = daysStatus.find(day => day.date === date);
+    console.log(dayInfo ? dayInfo.type: "no")
+    return dayInfo ? dayInfo.type : null;
+};
+
+
 const today = ref(new Date());
 const currentMonth = ref(today.value.getMonth());
 const currentYear = ref(today.value.getFullYear());
@@ -154,9 +172,16 @@ const currentMonthAndYearName = computed(() => `${monthNames[currentMonth.value]
 const selectedDate = ref(today.value);
 
 const displayedDate = computed(() => {
-    const options = { day: 'numeric', month: 'long' };
+    const options = { weekday: 'short', day: 'numeric',  };
     return selectedDate.value ? selectedDate.value.toLocaleDateString(undefined, options) : today.value.toLocaleDateString(undefined, options);
 });
+
+const displayedMonthYear = computed(() => {
+    const options = { month: 'short', year: 'numeric' };
+    return selectedDate.value ? selectedDate.value.toLocaleDateString(undefined, options) : today.value.toLocaleDateString(undefined, options);
+});
+
+
 
 
 function getDaysInMonth(month, year) {

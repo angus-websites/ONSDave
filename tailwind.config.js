@@ -12,7 +12,7 @@ export default {
         './resources/js/**/*.vue',
     ],
 
-    darkMode: 'media',
+    darkMode: '',
 
     theme: {
         extend: {

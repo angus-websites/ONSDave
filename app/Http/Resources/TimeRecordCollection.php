@@ -15,11 +15,7 @@ class TimeRecordCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        $organizedRecords = $this->organizeRecords($this->collection);
-
-        return [
-            'data' => $organizedRecords,
-        ];
+        return $this->organizeRecords($this->collection);
     }
 
     private function organizeRecords($records)

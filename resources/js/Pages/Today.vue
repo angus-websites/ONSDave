@@ -8,11 +8,17 @@
         </template>
 
         <PageContainer class="">
-            <div class="px-6 py-24 sm:py-32 lg:px-8">
-                <div class="mx-auto max-w-2xl text-center">
-                    <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">{{ greeting }}</h2>
-                    <p class="mt-6 text-lg leading-8 text-gray-600">Welcome to the Today page</p>
+            <div class="mx-auto max-w-2xl text-center">
+                <h2 class="text-5xl font-bold tracking-tight text-gray-900 sm:text-5xl">{{ greeting }}</h2>
+                <p class="mb-6 mt-2 text-lg leading-8 text-gray-600">Today you have worked...</p>
+                <h1 class="text-5xl font-bold tracking-tight text-gray-900 sm:text-8xl">00:00:00</h1>
+                <hr class="my-10">
+
+                <div class="mt-10">
+                    <MultiLoader v-if="isLoading" type="PulseLoader" />
+                    <PrimaryButton size="xl">Start</PrimaryButton>
                 </div>
+
             </div>
         </PageContainer>
     </AppLayout>
@@ -21,10 +27,12 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PageContainer from "@/Components/_util/PageContainer.vue";
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import PrimaryButton from "@/Components/buttons/PrimaryButton.vue";
+import MultiLoader from "@/Components/loader/MultiLoader.vue";
 
 const currentHour = new Date().getHours();
-
+const isLoading = ref(false)
 const greeting = computed(() => {
     if (currentHour >= 5 && currentHour < 12) {
         return "Good Morning";

@@ -15,8 +15,15 @@
                 <hr class="my-10">
 
                 <div class="mt-10">
-                    <MultiLoader v-if="isLoading" type="PulseLoader" />
-                    <PrimaryButton v-else size="xl" @click="toggleClock">{{ isClockedIn ? 'Stop' : 'Start' }}</PrimaryButton>
+                    <MultiLoader v-if="loading.clockLoading" type="PulseLoader" />
+                    <button
+                        v-else
+                        :class="['px-4 py-2.5 md:py-3.5 md:px-5 text-xl inline-flex items-center justify-center rounded-md font-semibold shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2', isClockedIn ? 'bg-red-500 text-white hover:bg-red-700' : 'bg-green-500 hover:bg-green-600']"
+                        @click="toggleClock"
+                    >
+                        {{ isClockedIn ? 'Clock out' : 'Clock in' }}
+                    </button>
+
                 </div>
 
             </div>
@@ -27,7 +34,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PageContainer from "@/Components/_util/PageContainer.vue";
-import { computed, ref } from 'vue';
+import { computed, ref, reactive } from 'vue';
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue";
 import MultiLoader from "@/Components/loader/MultiLoader.vue";
 import {useForm} from '@inertiajs/vue3';
@@ -39,14 +46,29 @@ const props = defineProps({
 const form = useForm({
     isClockedIn: props.isClockedIn,
 });
+
 const currentHour = new Date().getHours();
-const isLoading = ref(false)
+
+// Reactive structure to store loading state
+let loading = reactive({
+    clockLoading: false,
+    clockTimeoutId: null,
+})
+
 
 const toggleClock = () => {
-    isLoading.value = true;
+
+    // Set a timeout to only show loading after 1 second
+    loading.clockTimeoutId = setTimeout(() => {
+        loading.clockLoading = true;
+    }, 250);
+
     form.post(route('time-records.store'), {
         preserveScroll: true,
-        onFinish: () => isLoading.value = false,
+        onFinish: () => {
+            clearTimeout(loading.clockTimeoutId);
+            loading.clockLoading = false
+        }
     })
 };
 

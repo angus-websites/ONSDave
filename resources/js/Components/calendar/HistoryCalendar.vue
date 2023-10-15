@@ -178,7 +178,6 @@ const daysStatus = [
 
 const getDayStatus = (date) => {
     const dayInfo = daysStatus.find(day => day.date === date);
-    console.log(dayInfo ? dayInfo.type: "no")
     return dayInfo ? dayInfo.type : null;
 };
 

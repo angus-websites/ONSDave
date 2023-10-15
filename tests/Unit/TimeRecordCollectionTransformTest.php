@@ -3,12 +3,14 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use App\Http\Resources\TimeRecordResource;
+use App\Http\Resources\TimeRecordCollection;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
 
-class TimeRecordResourceTest extends TestCase
+class TimeRecordCollectionTransformTest extends TestCase
 {
+
+
     /** @test */
     public function test_resource_correctly_organizes_clock_in_and_clock_out_entries()
     {
@@ -17,33 +19,33 @@ class TimeRecordResourceTest extends TestCase
         $records = new Collection([
             (object) [
                 'type' => 'clock_in',
-                'recorded_at' => Carbon::parse('2023-04-15 09:00:00')
+                'recorded_at' => ('2023-04-15 09:00:00')
             ],
             (object) [
                 'type' => 'clock_out',
-                'recorded_at' => Carbon::parse('2023-04-15 13:00:00')
+                'recorded_at' => ('2023-04-15 13:00:00')
             ],
             (object) [
                 'type' => 'clock_in',
-                'recorded_at' => Carbon::parse('2023-04-15 14:00:00')
+                'recorded_at' => ('2023-04-15 14:00:00')
             ],
             (object) [
                 'type' => 'auto_clock_out',
-                'recorded_at' => Carbon::parse('2023-04-15 18:00:00')
+                'recorded_at' => ('2023-04-15 18:00:00')
             ]
         ]);
 
         // Pass the records to the resource
-        $resourceResult = (new TimeRecordResource($records))->toArray(request());
+        $resourceResult = (new TimeRecordCollection($records))->toArray(request());
 
         // Assert the resource correctly organized the records
-        $this->assertEquals('09:00:00', $resourceResult['data'][0]['clock_in']->toTimeString());
-        $this->assertEquals('13:00:00', $resourceResult['data'][0]['clock_out']->toTimeString());
+        $this->assertEquals('2023-04-15 09:00:00', $resourceResult['data'][0]['clock_in']);
+        $this->assertEquals('2023-04-15 13:00:00', $resourceResult['data'][0]['clock_out']);
         $this->assertEquals('04:00:00', $resourceResult['data'][0]['duration']);
         $this->assertFalse($resourceResult['data'][0]['ongoing']);
 
-        $this->assertEquals('14:00:00', $resourceResult['data'][1]['clock_in']->toTimeString());
-        $this->assertEquals('18:00:00', $resourceResult['data'][1]['clock_out']->toTimeString());
+        $this->assertEquals('2023-04-15 14:00:00', $resourceResult['data'][1]['clock_in']);
+        $this->assertEquals('2023-04-15 18:00:00', $resourceResult['data'][1]['clock_out']);
         $this->assertEquals('04:00:00', $resourceResult['data'][1]['duration']);
         $this->assertFalse($resourceResult['data'][1]['ongoing']);
     }
@@ -54,15 +56,15 @@ class TimeRecordResourceTest extends TestCase
         $records = new Collection([
             (object) [
                 'type' => 'clock_in',
-                'recorded_at' => Carbon::parse('2023-04-15 09:00:00')
+                'recorded_at' => ('2023-04-15 09:00:00')
             ]
         ]);
 
-        $resourceResult = (new TimeRecordResource($records))->toArray(request());
+        $resourceResult = (new TimeRecordCollection($records))->toArray(request());
 
-        $this->assertEquals('09:00:00', $resourceResult['data'][0]['clock_in']->toTimeString());
+        $this->assertEquals('2023-04-15 09:00:00', $resourceResult['data'][0]['clock_in']);
         $this->assertNull($resourceResult['data'][0]['clock_out']);
-        $this->assertEquals('N/A', $resourceResult['data'][0]['duration']);
+        $this->assertNull($resourceResult['data'][0]['duration']);
         $this->assertTrue($resourceResult['data'][0]['ongoing']);
     }
 }

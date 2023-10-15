@@ -10,13 +10,13 @@ use Inertia\Inertia;
 
 class HistoryController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $date = $request->input('date', now()->format('Y-m-d'));
         $userId = Auth::user()->employee->id;
 
-        $timeRecords = TimeRecord::whereDate('recorded_at', $date)
+        $timeRecords = TimeRecord::whereDate('recorded_at', now())
             ->where('employee_id', $userId)
+            ->orderBy('recorded_at', 'asc')
             ->get();
 
         $timeRecordsResource = new TimeRecordCollection($timeRecords);
@@ -25,4 +25,22 @@ class HistoryController extends Controller
             'timeRecords' => $timeRecordsResource
         ]);
     }
+
+    public function fetchByDate(Request $request)
+    {
+        $data = $request->validate([
+            'date' => 'required|date',
+        ]);
+
+        $userId = Auth::user()->employee->id;
+
+        $timeRecords = TimeRecord::whereDate('recorded_at', $data['date'])
+            ->where('employee_id', $userId)
+            ->orderBy('recorded_at', 'asc')
+            ->get();
+
+        return new TimeRecordCollection($timeRecords);
+    }
+
 }
+

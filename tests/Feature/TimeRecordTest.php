@@ -91,23 +91,28 @@ class TimeRecordTest extends TestCase
         ]);
 
         // Make an HTTP request to the desired endpoint
-        $response = $this->get(route('history', ['date' => '2023-04-15']));
+        $response = $this->post(route('history.fetch', ['date' => '2023-04-15']));
 
-        // Assert the Inertia response
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('History')
-            ->has('timeRecords.data', 2)
-            ->where('timeRecords.data.0.clock_in', '2023-04-15 09:00:00')
-            ->where('timeRecords.data.0.clock_out', '2023-04-15 13:00:00')
-            ->where('timeRecords.data.0.duration', '04:00:00')
-            ->where('timeRecords.data.0.ongoing', false)
-            ->where('timeRecords.data.0.auto_clock_out', false)
-            ->where('timeRecords.data.1.clock_in', '2023-04-15 14:00:00')
-            ->where('timeRecords.data.1.clock_out', '2023-04-15 18:00:00')
-            ->where('timeRecords.data.1.duration', '04:00:00')
-            ->where('timeRecords.data.1.ongoing', false)
-            ->where('timeRecords.data.1.auto_clock_out', true)
-        );
+        $response->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    [
+                        'clock_in' => '2023-04-15 09:00:00',
+                        'clock_out' => '2023-04-15 13:00:00',
+                        'duration' => '04:00:00',
+                        'ongoing' => false,
+                        'auto_clock_out' => false,
+                    ],
+                    [
+                        'clock_in' => '2023-04-15 14:00:00',
+                        'clock_out' => '2023-04-15 18:00:00',
+                        'duration' => '04:00:00',
+                        'ongoing' => false,
+                        'auto_clock_out' => true,
+                    ],
+                ]
+            ]);
+
     }
 
 

@@ -16,7 +16,7 @@
 
                 <div class="mt-10">
                     <MultiLoader v-if="isLoading" type="PulseLoader" />
-                    <PrimaryButton size="xl">Start</PrimaryButton>
+                    <PrimaryButton v-else size="xl" @click="toggleClock">{{ isClockedIn ? 'Stop' : 'Start' }}</PrimaryButton>
                 </div>
 
             </div>
@@ -30,9 +30,26 @@ import PageContainer from "@/Components/_util/PageContainer.vue";
 import { computed, ref } from 'vue';
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue";
 import MultiLoader from "@/Components/loader/MultiLoader.vue";
+import {useForm} from '@inertiajs/vue3';
 
+const props = defineProps({
+    isClockedIn: Boolean,
+})
+
+const form = useForm({
+    isClockedIn: props.isClockedIn,
+});
 const currentHour = new Date().getHours();
 const isLoading = ref(false)
+
+const toggleClock = () => {
+    isLoading.value = true;
+    form.post(route('time-records.store'), {
+        preserveScroll: true,
+        onFinish: () => isLoading.value = false,
+    })
+};
+
 const greeting = computed(() => {
     if (currentHour >= 5 && currentHour < 12) {
         return "Good Morning";

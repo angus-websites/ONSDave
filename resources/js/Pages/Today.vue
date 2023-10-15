@@ -27,7 +27,13 @@
                 </div>
 
             </div>
+
+            <div>
+                <ConfettiExplosion v-if="confettiVisible" class="mx-auto" />
+            </div>
         </PageContainer>
+
+
     </AppLayout>
 </template>
 
@@ -38,6 +44,7 @@ import { computed, ref, reactive } from 'vue';
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue";
 import MultiLoader from "@/Components/loader/MultiLoader.vue";
 import {useForm} from '@inertiajs/vue3';
+import ConfettiExplosion from "vue-confetti-explosion";
 
 const props = defineProps({
     isClockedIn: Boolean,
@@ -55,8 +62,18 @@ let loading = reactive({
     clockTimeoutId: null,
 })
 
+let confettiVisible = ref(false);
+
+function explodeConfetti() {
+    confettiVisible.value = true;
+    setTimeout(() => {
+        confettiVisible.value = false;
+    }, 3000);
+}
 
 const toggleClock = () => {
+
+    let wasClockingIn = props.isClockedIn;
 
     // Set a timeout to only show loading after 1 second
     loading.clockTimeoutId = setTimeout(() => {
@@ -68,7 +85,14 @@ const toggleClock = () => {
         onFinish: () => {
             clearTimeout(loading.clockTimeoutId);
             loading.clockLoading = false
-        }
+
+        },
+        onSuccess: () => {
+            // Only call confetti if we are clocking out
+            if (wasClockingIn) {
+                explodeConfetti();
+            }
+        },
     })
 };
 

@@ -22,7 +22,7 @@ class TodayController extends Controller
             ->orderBy('recorded_at', 'desc')
             ->first();
 
-        $isClockedIn = ($latestRecord && $latestRecord->type === 'clock_in');
+        $isClockedIn = ($latestRecord && $latestRecord->type === TimeRecord::CLOCK_IN);
 
         return Inertia::render('Today', ['isClockedIn' => $isClockedIn]);
     }

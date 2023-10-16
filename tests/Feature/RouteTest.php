@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Employee;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
@@ -32,7 +33,9 @@ class RouteTest extends TestCase
         $response->assertRedirect('/login');
 
         // Create a user for the test
-        $user = User::factory()->create();
+        $user = Employee::factory()->create()->user;
+
+        // TODO add check for user with no employee
 
         // Check the 'today' route
         $response = $this->actingAs($user)->get('/today');
@@ -47,7 +50,7 @@ class RouteTest extends TestCase
         $response->assertRedirect('/login');
 
         // Create a user for the test
-        $user = User::factory()->create();
+        $user = Employee::factory()->create()->user;
 
         // Check when authenticated
         $response = $this->actingAs($user)->get('/history');

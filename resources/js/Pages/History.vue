@@ -1,9 +1,3 @@
-<script setup>
-import AppLayout from '@/Layouts/AppLayout.vue';
-import PageContainer from "@/Components/_util/PageContainer.vue";
-import HistoryCalendar from "@/Components/calendar/HistoryCalendar.vue";
-
-</script>
 
 <template>
     <AppLayout title="History">
@@ -18,3 +12,14 @@ import HistoryCalendar from "@/Components/calendar/HistoryCalendar.vue";
         </PageContainer>
     </AppLayout>
 </template>
+
+<script setup>
+import AppLayout from '@/Layouts/AppLayout.vue';
+import PageContainer from "@/Components/_util/PageContainer.vue";
+import HistoryCalendar from "@/Components/calendar/HistoryCalendar.vue";
+
+const props = defineProps({
+    timeRecords: Object,
+})
+
+</script>

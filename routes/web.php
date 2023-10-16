@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\TimeRecordController;
 use App\Http\Controllers\TodayController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,7 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
@@ -45,5 +47,10 @@ Route::middleware([
 
     // History
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
+    Route::post('/history/day/fetch', [HistoryController::class, 'fetchByDate'])->name('history.day.fetch');
+    Route::post('/history/month/fetch', [HistoryController::class, 'fetchByMonth'])->name('history.month.fetch');
+
+
+    Route::resource('time-records', TimeRecordController::class)->only(['store', 'update', 'destroy']);
 
 });

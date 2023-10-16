@@ -2,8 +2,11 @@
 
 namespace App\Http\Resources;
 
+use App\Models\TimeRecord;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class TimeRecordByDayResource extends ResourceCollection
 {
@@ -15,7 +18,7 @@ class TimeRecordByDayResource extends ResourceCollection
         $this->date = $date;
     }
 
-    public function toArray($request)
+    public function toArray(Request $request): array
     {
         return [
             'date' => $this->date->format('Y-m-d'),
@@ -23,7 +26,13 @@ class TimeRecordByDayResource extends ResourceCollection
         ];
     }
 
-    private function organizeRecords($records)
+    /**
+     * @param Collection $records
+     * @return array
+     * This method organizes the records into sessions, a session is a clock in and clock out
+     * along with the duration of the session.
+     */
+    private function organizeRecords(Collection $records): array
     {
         $organized = [];
         $count = count($records);
@@ -31,10 +40,11 @@ class TimeRecordByDayResource extends ResourceCollection
         for ($i = 0; $i < $count; $i++) {
             $record = $records[$i];
 
-            if ($record->type === 'clock_in') {
+            // If the record is a clock in then we need to find the next clock out
+            if ($record->type === TimeRecord::CLOCK_IN) {
                 $nextRecord = ($i + 1) < $count ? $records[$i + 1] : null;
 
-                $ongoing = !$nextRecord || !in_array($nextRecord->type, ['clock_out', 'auto_clock_out']);
+                $ongoing = !$nextRecord || !in_array($nextRecord->type, [TimeRecord::CLOCK_OUT, TimeRecord::AUTO_CLOCK_OUT]);
                 $isAutoClockOut = $nextRecord && $nextRecord->type === 'auto_clock_out';
 
                 $organized[] = [
@@ -50,6 +60,12 @@ class TimeRecordByDayResource extends ResourceCollection
         return $organized;
     }
 
+    /**
+     * @param Carbon|null $start
+     * @param Carbon|null $end
+     * @return string|null
+     * This method calculates the duration between two dates
+     */
     private function calculateDuration(?Carbon $start, ?Carbon $end): ?string
     {
         if (!$start || !$end) {

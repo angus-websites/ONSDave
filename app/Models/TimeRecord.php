@@ -9,6 +9,7 @@ class TimeRecord extends Model
 {
     const CLOCK_IN = 'clock_in';
     const CLOCK_OUT = 'clock_out';
+    const AUTO_CLOCK_OUT = 'auto_clock_out';
 
     protected $fillable = [
         'employee_id', 'recorded_at', 'type', 'notes'

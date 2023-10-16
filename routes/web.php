@@ -47,7 +47,8 @@ Route::middleware([
 
     // History
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
-    Route::post('/history/fetch', [HistoryController::class, 'fetchByDate'])->name('history.fetch');
+    Route::post('/history/day/fetch', [HistoryController::class, 'fetchByDate'])->name('history.day.fetch');
+    Route::post('/history/month/fetch', [HistoryController::class, 'fetchByMonth'])->name('history.month.fetch');
 
 
     Route::resource('time-records', TimeRecordController::class)->only(['store', 'update', 'destroy']);

@@ -24,19 +24,19 @@ class TimeRecordByDayResourceTest extends TestCase
         // Mockup some fake records
         $records = new Collection([
             (object) [
-                'type' => 'clock_in',
+                'type' => TimeRecord::CLOCK_IN,
                 'recorded_at' => ('2023-04-15 09:00:00')
             ],
             (object) [
-                'type' => 'clock_out',
+                'type' => TimeRecord::CLOCK_OUT,
                 'recorded_at' => ('2023-04-15 13:00:00')
             ],
             (object) [
-                'type' => 'clock_in',
+                'type' => TimeRecord::CLOCK_IN,
                 'recorded_at' => ('2023-04-15 14:00:00')
             ],
             (object) [
-                'type' => 'auto_clock_out',
+                'type' => TimeRecord::AUTO_CLOCK_OUT,
                 'recorded_at' => ('2023-04-15 18:00:00')
             ]
         ]);
@@ -47,26 +47,31 @@ class TimeRecordByDayResourceTest extends TestCase
         // Pass the records to the resource
         $resourceResult = (new TimeRecordByDayResource($records, $date))->toArray(request());
 
-        // Assert the date is correct
-        $this->assertEquals('2023-04-15', $resourceResult['date']);
+        // Expected result
+        $expectedResult = [
+            'date' => '2023-04-15',
+            'records' => [
+                [
+                    'clock_in' => '2023-04-15 09:00:00',
+                    'clock_out' => '2023-04-15 13:00:00',
+                    'duration' => '04:00:00',
+                    'ongoing' => false,
+                    'auto_clock_out' => false,
+                ],
+                [
+                    'clock_in' => '2023-04-15 14:00:00',
+                    'clock_out' => '2023-04-15 18:00:00',
+                    'duration' => '04:00:00',
+                    'ongoing' => false,
+                    'auto_clock_out' => true,
+                ]
+            ],
+        ];
 
-        // Fetch the records from the resource
-        $resourceResult = $resourceResult['records'];
-
-        // Assert the records are correctly organized
-        $this->assertEquals('2023-04-15 09:00:00', $resourceResult[0]['clock_in']);
-        $this->assertEquals('2023-04-15 13:00:00', $resourceResult[0]['clock_out']);
-        $this->assertEquals('04:00:00', $resourceResult[0]['duration']);
-        $this->assertFalse($resourceResult[0]['ongoing']);
-        $this->assertFalse($resourceResult[0]['auto_clock_out']);
-
-        // Assert the next record is correctly organized
-        $this->assertEquals('2023-04-15 14:00:00', $resourceResult[1]['clock_in']);
-        $this->assertEquals('2023-04-15 18:00:00', $resourceResult[1]['clock_out']);
-        $this->assertEquals('04:00:00', $resourceResult[1]['duration']);
-        $this->assertFalse($resourceResult[1]['ongoing']);
-
+        // Assert that the entire structure matches our expectation
+        $this->assertEquals($expectedResult, $resourceResult);
     }
+
 
     /**
      * Test the resource with a single record
@@ -77,7 +82,7 @@ class TimeRecordByDayResourceTest extends TestCase
         // Mockup some fake records
         $records = new Collection([
             (object) [
-                'type' => 'clock_in',
+                'type' => TimeRecord::CLOCK_IN,
                 'recorded_at' => ('2023-04-15 09:00:00')
             ],
         ]);
@@ -88,17 +93,23 @@ class TimeRecordByDayResourceTest extends TestCase
         // Pass the records to the resource
         $resourceResult = (new TimeRecordByDayResource($records, $date))->toArray(request());
 
-        // Assert the date is correct
-        $this->assertEquals('2023-04-15', $resourceResult['date']);
 
-        // Fetch the records from the resource
-        $resourceResult = $resourceResult['records'];
+        // Expected result
+        $expectedResult = [
+            'date' => '2023-04-15',
+            'records' => [
+                [
+                    'clock_in' => '2023-04-15 09:00:00',
+                    'clock_out' => null,
+                    'duration' => null,
+                    'ongoing' => true,
+                    'auto_clock_out' => false,
+                ]
+            ],
+        ];
 
-        // Assert the records are correctly organized
-        $this->assertEquals('2023-04-15 09:00:00', $resourceResult[0]['clock_in']);
-        $this->assertNull($resourceResult[0]['clock_out']);
-        $this->assertNull($resourceResult[0]['duration']);
-        $this->assertTrue($resourceResult[0]['ongoing']);
+        // Assert that the entire structure matches our expectation
+        $this->assertEquals($expectedResult, $resourceResult);
 
     }
 
@@ -111,11 +122,11 @@ class TimeRecordByDayResourceTest extends TestCase
         // Mockup some fake records
         $records = new Collection([
             (object) [
-                'type' => 'clock_in',
+                'type' => TimeRecord::CLOCK_IN,
                 'recorded_at' => ('2023-04-15 09:00:00')
             ],
             (object) [
-                'type' => 'clock_in',
+                'type' => TimeRecord::CLOCK_IN,
                 'recorded_at' => ('2023-04-15 14:00:00')
             ]
         ]);
@@ -126,25 +137,31 @@ class TimeRecordByDayResourceTest extends TestCase
         // Pass the records to the resource
         $resourceResult = (new TimeRecordByDayResource($records, $date))->toArray(request());
 
-        // Assert the date is correct
-        $this->assertEquals('2023-04-15', $resourceResult['date']);
+        // Expected result
+        $expectedResult = [
+            'date' => '2023-04-15',
+            'records' => [
+                [
+                    'clock_in' => '2023-04-15 09:00:00',
+                    'clock_out' => null,
+                    'duration' => null,
+                    'ongoing' => true,
+                    'auto_clock_out' => false,
+                ],
+                [
+                    'clock_in' => '2023-04-15 14:00:00',
+                    'clock_out' => null,
+                    'duration' => null,
+                    'ongoing' => true,
+                    'auto_clock_out' => false,
+                ]
+            ],
+        ];
 
-        // Fetch the records from the resource
-        $resourceResult = $resourceResult['records'];
-
-        // Assert the records are correctly organized
-        $this->assertEquals('2023-04-15 09:00:00', $resourceResult[0]['clock_in']);
-        $this->assertNull($resourceResult[0]['clock_out']);
-        $this->assertNull($resourceResult[0]['duration']);
-        $this->assertTrue($resourceResult[0]['ongoing']);
-
-        // Assert the next record is correctly organized
-        $this->assertEquals('2023-04-15 14:00:00', $resourceResult[1]['clock_in']);
-        $this->assertNull($resourceResult[1]['clock_out']);
-        $this->assertNull($resourceResult[1]['duration']);
-        $this->assertTrue($resourceResult[1]['ongoing']);
-
+        // Assert that the entire structure matches our expectation
+        $this->assertEquals($expectedResult, $resourceResult);
     }
+
 
     /**
      * Test the resource with no data
@@ -160,14 +177,77 @@ class TimeRecordByDayResourceTest extends TestCase
         // Pass the records to the resource
         $resourceResult = (new TimeRecordByDayResource($records, $date))->toArray(request());
 
-        // Assert the date is correct
-        $this->assertEquals('2023-04-15', $resourceResult['date']);
+        // Expected result
+        $expectedResult = [
+            'date' => '2023-04-15',
+            'records' => [],
+        ];
 
-        // Fetch the records from the resource
-        $resourceResult = $resourceResult['records'];
-
-        // Assert the records are correctly organized
-        $this->assertEmpty($resourceResult);
+        // Assert that the entire structure matches our expectation
+        $this->assertEquals($expectedResult, $resourceResult);
     }
+
+
+    /**
+     * Test the resource at a http endpoint
+     */
+    public function test_resource_fetch_by_date_endpoint_works()
+    {
+        $employee = Employee::factory()->create();
+        $this->actingAs($employee->user);
+
+        // Insert some records into the database
+        TimeRecord::create([
+            'employee_id' => $employee->id,
+            'type' => TimeRecord::CLOCK_IN,
+            'recorded_at' => Carbon::parse('2023-04-15 09:00:00')
+        ]);
+
+        TimeRecord::create([
+            'employee_id' => $employee->id,
+            'type' => TimeRecord::CLOCK_OUT,
+            'recorded_at' => Carbon::parse('2023-04-15 13:00:00')
+        ]);
+
+        TimeRecord::create([
+            'employee_id' => $employee->id,
+            'type' => TimeRecord::CLOCK_IN,
+            'recorded_at' => Carbon::parse('2023-04-15 14:00:00')
+        ]);
+
+        TimeRecord::create([
+            'employee_id' => $employee->id,
+            'type' => TimeRecord::AUTO_CLOCK_OUT,
+            'recorded_at' => Carbon::parse('2023-04-15 18:00:00')
+        ]);
+
+        // Make an HTTP request to the desired endpoint
+        $response = $this->post(route('history.day.fetch', ['date' => '2023-04-15']));
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'data'=> [
+                    'date' => '2023-04-15',
+                    'records' => [
+                        [
+                            'clock_in' => '2023-04-15 09:00:00',
+                            'clock_out' => '2023-04-15 13:00:00',
+                            'duration' => '04:00:00',
+                            'ongoing' => false,
+                            'auto_clock_out' => false,
+                        ],
+                        [
+                            'clock_in' => '2023-04-15 14:00:00',
+                            'clock_out' => '2023-04-15 18:00:00',
+                            'duration' => '04:00:00',
+                            'ongoing' => false,
+                            'auto_clock_out' => true,
+                        ],
+                    ]
+                ]
+            ]);
+
+    }
+
 
 }

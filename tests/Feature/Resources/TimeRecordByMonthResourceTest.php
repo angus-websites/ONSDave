@@ -3,6 +3,8 @@
 namespace Tests\Feature\Resources;
 
 use App\Http\Resources\TimeRecordByMonthResource;
+use App\Models\Employee;
+use App\Models\TimeRecord;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
@@ -11,6 +13,8 @@ use Tests\TestCase;
 
 class TimeRecordByMonthResourceTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Test the resource with multiple records on different days
      * in the same month
@@ -107,6 +111,85 @@ class TimeRecordByMonthResourceTest extends TestCase
         $this->assertFalse($dayThree['records'][1]['ongoing']);
         $this->assertTrue($dayThree['records'][1]['auto_clock_out']);
 
+
+
+    }
+
+    public function test_resource_fetch_by_month_endpoint_works()
+    {
+        $employee = Employee::factory()->create();
+        $this->actingAs($employee->user);
+
+        // Insert some records into the database
+        TimeRecord::create([
+            'employee_id' => $employee->id,
+            'type' => 'clock_in',
+            'recorded_at' => Carbon::parse('2023-04-15 09:00:00')
+        ]);
+
+        TimeRecord::create([
+            'employee_id' => $employee->id,
+            'type' => TimeRecord::CLOCK_OUT,
+            'recorded_at' => Carbon::parse('2023-04-15 13:00:00')
+        ]);
+
+        TimeRecord::create([
+            'employee_id' => $employee->id,
+            'type' => TimeRecord::CLOCK_IN,
+            'recorded_at' => Carbon::parse('2023-04-15 14:00:00')
+        ]);
+
+        TimeRecord::create([
+            'employee_id' => $employee->id,
+            'type' => TimeRecord::AUTO_CLOCK_OUT,
+            'recorded_at' => Carbon::parse('2023-04-15 18:00:00')
+        ]);
+
+        TimeRecord::create([
+            'employee_id' => $employee->id,
+            'type' => TimeRecord::CLOCK_IN,
+            'recorded_at' => Carbon::parse('2023-04-16 09:00:00')
+        ]);
+
+        TimeRecord::create([
+            'employee_id' => $employee->id,
+            'type' => TimeRecord::CLOCK_OUT,
+            'recorded_at' => Carbon::parse('2023-04-16 13:00:00')
+        ]);
+
+        // Make an HTTP request to the desired endpoint
+        $response = $this->post(route('history.month.fetch', ['month' => '4', 'year' => '2023']));
+
+        // Assert the response is correct
+        $response->assertStatus(200);
+
+        // Assert the 15th day is correct
+        $dayOne = $response->json('data.days')[14]; // 14 because the array is zero indexed
+        $this->assertEquals('2023-04-15', $dayOne['date']);
+        $this->assertEquals('2023-04-15 09:00:00', $dayOne['records'][0]['clock_in']);
+        $this->assertEquals('2023-04-15 13:00:00', $dayOne['records'][0]['clock_out']);
+        $this->assertEquals('04:00:00', $dayOne['records'][0]['duration']);
+        $this->assertFalse($dayOne['records'][0]['ongoing']);
+        $this->assertFalse($dayOne['records'][0]['auto_clock_out']);
+        $this->assertEquals('2023-04-15 14:00:00', $dayOne['records'][1]['clock_in']);
+        $this->assertEquals('2023-04-15 18:00:00', $dayOne['records'][1]['clock_out']);
+        $this->assertEquals('04:00:00', $dayOne['records'][1]['duration']);
+        $this->assertFalse($dayOne['records'][1]['ongoing']);
+        $this->assertTrue($dayOne['records'][1]['auto_clock_out']);
+
+        // Assert the 16th day is correct
+        $dayTwo = $response->json('data.days')[15]; // 15 because the array is zero indexed
+        $this->assertEquals('2023-04-16', $dayTwo['date']);
+        $this->assertEquals('2023-04-16 09:00:00', $dayTwo['records'][0]['clock_in']);
+        $this->assertEquals('2023-04-16 13:00:00', $dayTwo['records'][0]['clock_out']);
+        $this->assertEquals('04:00:00', $dayTwo['records'][0]['duration']);
+        $this->assertFalse($dayTwo['records'][0]['ongoing']);
+        $this->assertFalse($dayTwo['records'][0]['auto_clock_out']);
+
+        // Assert the 17th day is empty
+        $dayThree = $response->json('data.days')[16]; // 16 because the array is zero indexed
+        $this->assertEquals('2023-04-17', $dayThree['date']);
+        $this->assertEmpty($dayThree['records']);
 
 
     }

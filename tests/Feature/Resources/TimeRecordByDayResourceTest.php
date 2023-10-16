@@ -50,7 +50,7 @@ class TimeRecordByDayResourceTest extends TestCase
         // Expected result
         $expectedResult = [
             'date' => '2023-04-15',
-            'records' => [
+            'sessions' => [
                 [
                     'clock_in' => '2023-04-15 09:00:00',
                     'clock_out' => '2023-04-15 13:00:00',
@@ -97,7 +97,7 @@ class TimeRecordByDayResourceTest extends TestCase
         // Expected result
         $expectedResult = [
             'date' => '2023-04-15',
-            'records' => [
+            'sessions' => [
                 [
                     'clock_in' => '2023-04-15 09:00:00',
                     'clock_out' => null,
@@ -140,7 +140,7 @@ class TimeRecordByDayResourceTest extends TestCase
         // Expected result
         $expectedResult = [
             'date' => '2023-04-15',
-            'records' => [
+            'sessions' => [
                 [
                     'clock_in' => '2023-04-15 09:00:00',
                     'clock_out' => null,
@@ -180,7 +180,7 @@ class TimeRecordByDayResourceTest extends TestCase
         // Expected result
         $expectedResult = [
             'date' => '2023-04-15',
-            'records' => [],
+            'sessions' => [],
         ];
 
         // Assert that the entire structure matches our expectation
@@ -228,7 +228,7 @@ class TimeRecordByDayResourceTest extends TestCase
             ->assertJson([
                 'data'=> [
                     'date' => '2023-04-15',
-                    'records' => [
+                    'sessions' => [
                         [
                             'clock_in' => '2023-04-15 09:00:00',
                             'clock_out' => '2023-04-15 13:00:00',

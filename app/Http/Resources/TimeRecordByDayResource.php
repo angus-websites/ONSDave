@@ -22,7 +22,7 @@ class TimeRecordByDayResource extends ResourceCollection
     {
         return [
             'date' => $this->date->format('Y-m-d'),
-            'records' => $this->organizeRecords($this->collection),
+            'sessions' => $this->organizeRecords($this->collection),
         ];
     }
 

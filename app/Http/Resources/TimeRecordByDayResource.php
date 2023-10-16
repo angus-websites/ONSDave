@@ -12,7 +12,7 @@ class TimeRecordByDayResource extends ResourceCollection
 {
     protected Carbon $date;
 
-    public function __construct($resource, Carbon $date)
+    public function __construct(Collection $resource, Carbon $date)
     {
         parent::__construct($resource);
         $this->date = $date;

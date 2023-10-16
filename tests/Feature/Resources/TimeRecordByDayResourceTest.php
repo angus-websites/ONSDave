@@ -146,5 +146,28 @@ class TimeRecordByDayResourceTest extends TestCase
 
     }
 
+    /**
+     * Test the resource with no data
+     */
+    public function test_resource_with_no_data(): void
+    {
+        // Mockup some fake records
+        $records = new Collection([]);
+
+        // Create a date to pass to the resource
+        $date = Carbon::parse('2023-04-15');
+
+        // Pass the records to the resource
+        $resourceResult = (new TimeRecordByDayResource($records, $date))->toArray(request());
+
+        // Assert the date is correct
+        $this->assertEquals('2023-04-15', $resourceResult['date']);
+
+        // Fetch the records from the resource
+        $resourceResult = $resourceResult['records'];
+
+        // Assert the records are correctly organized
+        $this->assertEmpty($resourceResult);
+    }
 
 }

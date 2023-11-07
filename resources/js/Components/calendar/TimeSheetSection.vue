@@ -102,11 +102,7 @@ const entries = [
 
 // Create a computed property to calculate the total worked time
 const totalWorkedTime = computed(() => {
-    let total = 0;
-    entries.forEach(entry => {
-        total += entry.duration;
-    })
-    return total;
+    return "8h 15m"
 })
 
 </script>

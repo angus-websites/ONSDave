@@ -1,11 +1,11 @@
 import { mount } from '@vue/test-utils';
-import HistoryCalendar from '@/Components/calendar/HistoryCalendar.vue';
+import MonthCalendar from '@/Components/calendar/MonthCalendar.vue';
 
-describe('HistoryCalendar.vue', () => {
+describe('MonthCalendar.vue', () => {
     let wrapper;
 
     beforeEach(() => {
-        wrapper = mount(HistoryCalendar);
+        wrapper = mount(MonthCalendar);
     });
 
     it('renders the component', () => {

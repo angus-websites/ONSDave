@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Employee;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 
 class RouteTest extends TestCase
 {
@@ -56,6 +56,4 @@ class RouteTest extends TestCase
         $response = $this->actingAs($user)->get('/history');
         $response->assertStatus(200);
     }
-
 }
-

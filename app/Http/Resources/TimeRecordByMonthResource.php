@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\ResourceCollection;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
-
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Collection;
 
 class TimeRecordByMonthResource extends ResourceCollection
 {

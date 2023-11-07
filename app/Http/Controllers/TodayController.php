@@ -10,7 +10,6 @@ use Inertia\Inertia;
 
 class TodayController extends Controller
 {
-
     public function index(Request $request)
     {
         $userId = Auth::user()->employee->id;

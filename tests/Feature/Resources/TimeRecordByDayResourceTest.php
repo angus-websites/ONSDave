@@ -6,7 +6,6 @@ use App\Http\Resources\TimeRecordByDayResource;
 use App\Models\Employee;
 use App\Models\TimeRecord;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
@@ -25,20 +24,20 @@ class TimeRecordByDayResourceTest extends TestCase
         $records = new Collection([
             (object) [
                 'type' => TimeRecord::CLOCK_IN,
-                'recorded_at' => ('2023-04-15 09:00:00')
+                'recorded_at' => ('2023-04-15 09:00:00'),
             ],
             (object) [
                 'type' => TimeRecord::CLOCK_OUT,
-                'recorded_at' => ('2023-04-15 13:00:00')
+                'recorded_at' => ('2023-04-15 13:00:00'),
             ],
             (object) [
                 'type' => TimeRecord::CLOCK_IN,
-                'recorded_at' => ('2023-04-15 14:00:00')
+                'recorded_at' => ('2023-04-15 14:00:00'),
             ],
             (object) [
                 'type' => TimeRecord::AUTO_CLOCK_OUT,
-                'recorded_at' => ('2023-04-15 18:00:00')
-            ]
+                'recorded_at' => ('2023-04-15 18:00:00'),
+            ],
         ]);
 
         // Create a date to pass to the resource
@@ -64,14 +63,13 @@ class TimeRecordByDayResourceTest extends TestCase
                     'duration' => '04:00:00',
                     'ongoing' => false,
                     'auto_clock_out' => true,
-                ]
+                ],
             ],
         ];
 
         // Assert that the entire structure matches our expectation
         $this->assertEquals($expectedResult, $resourceResult);
     }
-
 
     /**
      * Test the resource with a single record
@@ -83,7 +81,7 @@ class TimeRecordByDayResourceTest extends TestCase
         $records = new Collection([
             (object) [
                 'type' => TimeRecord::CLOCK_IN,
-                'recorded_at' => ('2023-04-15 09:00:00')
+                'recorded_at' => ('2023-04-15 09:00:00'),
             ],
         ]);
 
@@ -92,7 +90,6 @@ class TimeRecordByDayResourceTest extends TestCase
 
         // Pass the records to the resource
         $resourceResult = (new TimeRecordByDayResource($records, $date))->toArray(request());
-
 
         // Expected result
         $expectedResult = [
@@ -104,7 +101,7 @@ class TimeRecordByDayResourceTest extends TestCase
                     'duration' => null,
                     'ongoing' => true,
                     'auto_clock_out' => false,
-                ]
+                ],
             ],
         ];
 
@@ -123,12 +120,12 @@ class TimeRecordByDayResourceTest extends TestCase
         $records = new Collection([
             (object) [
                 'type' => TimeRecord::CLOCK_IN,
-                'recorded_at' => ('2023-04-15 09:00:00')
+                'recorded_at' => ('2023-04-15 09:00:00'),
             ],
             (object) [
                 'type' => TimeRecord::CLOCK_IN,
-                'recorded_at' => ('2023-04-15 14:00:00')
-            ]
+                'recorded_at' => ('2023-04-15 14:00:00'),
+            ],
         ]);
 
         // Create a date to pass to the resource
@@ -154,14 +151,13 @@ class TimeRecordByDayResourceTest extends TestCase
                     'duration' => null,
                     'ongoing' => true,
                     'auto_clock_out' => false,
-                ]
+                ],
             ],
         ];
 
         // Assert that the entire structure matches our expectation
         $this->assertEquals($expectedResult, $resourceResult);
     }
-
 
     /**
      * Test the resource with no data
@@ -187,7 +183,6 @@ class TimeRecordByDayResourceTest extends TestCase
         $this->assertEquals($expectedResult, $resourceResult);
     }
 
-
     /**
      * Test the resource at a http endpoint
      */
@@ -200,25 +195,25 @@ class TimeRecordByDayResourceTest extends TestCase
         TimeRecord::create([
             'employee_id' => $employee->id,
             'type' => TimeRecord::CLOCK_IN,
-            'recorded_at' => Carbon::parse('2023-04-15 09:00:00')
+            'recorded_at' => Carbon::parse('2023-04-15 09:00:00'),
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
             'type' => TimeRecord::CLOCK_OUT,
-            'recorded_at' => Carbon::parse('2023-04-15 13:00:00')
+            'recorded_at' => Carbon::parse('2023-04-15 13:00:00'),
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
             'type' => TimeRecord::CLOCK_IN,
-            'recorded_at' => Carbon::parse('2023-04-15 14:00:00')
+            'recorded_at' => Carbon::parse('2023-04-15 14:00:00'),
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
             'type' => TimeRecord::AUTO_CLOCK_OUT,
-            'recorded_at' => Carbon::parse('2023-04-15 18:00:00')
+            'recorded_at' => Carbon::parse('2023-04-15 18:00:00'),
         ]);
 
         // Make an HTTP request to the desired endpoint
@@ -226,7 +221,7 @@ class TimeRecordByDayResourceTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'data'=> [
+                'data' => [
                     'date' => '2023-04-15',
                     'sessions' => [
                         [
@@ -243,11 +238,9 @@ class TimeRecordByDayResourceTest extends TestCase
                             'ongoing' => false,
                             'auto_clock_out' => true,
                         ],
-                    ]
-                ]
+                    ],
+                ],
             ]);
 
     }
-
-
 }

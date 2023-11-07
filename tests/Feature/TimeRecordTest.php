@@ -2,13 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Employee;
 use App\Models\TimeRecord;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Carbon;
-use Tests\TestCase;
 use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
 class TimeRecordTest extends TestCase
 {
@@ -28,7 +27,7 @@ class TimeRecordTest extends TestCase
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
             'type' => TimeRecord::CLOCK_IN,
-            'recorded_at' => now()->toDateTimeString()
+            'recorded_at' => now()->toDateTimeString(),
         ]);
     }
 
@@ -46,7 +45,7 @@ class TimeRecordTest extends TestCase
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
             'type' => TimeRecord::CLOCK_IN,
-            'recorded_at' => now()->toDateTimeString()
+            'recorded_at' => now()->toDateTimeString(),
         ]);
 
         // Simulate a POST request to the time-records.store route
@@ -56,8 +55,7 @@ class TimeRecordTest extends TestCase
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
             'type' => TimeRecord::CLOCK_OUT,
-            'recorded_at' => now()->toDateTimeString()
+            'recorded_at' => now()->toDateTimeString(),
         ]);
     }
-
 }

@@ -3,9 +3,9 @@
 namespace App\Http\Resources;
 
 use App\Models\TimeRecord;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Collection;
 
 class TimeRecordByDayResource extends ResourceCollection
@@ -27,7 +27,6 @@ class TimeRecordByDayResource extends ResourceCollection
     }
 
     /**
-     * @param Collection $records
      * @return array
      * This method organizes the records into sessions, a session is a clock in and clock out
      * along with the duration of the session.
@@ -44,7 +43,7 @@ class TimeRecordByDayResource extends ResourceCollection
             if ($record->type === TimeRecord::CLOCK_IN) {
                 $nextRecord = ($i + 1) < $count ? $records[$i + 1] : null;
 
-                $ongoing = !$nextRecord || !in_array($nextRecord->type, [TimeRecord::CLOCK_OUT, TimeRecord::AUTO_CLOCK_OUT]);
+                $ongoing = ! $nextRecord || ! in_array($nextRecord->type, [TimeRecord::CLOCK_OUT, TimeRecord::AUTO_CLOCK_OUT]);
                 $isAutoClockOut = $nextRecord && $nextRecord->type === 'auto_clock_out';
 
                 $organized[] = [
@@ -61,18 +60,15 @@ class TimeRecordByDayResource extends ResourceCollection
     }
 
     /**
-     * @param Carbon|null $start
-     * @param Carbon|null $end
      * @return string|null
      * This method calculates the duration between two dates
      */
     private function calculateDuration(?Carbon $start, ?Carbon $end): ?string
     {
-        if (!$start || !$end) {
+        if (! $start || ! $end) {
             return null;
         }
 
         return $start->diff($end)->format('%H:%I:%S');
     }
 }
-

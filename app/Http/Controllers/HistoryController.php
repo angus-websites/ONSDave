@@ -28,7 +28,7 @@ class HistoryController extends Controller
         $timeRecordsThisMonth = new TimeRecordByMonthResource($timeRecords, today());
 
         return Inertia::render('History', [
-            'timeRecordsThisMonth' => $timeRecordsThisMonth
+            'timeRecordsThisMonth' => $timeRecordsThisMonth,
         ]);
     }
 
@@ -69,8 +69,5 @@ class HistoryController extends Controller
 
         return new TimeRecordByMonthResource($timeRecords, $date);
 
-
     }
-
 }
-

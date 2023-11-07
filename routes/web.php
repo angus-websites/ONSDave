@@ -1,11 +1,11 @@
 <?php
 
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\StorageController;
 use App\Http\Controllers\TimeRecordController;
 use App\Http\Controllers\TodayController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\StorageController;
 use Inertia\Inertia;
 
 /*
@@ -49,7 +49,6 @@ Route::middleware([
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
     Route::post('/history/day/fetch', [HistoryController::class, 'fetchByDate'])->name('history.day.fetch');
     Route::post('/history/month/fetch', [HistoryController::class, 'fetchByMonth'])->name('history.month.fetch');
-
 
     Route::resource('time-records', TimeRecordController::class)->only(['store', 'update', 'destroy']);
 

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TimeRecordController extends Controller
 {
-
     /**
      * Store a newly created resource in storage.
      */
@@ -23,19 +22,19 @@ class TimeRecordController extends Controller
             ->orderBy('recorded_at', 'desc')
             ->first();
 
-        if (!$latestRecord || $latestRecord->type === TimeRecord::CLOCK_OUT) {
+        if (! $latestRecord || $latestRecord->type === TimeRecord::CLOCK_OUT) {
             // If there's no record for today or the latest is a clock-out, then create a clock-in
             TimeRecord::create([
                 'employee_id' => $userId,
                 'recorded_at' => Carbon::now(),
-                'type' => TimeRecord::CLOCK_IN
+                'type' => TimeRecord::CLOCK_IN,
             ]);
         } else {
             // Otherwise, create a clock-out
             TimeRecord::create([
                 'employee_id' => $userId,
                 'recorded_at' => Carbon::now(),
-                'type' => 'clock_out'
+                'type' => 'clock_out',
             ]);
         }
 

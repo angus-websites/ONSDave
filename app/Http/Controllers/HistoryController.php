@@ -16,15 +16,19 @@ class HistoryController extends Controller
     {
         $userId = Auth::user()->employee->id;
 
-        $timeRecords = TimeRecord::whereDate('recorded_at', now())
+        $currentMonth = today()->month;
+        $currentYear = today()->year;
+
+        $timeRecords = TimeRecord::whereMonth('recorded_at', $currentMonth)
+            ->whereYear('recorded_at', $currentYear)
             ->where('employee_id', $userId)
             ->orderBy('recorded_at', 'asc')
             ->get();
 
-        $timeRecordsResource = new TimeRecordByDayResource($timeRecords, today());
+        $timeRecordsThisMonth = new TimeRecordByMonthResource($timeRecords, today());
 
         return Inertia::render('History', [
-            'timeRecords' => $timeRecordsResource
+            'timeRecordsThisMonth' => $timeRecordsThisMonth,
         ]);
     }
 
@@ -65,8 +69,5 @@ class HistoryController extends Controller
 
         return new TimeRecordByMonthResource($timeRecords, $date);
 
-
     }
-
 }
-

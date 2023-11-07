@@ -11,7 +11,6 @@ class Employee extends Model
     use HasFactory;
     use HasUuids;
 
-
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -22,17 +21,17 @@ class Employee extends Model
         return $this->belongsTo(Role::class);
     }
 
-    public function isAdmin($super=false){
+    public function isAdmin($super = false)
+    {
         /**
          * Is this user admin or super admin?
          */
 
         // Check this user actually has a role
-        if ($this->role()){
-            return $super ? $this->role()->name == "Super Admin" :  in_array($this->role()->name, ["Admin", "Super Admin"]);
+        if ($this->role()) {
+            return $super ? $this->role()->name == 'Super Admin' : in_array($this->role()->name, ['Admin', 'Super Admin']);
         }
+
         return false;
     }
-
-
 }

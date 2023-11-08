@@ -13,18 +13,16 @@ class TimeRecordByDayResource extends ResourceCollection
     protected Carbon $date;
     protected TimeRecordOrganiserService $timeRecordOrganizerService;
 
-    public function __construct(Collection $resource, Carbon $date, TimeRecordOrganiserService $timeRecordOrganizerService)
+    public function __construct(Collection $resource, Carbon $date)
     {
         parent::__construct($resource);
         $this->date = $date;
-        $this->timeRecordOrganizerService = $timeRecordOrganizerService;
+        $this->timeRecordOrganizerService = new TimeRecordOrganiserService();
     }
 
     public function toArray(Request $request): array
     {
-        return [
-            'date' => $this->date->format('Y-m-d'),
-            'sessions' => $this->timeRecordOrganizerService->organiseRecordsByDay($this->collection, $this->date),
-        ];
+        return $this->timeRecordOrganizerService->organiseRecordsByDay($this->collection, $this->date)->toArray();
     }
+
 }

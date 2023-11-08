@@ -12,20 +12,15 @@ class TimeRecordByMonthResource extends ResourceCollection
     protected Carbon $month;
     protected TimeRecordOrganiserService $timeRecordOrganizerService;
 
-    public function __construct($resource, Carbon $month, TimeRecordOrganiserService $timeRecordOrganizerService)
+    public function __construct($resource, Carbon $month)
     {
         parent::__construct($resource);
         $this->month = $month;
-        $this->timeRecordOrganizerService = $timeRecordOrganizerService;
+        $this->timeRecordOrganizerService = new TimeRecordOrganiserService();
     }
 
     public function toArray(Request $request): array
     {
-        $organizedRecords = $this->timeRecordOrganizerService->organiseRecordsByMonth($this->resource, $this->month);
-
-        return [
-            'month' => $this->month->format('Y-m'),
-            'days' => $organizedRecords,
-        ];
+        return $this->timeRecordOrganizerService->organiseRecordsByMonth($this->resource, $this->month)->toArray();
     }
 }

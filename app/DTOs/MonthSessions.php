@@ -4,8 +4,9 @@ namespace App\DTOs;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use JsonSerializable;
 
-class MonthSessions
+class MonthSessions implements JsonSerializable
 {
     /**
      * @param Carbon $month [Month]
@@ -46,6 +47,19 @@ class MonthSessions
             $data['date'],
             $data['days'],
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'month' => $this->month->format('Y-m'),
+            'days' => $this->days,
+        ];
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }
 

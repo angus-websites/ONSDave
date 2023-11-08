@@ -15,6 +15,7 @@ class TimeRecord extends Model
     // Cast the 'type' attribute to enum
     protected $casts = [
         'type' => TimeRecordType::class,
+        'recorded_at' => 'datetime',
     ];
 
     public function employee()

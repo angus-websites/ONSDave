@@ -4,8 +4,9 @@ namespace App\DTOs;
 
 use Carbon\Carbon;
 use DateInterval;
+use JsonSerializable;
 
-class Session
+class Session implements JsonSerializable
 {
     /**
      * @param Carbon $clockIn
@@ -39,7 +40,7 @@ class Session
 
     public function getDurationString(): ?string
     {
-        return $this->duration ? $this->duration->format('%H:%I:%S') : null;
+        return $this->duration?->format('%H:%I:%S');
     }
 
     public function isOngoing(): bool
@@ -62,5 +63,21 @@ class Session
             $data['ongoing'],
             $data['auto_clock_out'],
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'clock_in' => $this->getClockIn()->format('Y-m-d H:i:s'),
+            'clock_out' => $this->getClockOut()->format('Y-m-d H:i:s'),
+            'duration' => $this->getDurationString(),
+            'ongoing' => $this->isOngoing(),
+            'auto_clock_out' => $this->isAutoClockOut(),
+        ];
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

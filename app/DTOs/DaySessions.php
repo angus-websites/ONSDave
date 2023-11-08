@@ -4,8 +4,9 @@ namespace App\DTOs;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use JsonSerializable;
 
-class DaySessions
+class DaySessions implements JsonSerializable
 {
     /**
      * @param Carbon $date [Date]
@@ -31,6 +32,19 @@ class DaySessions
             $data['date'],
             $data['sessions'],
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'date' => $this->date->format('Y-m-d'),
+            'sessions' => $this->sessions,
+        ];
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }
 

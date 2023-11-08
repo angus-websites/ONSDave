@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TimeRecordType;
 use App\Models\TimeRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -21,7 +22,7 @@ class TodayController extends Controller
             ->orderBy('recorded_at', 'desc')
             ->first();
 
-        $isClockedIn = ($latestRecord && $latestRecord->type === TimeRecord::CLOCK_IN);
+        $isClockedIn = ($latestRecord && $latestRecord->type === TimeRecordType::CLOCK_IN);
 
         return Inertia::render('Today', ['isClockedIn' => $isClockedIn]);
     }

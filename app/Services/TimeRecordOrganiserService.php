@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\DTOs\DaySessions;
+use App\DTOs\MonthSessions;
 use App\DTOs\Session;
 use App\Enums\TimeRecordType;
 use App\Http\Resources\TimeRecordByDayResource;
@@ -10,15 +12,15 @@ use DateInterval;
 use Illuminate\Support\Collection;
 
 
-class TimeRecordOrganizerService
+class TimeRecordOrganiserService
 {
     /**
      * Organize the records into sessions with clock in, clock out, and duration.
      *
      * @param Collection $records
-     * @return Collection[Session]
+     * @return DaySessions
      */
-    public function organizeRecordsByDay(Collection $records): Collection
+    public function organiseRecordsByDay(Collection $records, Carbon $date): DaySessions
     {
         $organizedSessions = collect();
         $count = count($records);
@@ -46,7 +48,10 @@ class TimeRecordOrganizerService
             }
         }
 
-        return $organizedSessions;
+        return new DaySessions(
+            date: $date,
+            sessions: $organizedSessions,
+        );
     }
 
     /**
@@ -54,25 +59,36 @@ class TimeRecordOrganizerService
      *
      * @param Collection $records
      * @param Carbon $month
-     * @return array
+     * @return MonthSessions
      */
-    public function organizeRecordsByMonth(Collection $records, Carbon $month): array
+    public function organiseRecordsByMonth(Collection $records, Carbon $month): MonthSessions
     {
         $daysInMonth = $month->daysInMonth;
-        $sessionsByDay = [];
+        $monthSessions = collect();
 
         for ($i = 1; $i <= $daysInMonth; $i++) {
             $currentDay = $month->copy()->day($i);
 
-            $daySessions = $records->filter(function ($record) use ($currentDay) {
+            // Filter the records to only include the current day
+            $dayRecords = $records->filter(function ($record) use ($currentDay) {
                 return $currentDay->isSameDay($record->recorded_at);
             })->values();
 
-            // We can still use TimeRecordByDayResource to format each day's sessions
-            $sessionsByDay[] = (new TimeRecordByDayResource($daySessions))->toArray(request());
+            $daySessions = new DaySessions(
+                date: $currentDay,
+                sessions: $this->organiseRecordsByDay($dayRecords, $currentDay),
+            );
+
+            // Add the day sessions to the collection
+            $monthSessions->push($daySessions);
+
         }
 
-        return $sessionsByDay;
+        return new MonthSessions(
+            month: $month,
+            days: $monthSessions,
+        );
+
     }
 
 

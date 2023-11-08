@@ -7,7 +7,13 @@ use DateInterval;
 
 class Session
 {
-
+    /**
+     * @param Carbon $clockIn
+     * @param Carbon|null $clockOut
+     * @param DateInterval|null $duration
+     * @param bool $ongoing
+     * @param bool $autoClockOut
+     */
     public function __construct(
         public Carbon $clockIn,
         public ?Carbon $clockOut,

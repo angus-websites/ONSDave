@@ -16,6 +16,30 @@ class MonthSessions
         public Collection $days,
     ){}
 
+    /**
+     * Get the month for this object
+     * @return Carbon
+     */
+    public function getMonth(): Carbon
+    {
+        return $this->month;
+    }
+
+    /**
+     * Get a DaySessions object for a given date
+     * @param Carbon $date
+     * @return DaySessions|null
+     */
+    public function getDay(Carbon $date): ?DaySessions
+    {
+        return $this->days->first(fn(DaySessions $day) => $day->date->isSameDay($date));
+    }
+
+    /**
+     * Create a MonthSessions object from an array
+     * @param array $data
+     * @return MonthSessions
+     */
     public static function fromArray(array $data): MonthSessions
     {
         return new MonthSessions(

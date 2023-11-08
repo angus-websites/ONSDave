@@ -16,6 +16,15 @@ class DaySessions
         public Collection $sessions,
     ){}
 
+    /**
+     * Get the sessions for this day
+     * @return Collection
+     */
+    public function getSessions(): Collection
+    {
+        return $this->sessions;
+    }
+
     public static function fromArray(array $data): DaySessions
     {
         return new DaySessions(

@@ -22,6 +22,36 @@ class Session
         public bool $autoClockOut,
     ){}
 
+    public function getClockIn(): Carbon
+    {
+        return $this->clockIn;
+    }
+
+    public function getClockOut(): ?Carbon
+    {
+        return $this->clockOut;
+    }
+
+    public function getDuration(): ?DateInterval
+    {
+        return $this->duration;
+    }
+
+    public function getDurationString(): ?string
+    {
+        return $this->duration ? $this->duration->format('%H:%I:%S') : null;
+    }
+
+    public function isOngoing(): bool
+    {
+        return $this->ongoing;
+    }
+
+    public function isAutoClockOut(): bool
+    {
+        return $this->autoClockOut;
+    }
+
 
     public static function fromArray(array $data): Session
     {

@@ -70,51 +70,50 @@ class TimeRecordOrganiserServiceByMonthTest extends TestCase
         // Month to test
         $month = Carbon::parse('2023-04');
 
-        // Call the method we want to test
+        // Call the service
         $monthSessions = $service->organiseRecordsByMonth($records, $month);
 
         // Assert the month is correct
-        $this->assertEquals('2023-04', $monthSessions->getM);
+        $this->assertEquals('2023-04', $monthSessions->getMonth()->format('Y-m'));
 
-        // Assert the month is correct
-        $this->assertEquals('2023-04', $resourceResult['month']);
 
-        // Assert the 15th day is correct
-        $dayOne = $resourceResult['days'][14]; // 14 because the array is zero indexed
-        $this->assertEquals('2023-04-15', $dayOne['date']);
-        $this->assertEquals('2023-04-15 09:00:00', $dayOne['sessions'][0]['clock_in']);
-        $this->assertEquals('2023-04-15 13:00:00', $dayOne['sessions'][0]['clock_out']);
-        $this->assertEquals('04:00:00', $dayOne['sessions'][0]['duration']);
-        $this->assertFalse($dayOne['sessions'][0]['ongoing']);
-        $this->assertFalse($dayOne['sessions'][0]['auto_clock_out']);
-        $this->assertEquals('2023-04-15 14:00:00', $dayOne['sessions'][1]['clock_in']);
-        $this->assertEquals('2023-04-15 17:00:00', $dayOne['sessions'][1]['clock_out']);
-        $this->assertEquals('03:00:00', $dayOne['sessions'][1]['duration']);
-        $this->assertFalse($dayOne['sessions'][1]['ongoing']);
-        $this->assertFalse($dayOne['sessions'][1]['auto_clock_out']);
+        // Assert the sessions are correct for the 15th
+        $dayFifteen = $monthSessions->getDay(Carbon::parse('2023-04-15'));
+        $dayFifteenSessions = $dayFifteen->getSessions();
+        $this->assertEquals('2023-04-15 09:00:00', $dayFifteenSessions[0]->getClockIn()->format('Y-m-d H:i:s'));
+        $this->assertEquals('2023-04-15 13:00:00', $dayFifteenSessions[0]->getClockOut()->format('Y-m-d H:i:s'));
+        $this->assertEquals('04:00:00', $dayFifteenSessions[0]->getDurationString());
+        $this->assertFalse($dayFifteenSessions[0]->isOngoing());
+        $this->assertFalse($dayFifteenSessions[0]->isAutoClockOut());
+        $this->assertEquals('2023-04-15 14:00:00', $dayFifteenSessions[1]->getClockIn()->format('Y-m-d H:i:s'));
+        $this->assertEquals('2023-04-15 17:00:00', $dayFifteenSessions[1]->getClockOut()->format('Y-m-d H:i:s'));
+        $this->assertEquals('03:00:00', $dayFifteenSessions[1]->getDurationString());
+        $this->assertFalse($dayFifteenSessions[1]->isOngoing());
+        $this->assertFalse($dayFifteenSessions[1]->isAutoClockOut());
 
-        // Assert the 16th day is correct
-        $dayTwo = $resourceResult['days'][15]; // 15 because the array is zero indexed
-        $this->assertEquals('2023-04-16', $dayTwo['date']);
-        $this->assertEquals('2023-04-16 09:00:00', $dayTwo['sessions'][0]['clock_in']);
-        $this->assertEquals('2023-04-16 17:00:00', $dayTwo['sessions'][0]['clock_out']);
-        $this->assertEquals('08:00:00', $dayTwo['sessions'][0]['duration']);
-        $this->assertFalse($dayTwo['sessions'][0]['ongoing']);
-        $this->assertFalse($dayTwo['sessions'][0]['auto_clock_out']);
+        // Assert the sessions are correct for the 16th
+        $daySixteen = $monthSessions->getDay(Carbon::parse('2023-04-16'));
+        $daySixteenSessions = $daySixteen->getSessions();
+        $this->assertEquals('2023-04-16 09:00:00', $daySixteenSessions[0]->getClockIn()->format('Y-m-d H:i:s'));
+        $this->assertEquals('2023-04-16 17:00:00', $daySixteenSessions[0]->getClockOut()->format('Y-m-d H:i:s'));
+        $this->assertEquals('08:00:00', $daySixteenSessions[0]->getDurationString());
+        $this->assertFalse($daySixteenSessions[0]->isOngoing());
+        $this->assertFalse($daySixteenSessions[0]->isAutoClockOut());
 
-        // Assert the 17th day is correct
-        $dayThree = $resourceResult['days'][16]; // 16 because the array is zero indexed
-        $this->assertEquals('2023-04-17', $dayThree['date']);
-        $this->assertEquals('2023-04-17 09:00:00', $dayThree['sessions'][0]['clock_in']);
-        $this->assertEquals('2023-04-17 13:00:00', $dayThree['sessions'][0]['clock_out']);
-        $this->assertEquals('04:00:00', $dayThree['sessions'][0]['duration']);
-        $this->assertFalse($dayThree['sessions'][0]['ongoing']);
-        $this->assertFalse($dayThree['sessions'][0]['auto_clock_out']);
-        $this->assertEquals('2023-04-17 14:00:00', $dayThree['sessions'][1]['clock_in']);
-        $this->assertEquals('2023-04-17 15:00:00', $dayThree['sessions'][1]['clock_out']);
-        $this->assertEquals('01:00:00', $dayThree['sessions'][1]['duration']);
-        $this->assertFalse($dayThree['sessions'][1]['ongoing']);
-        $this->assertTrue($dayThree['sessions'][1]['auto_clock_out']);
+        // Assert the sessions are correct for the 17th
+        $daySeventeen = $monthSessions->getDay(Carbon::parse('2023-04-17'));
+        $daySeventeenSessions = $daySeventeen->getSessions();
+        $this->assertEquals('2023-04-17 09:00:00', $daySeventeenSessions[0]->getClockIn()->format('Y-m-d H:i:s'));
+        $this->assertEquals('2023-04-17 13:00:00', $daySeventeenSessions[0]->getClockOut()->format('Y-m-d H:i:s'));
+        $this->assertEquals('04:00:00', $daySeventeenSessions[0]->getDurationString());
+        $this->assertFalse($daySeventeenSessions[0]->isOngoing());
+        $this->assertFalse($daySeventeenSessions[0]->isAutoClockOut());
+        $this->assertEquals('2023-04-17 14:00:00', $daySeventeenSessions[1]->getClockIn()->format('Y-m-d H:i:s'));
+        $this->assertEquals('2023-04-17 15:00:00', $daySeventeenSessions[1]->getClockOut()->format('Y-m-d H:i:s'));
+        $this->assertEquals('01:00:00', $daySeventeenSessions[1]->getDurationString());
+        $this->assertFalse($daySeventeenSessions[1]->isOngoing());
+        $this->assertTrue($daySeventeenSessions[1]->isAutoClockOut());
+
 
     }
 }

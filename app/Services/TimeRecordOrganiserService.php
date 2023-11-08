@@ -18,6 +18,7 @@ class TimeRecordOrganiserService
      * Organize the records into sessions with clock in, clock out, and duration.
      *
      * @param Collection $records
+     * @param Carbon $date
      * @return DaySessions
      */
     public function organiseRecordsByDay(Collection $records, Carbon $date): DaySessions
@@ -74,10 +75,7 @@ class TimeRecordOrganiserService
                 return $currentDay->isSameDay($record->recorded_at);
             })->values();
 
-            $daySessions = new DaySessions(
-                date: $currentDay,
-                sessions: $this->organiseRecordsByDay($dayRecords, $currentDay),
-            );
+            $daySessions = $this->organiseRecordsByDay($dayRecords, $currentDay);
 
             // Add the day sessions to the collection
             $monthSessions->push($daySessions);

@@ -9,17 +9,17 @@ use JsonSerializable;
 class MonthSessions implements JsonSerializable
 {
     /**
-     * @param Carbon $month [Month]
-     * @param Collection $days [DaySessions]
+     * @param  Carbon  $month [Month]
+     * @param  Collection  $days [DaySessions]
      */
     public function __construct(
         public Carbon $month,
         public Collection $days,
-    ){}
+    ) {
+    }
 
     /**
      * Get the month for this object
-     * @return Carbon
      */
     public function getMonth(): Carbon
     {
@@ -28,18 +28,14 @@ class MonthSessions implements JsonSerializable
 
     /**
      * Get a DaySessions object for a given date
-     * @param Carbon $date
-     * @return DaySessions|null
      */
     public function getDay(Carbon $date): ?DaySessions
     {
-        return $this->days->first(fn(DaySessions $day) => $day->date->isSameDay($date));
+        return $this->days->first(fn (DaySessions $day) => $day->date->isSameDay($date));
     }
 
     /**
      * Create a MonthSessions object from an array
-     * @param array $data
-     * @return MonthSessions
      */
     public static function fromArray(array $data): MonthSessions
     {
@@ -62,4 +58,3 @@ class MonthSessions implements JsonSerializable
         return $this->toArray();
     }
 }
-

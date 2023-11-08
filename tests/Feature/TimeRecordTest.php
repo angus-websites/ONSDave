@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Enums\TimeRecordType;
 use App\Models\Employee;
-use App\Models\TimeRecord;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;

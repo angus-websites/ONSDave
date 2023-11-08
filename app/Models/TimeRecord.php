@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use App\Enums\TimeRecordType;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
 
 class TimeRecord extends Model
 {
@@ -22,5 +22,4 @@ class TimeRecord extends Model
     {
         return $this->belongsTo(Employee::class);
     }
-
 }

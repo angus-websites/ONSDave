@@ -8,20 +8,14 @@ use JsonSerializable;
 
 class Session implements JsonSerializable
 {
-    /**
-     * @param Carbon $clockIn
-     * @param Carbon|null $clockOut
-     * @param DateInterval|null $duration
-     * @param bool $ongoing
-     * @param bool $autoClockOut
-     */
     public function __construct(
         public Carbon $clockIn,
         public ?Carbon $clockOut,
         public ?DateInterval $duration,
         public bool $ongoing,
         public bool $autoClockOut,
-    ){}
+    ) {
+    }
 
     public function getClockIn(): Carbon
     {
@@ -52,7 +46,6 @@ class Session implements JsonSerializable
     {
         return $this->autoClockOut;
     }
-
 
     public static function fromArray(array $data): Session
     {

@@ -6,20 +6,14 @@ use App\DTOs\DaySessions;
 use App\DTOs\MonthSessions;
 use App\DTOs\Session;
 use App\Enums\TimeRecordType;
-use App\Http\Resources\TimeRecordByDayResource;
 use Carbon\Carbon;
 use DateInterval;
 use Illuminate\Support\Collection;
-
 
 class TimeRecordOrganiserService
 {
     /**
      * Organize the records into sessions with clock in, clock out, and duration.
-     *
-     * @param Collection $records
-     * @param Carbon $date
-     * @return DaySessions
      */
     public function organiseRecordsByDay(Collection $records, Carbon $date): DaySessions
     {
@@ -32,7 +26,7 @@ class TimeRecordOrganiserService
             if ($record->type === TimeRecordType::CLOCK_IN) {
                 $nextRecord = ($i + 1) < $count ? $records[$i + 1] : null;
 
-                $ongoing = !$nextRecord || !in_array($nextRecord->type, [TimeRecordType::CLOCK_OUT, TimeRecordType::AUTO_CLOCK_OUT]);
+                $ongoing = ! $nextRecord || ! in_array($nextRecord->type, [TimeRecordType::CLOCK_OUT, TimeRecordType::AUTO_CLOCK_OUT]);
                 $isAutoClockOut = $nextRecord && $nextRecord->type === TimeRecordType::AUTO_CLOCK_OUT;
                 $clockOutTime = $ongoing ? null : $nextRecord->recorded_at;
 
@@ -57,10 +51,6 @@ class TimeRecordOrganiserService
 
     /**
      * Organize time records by month.
-     *
-     * @param Collection $records
-     * @param Carbon $month
-     * @return MonthSessions
      */
     public function organiseRecordsByMonth(Collection $records, Carbon $month): MonthSessions
     {
@@ -89,21 +79,18 @@ class TimeRecordOrganiserService
 
     }
 
-
     /**
      * Calculate the duration between two dates.
      *
-     * @param string|null $start
-     * @param string|null $end
      * @return Carbon|null
      */
-    private function calculateDuration(?string $start, ?string $end): DateInterval|null
+    private function calculateDuration(?string $start, ?string $end): ?DateInterval
     {
-        if (!$start || !$end) {
+        if (! $start || ! $end) {
             return null;
         }
 
-       // Return the difference between the two dates as a Carbon instance
+        // Return the difference between the two dates as a Carbon instance
         return Carbon::parse($start)->diff(Carbon::parse($end));
     }
 }

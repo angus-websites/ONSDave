@@ -10,8 +10,6 @@ enum TimeRecordType: string
 
     /**
      * Get all enum values as an array of strings.
-     *
-     * @return array
      */
     public static function getValues(): array
     {

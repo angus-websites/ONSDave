@@ -3,14 +3,15 @@
 namespace App\Http\Resources;
 
 use App\Services\TimeRecordOrganiserService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Collection;
-use Carbon\Carbon;
 
 class TimeRecordByDayResource extends ResourceCollection
 {
     protected Carbon $date;
+
     protected TimeRecordOrganiserService $timeRecordOrganizerService;
 
     public function __construct(Collection $resource, Carbon $date)
@@ -24,5 +25,4 @@ class TimeRecordByDayResource extends ResourceCollection
     {
         return $this->timeRecordOrganizerService->organiseRecordsByDay($this->collection, $this->date)->toArray();
     }
-
 }

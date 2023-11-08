@@ -2,18 +2,14 @@
 
 namespace Tests\Unit\Services;
 
-use App\DTOs\Session;
 use App\Enums\TimeRecordType;
-use App\Http\Resources\TimeRecordByMonthResource;
-use DateInterval;
-use PHPUnit\Framework\TestCase;
 use App\Services\TimeRecordOrganiserService;
-use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use PHPUnit\Framework\TestCase;
 
 class TimeRecordOrganiserServiceByMonthTest extends TestCase
 {
-
     /**
      * Test the service with multiple records on different days
      * in the same month
@@ -59,7 +55,7 @@ class TimeRecordOrganiserServiceByMonthTest extends TestCase
                 'recorded_at' => Carbon::parse('2023-04-17 14:00:00'),
             ],
             (object) [
-                'type' =>  TimeRecordType::AUTO_CLOCK_OUT,
+                'type' => TimeRecordType::AUTO_CLOCK_OUT,
                 'recorded_at' => Carbon::parse('2023-04-17 15:00:00'),
             ],
         ]);
@@ -75,7 +71,6 @@ class TimeRecordOrganiserServiceByMonthTest extends TestCase
 
         // Assert the month is correct
         $this->assertEquals('2023-04', $monthSessions->getMonth()->format('Y-m'));
-
 
         // Assert the sessions are correct for the 15th
         $dayFifteen = $monthSessions->getDay(Carbon::parse('2023-04-15'));
@@ -113,7 +108,6 @@ class TimeRecordOrganiserServiceByMonthTest extends TestCase
         $this->assertEquals('01:00:00', $daySeventeenSessions[1]->getDurationString());
         $this->assertFalse($daySeventeenSessions[1]->isOngoing());
         $this->assertTrue($daySeventeenSessions[1]->isAutoClockOut());
-
 
     }
 }

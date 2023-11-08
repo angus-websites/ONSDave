@@ -5,15 +5,14 @@ namespace Tests\Unit\Services;
 use App\DTOs\DaySessions;
 use App\DTOs\Session;
 use App\Enums\TimeRecordType;
-use DateInterval;
-use PHPUnit\Framework\TestCase;
 use App\Services\TimeRecordOrganiserService;
-use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use DateInterval;
+use Illuminate\Support\Collection;
+use PHPUnit\Framework\TestCase;
 
 class TimeRecordOrganiserServiceByDayTest extends TestCase
 {
-
     /**
      * Test the service by day with four records
      * which should result in two sessions
@@ -52,14 +51,13 @@ class TimeRecordOrganiserServiceByDayTest extends TestCase
                 'duration' => new DateInterval('PT4H'),
                 'ongoing' => false,
                 'auto_clock_out' => true,
-            ])
+            ]),
         ]);
 
         $expectedDaySessions = new DaySessions(
             date: $date,
             sessions: $expectedSessions,
         );
-
 
         $this->assertEquals($expectedDaySessions, $actualDaySessions);
     }
@@ -95,7 +93,7 @@ class TimeRecordOrganiserServiceByDayTest extends TestCase
                 'duration' => null,
                 'ongoing' => true,
                 'auto_clock_out' => false,
-            ])
+            ]),
         ]);
 
         // Expected result
@@ -103,7 +101,6 @@ class TimeRecordOrganiserServiceByDayTest extends TestCase
             date: $date,
             sessions: $expectedSessions,
         );
-
 
         // Assert that the entire structure matches our expectation
         $this->assertEquals($expectedDaySessions, $actualDaySessions);
@@ -136,7 +133,6 @@ class TimeRecordOrganiserServiceByDayTest extends TestCase
 
         // Pass the records to the service
         $actualDaySessions = $service->organiseRecordsByDay($records, $date);
-
 
         // Create a collection with the expected sessions
         $expectedSessions = collect([

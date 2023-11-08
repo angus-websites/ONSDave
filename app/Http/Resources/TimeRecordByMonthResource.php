@@ -10,6 +10,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 class TimeRecordByMonthResource extends ResourceCollection
 {
     protected Carbon $month;
+
     protected TimeRecordOrganiserService $timeRecordOrganizerService;
 
     public function __construct($resource, Carbon $month)

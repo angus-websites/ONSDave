@@ -2,13 +2,11 @@
 
 namespace Tests\Feature\Resources;
 
-use App\Http\Resources\TimeRecordByMonthResource;
 use App\Enums\TimeRecordType;
 use App\Models\Employee;
 use App\Models\TimeRecord;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class TimeRecordByMonthResourceTest extends TestCase

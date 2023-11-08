@@ -1,12 +1,12 @@
 <?php
 
 namespace Tests\Feature\Resources;
+
 use App\DTOs\Session;
 use App\Enums\TimeRecordType;
 use App\Http\Resources\TimeRecordByDayResource;
 use App\Models\Employee;
 use App\Models\TimeRecord;
-use App\Services\TimeRecordOrganiserService;
 use DateInterval;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -44,7 +44,6 @@ class TimeRecordByDayResourceTest extends TestCase
         // Create a new TimeRecordByDayResource instance
         $resourceResult = (new TimeRecordByDayResource($timeRecords, $date))->toArray(request());
 
-
         // Create the expected result
         $expectedResult = [
             'date' => '2023-04-15',
@@ -63,7 +62,7 @@ class TimeRecordByDayResourceTest extends TestCase
                     'ongoing' => false,
                     'auto_clock_out' => true,
                 ]),
-            ])
+            ]),
         ];
 
         // Assert that the resource result matches the expected result

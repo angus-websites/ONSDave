@@ -9,17 +9,17 @@ use JsonSerializable;
 class DaySessions implements JsonSerializable
 {
     /**
-     * @param Carbon $date [Date]
-     * @param Collection $sessions [Session]
+     * @param  Carbon  $date [Date]
+     * @param  Collection  $sessions [Session]
      */
     public function __construct(
         public Carbon $date,
         public Collection $sessions,
-    ){}
+    ) {
+    }
 
     /**
      * Get the sessions for this day
-     * @return Collection
      */
     public function getSessions(): Collection
     {
@@ -47,4 +47,3 @@ class DaySessions implements JsonSerializable
         return $this->toArray();
     }
 }
-

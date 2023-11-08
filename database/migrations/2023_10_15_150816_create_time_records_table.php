@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\TimeRecordType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,7 +20,7 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->dateTime('recorded_at');
-            $table->enum('type', ['clock_in', 'clock_out', 'auto_clock_out']);
+            $table->enum('type', TimeRecordType::getValues())->default(TimeRecordType::CLOCK_IN->value);
             $table->string('notes')->nullable();
             $table->timestamps();
 

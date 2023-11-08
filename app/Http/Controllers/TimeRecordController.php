@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TimeRecordType;
 use App\Models\TimeRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -22,12 +23,12 @@ class TimeRecordController extends Controller
             ->orderBy('recorded_at', 'desc')
             ->first();
 
-        if (! $latestRecord || $latestRecord->type === TimeRecord::CLOCK_OUT) {
+        if (! $latestRecord || $latestRecord->type === TimeRecordType::CLOCK_OUT) {
             // If there's no record for today or the latest is a clock-out, then create a clock-in
             TimeRecord::create([
                 'employee_id' => $userId,
                 'recorded_at' => Carbon::now(),
-                'type' => TimeRecord::CLOCK_IN,
+                'type' => TimeRecordType::CLOCK_IN,
             ]);
         } else {
             // Otherwise, create a clock-out

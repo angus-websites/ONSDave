@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\TimeRecordType;
 use App\Models\Employee;
 use App\Models\TimeRecord;
 use App\Models\User;
@@ -26,7 +27,7 @@ class TimeRecordTest extends TestCase
         // Assert the record was created in the database
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
-            'type' => TimeRecord::CLOCK_IN,
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => now()->toDateTimeString(),
         ]);
     }
@@ -44,7 +45,7 @@ class TimeRecordTest extends TestCase
         // Assert the record was created in the database
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
-            'type' => TimeRecord::CLOCK_IN,
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => now()->toDateTimeString(),
         ]);
 
@@ -54,7 +55,7 @@ class TimeRecordTest extends TestCase
         // Assert the record was created in the database
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
-            'type' => TimeRecord::CLOCK_OUT,
+            'type' => TimeRecordType::CLOCK_OUT,
             'recorded_at' => now()->toDateTimeString(),
         ]);
     }

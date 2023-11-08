@@ -12,7 +12,7 @@ class TimeRecord extends Model
         'employee_id', 'recorded_at', 'type', 'notes',
     ];
 
-    // Cast the 'type' attribute to your enum
+    // Cast the 'type' attribute to enum
     protected $casts = [
         'type' => TimeRecordType::class,
     ];
@@ -22,11 +22,4 @@ class TimeRecord extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    protected function type(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => TimeRecordType::from($value),
-            set: fn (TimeRecordType $value) => $value->value,
-        );
-    }
 }

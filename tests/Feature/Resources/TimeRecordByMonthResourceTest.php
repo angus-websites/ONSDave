@@ -3,6 +3,7 @@
 namespace Tests\Feature\Resources;
 
 use App\Http\Resources\TimeRecordByMonthResource;
+use App\Enums\TimeRecordType;
 use App\Models\Employee;
 use App\Models\TimeRecord;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,43 +24,43 @@ class TimeRecordByMonthResourceTest extends TestCase
         // Generate some fake records
         $records = new Collection([
             (object) [
-                'type' => 'clock_in',
+                'type' => TimeRecordType::CLOCK_IN,
                 'recorded_at' => ('2023-04-15 09:00:00'),
             ],
             (object) [
-                'type' => 'clock_out',
+                'type' => TimeRecordType::CLOCK_OUT,
                 'recorded_at' => ('2023-04-15 13:00:00'),
             ],
             (object) [
-                'type' => 'clock_in',
+                'type' => TimeRecordType::CLOCK_IN,
                 'recorded_at' => ('2023-04-15 14:00:00'),
             ],
             (object) [
-                'type' => 'clock_out',
+                'type' => TimeRecordType::CLOCK_OUT,
                 'recorded_at' => ('2023-04-15 17:00:00'),
             ],
             (object) [
-                'type' => 'clock_in',
+                'type' => TimeRecordType::CLOCK_IN,
                 'recorded_at' => ('2023-04-16 09:00:00'),
             ],
             (object) [
-                'type' => 'clock_out',
+                'type' => TimeRecordType::CLOCK_OUT,
                 'recorded_at' => ('2023-04-16 17:00:00'),
             ],
             (object) [
-                'type' => 'clock_in',
+                'type' => TimeRecordType::CLOCK_IN,
                 'recorded_at' => ('2023-04-17 09:00:00'),
             ],
             (object) [
-                'type' => 'clock_out',
+                'type' => TimeRecordType::CLOCK_OUT,
                 'recorded_at' => ('2023-04-17 13:00:00'),
             ],
             (object) [
-                'type' => 'clock_in',
+                'type' => TimeRecordType::CLOCK_IN,
                 'recorded_at' => ('2023-04-17 14:00:00'),
             ],
             (object) [
-                'type' => 'auto_clock_out',
+                'type' =>  TimeRecordType::AUTO_CLOCK_OUT,
                 'recorded_at' => ('2023-04-17 15:00:00'),
             ],
         ]);
@@ -120,37 +121,37 @@ class TimeRecordByMonthResourceTest extends TestCase
         // Insert some records into the database
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => Carbon::parse('2023-04-15 09:00:00'),
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => TimeRecord::CLOCK_OUT,
+            'type' => TimeRecordType::CLOCK_OUT,
             'recorded_at' => Carbon::parse('2023-04-15 13:00:00'),
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => TimeRecord::CLOCK_IN,
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => Carbon::parse('2023-04-15 14:00:00'),
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => TimeRecord::AUTO_CLOCK_OUT,
+            'type' => TimeRecordType::AUTO_CLOCK_OUT,
             'recorded_at' => Carbon::parse('2023-04-15 18:00:00'),
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => TimeRecord::CLOCK_IN,
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => Carbon::parse('2023-04-16 09:00:00'),
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => TimeRecord::CLOCK_OUT,
+            'type' => TimeRecordType::CLOCK_OUT,
             'recorded_at' => Carbon::parse('2023-04-16 13:00:00'),
         ]);
 

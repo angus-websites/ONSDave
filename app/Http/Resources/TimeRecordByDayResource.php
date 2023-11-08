@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\TimeRecordType;
 use App\Models\TimeRecord;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -40,11 +41,11 @@ class TimeRecordByDayResource extends ResourceCollection
             $record = $records[$i];
 
             // If the record is a clock in then we need to find the next clock out
-            if ($record->type === TimeRecord::CLOCK_IN) {
+            if ($record->type === TimeRecordType::CLOCK_IN) {
                 $nextRecord = ($i + 1) < $count ? $records[$i + 1] : null;
 
-                $ongoing = ! $nextRecord || ! in_array($nextRecord->type, [TimeRecord::CLOCK_OUT, TimeRecord::AUTO_CLOCK_OUT]);
-                $isAutoClockOut = $nextRecord && $nextRecord->type === 'auto_clock_out';
+                $ongoing = ! $nextRecord || ! in_array($nextRecord->type, [TimeRecordType::CLOCK_OUT, TimeRecordType::AUTO_CLOCK_OUT]);
+                $isAutoClockOut = $nextRecord && $nextRecord->type === TimeRecordType::AUTO_CLOCK_OUT;
 
                 $organized[] = [
                     'clock_in' => $record->recorded_at,

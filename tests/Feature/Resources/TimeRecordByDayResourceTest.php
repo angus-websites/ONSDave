@@ -1,7 +1,7 @@
 <?php
 
 namespace Tests\Feature\Resources;
-
+use App\Enums\TimeRecordType;
 use App\Http\Resources\TimeRecordByDayResource;
 use App\Models\Employee;
 use App\Models\TimeRecord;
@@ -23,19 +23,19 @@ class TimeRecordByDayResourceTest extends TestCase
         // Mockup some fake records
         $records = new Collection([
             (object) [
-                'type' => TimeRecord::CLOCK_IN,
+                'type' => TimeRecordType::CLOCK_IN,
                 'recorded_at' => ('2023-04-15 09:00:00'),
             ],
             (object) [
-                'type' => TimeRecord::CLOCK_OUT,
+                'type' => TimeRecordType::CLOCK_OUT,
                 'recorded_at' => ('2023-04-15 13:00:00'),
             ],
             (object) [
-                'type' => TimeRecord::CLOCK_IN,
+                'type' => TimeRecordType::CLOCK_IN,
                 'recorded_at' => ('2023-04-15 14:00:00'),
             ],
             (object) [
-                'type' => TimeRecord::AUTO_CLOCK_OUT,
+                'type' => TimeRecordType::AUTO_CLOCK_OUT,
                 'recorded_at' => ('2023-04-15 18:00:00'),
             ],
         ]);
@@ -80,7 +80,7 @@ class TimeRecordByDayResourceTest extends TestCase
         // Mockup some fake records
         $records = new Collection([
             (object) [
-                'type' => TimeRecord::CLOCK_IN,
+                'type' => TimeRecordType::CLOCK_IN,
                 'recorded_at' => ('2023-04-15 09:00:00'),
             ],
         ]);
@@ -119,11 +119,11 @@ class TimeRecordByDayResourceTest extends TestCase
         // Mockup some fake records
         $records = new Collection([
             (object) [
-                'type' => TimeRecord::CLOCK_IN,
+                'type' => TimeRecordType::CLOCK_IN,
                 'recorded_at' => ('2023-04-15 09:00:00'),
             ],
             (object) [
-                'type' => TimeRecord::CLOCK_IN,
+                'type' => TimeRecordType::CLOCK_IN,
                 'recorded_at' => ('2023-04-15 14:00:00'),
             ],
         ]);
@@ -194,25 +194,25 @@ class TimeRecordByDayResourceTest extends TestCase
         // Insert some records into the database
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => TimeRecord::CLOCK_IN,
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => Carbon::parse('2023-04-15 09:00:00'),
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => TimeRecord::CLOCK_OUT,
+            'type' => TimeRecordType::CLOCK_OUT,
             'recorded_at' => Carbon::parse('2023-04-15 13:00:00'),
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => TimeRecord::CLOCK_IN,
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => Carbon::parse('2023-04-15 14:00:00'),
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => TimeRecord::AUTO_CLOCK_OUT,
+            'type' => TimeRecordType::AUTO_CLOCK_OUT,
             'recorded_at' => Carbon::parse('2023-04-15 18:00:00'),
         ]);
 

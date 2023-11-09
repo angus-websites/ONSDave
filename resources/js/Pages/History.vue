@@ -18,7 +18,7 @@
                     <MonthCalendar @update:selected-day="handleSelectedDay" :today="today" :monthSessions="monthSessions.data" class="mt-10 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-8"/>
 
                     <!-- Timesheet section -->
-                    <TimeSheetSection class="mt-10 lg:col-span-7 xl:col-span-7" />
+                    <TimeSheetSection :selectedDate="selectedDate" :monthSessions="monthSessions.data" class="mt-10 lg:col-span-7 xl:col-span-7" />
 
                 </div>
             </div>

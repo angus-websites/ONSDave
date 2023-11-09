@@ -15,7 +15,7 @@
                 <div class="lg:grid lg:grid-cols-12 lg:gap-x-16">
 
                     <!-- Calendar -->
-                    <MonthCalendar :today="today" :timeRecordsThisMonth="timeRecordsThisMonth.data" class="mt-10 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-8"/>
+                    <MonthCalendar @update:selected-day="handleSelectedDay" :today="today" :monthSessions="monthSessions.data" class="mt-10 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-8"/>
 
                     <!-- Timesheet section -->
                     <TimeSheetSection class="mt-10 lg:col-span-7 xl:col-span-7" />
@@ -36,7 +36,7 @@ import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/vue/20/solid/index.j
 import {computed, ref} from "vue";
 
 const props = defineProps({
-    timeRecordsThisMonth: Object,
+    monthSessions: Object,
 })
 
 const today = ref(new Date());
@@ -51,6 +51,14 @@ const displayedMonthYear = computed(() => {
     const options = { month: 'short', year: 'numeric' };
     return selectedDate.value ? selectedDate.value.toLocaleDateString(undefined, options) : today.value.toLocaleDateString(undefined, options);
 });
+
+
+function handleSelectedDay(selectedDay) {
+    /**
+     * Handler for the emit event from the MonthCalendar component
+     */
+    selectedDate.value = selectedDay;
+}
 
 
 </script>

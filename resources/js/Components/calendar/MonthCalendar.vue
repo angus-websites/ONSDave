@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, defineEmits } from 'vue';
 import {
     ChevronLeftIcon,
     ChevronRightIcon,
@@ -72,16 +72,20 @@ import SecondaryButton from "@/Components/buttons/SecondaryButton.vue";
 
 const props = defineProps({
     today: Object,
-    timeRecordsThisMonth: Object,
+    monthSessions: Object,
 })
+
+// Define the custom event that will be emitted
+const emit = defineEmits(['update:selected-day']);
+
 
 
 let daysStatus = ref([]);
 
 // Update the daysStatus based on the timeRecordsThisMonth prop
 const updateDaysStatus = () => {
-    if (props.timeRecordsThisMonth.days) { // make sure the days attribute exists
-        for (let day of props.timeRecordsThisMonth.days) {
+    if (props.monthSessions.days) { // make sure the days attribute exists
+        for (let day of props.monthSessions.days) {
             if (day.sessions && Object.keys(day.sessions).length > 0) { // check if records object is not empty
                 daysStatus.value.push({ date: day.date, type: 'worked' });
             }
@@ -105,16 +109,6 @@ const currentMonthAndYearName = computed(() => `${monthNames[currentMonth.value]
 
 const selectedDate = ref(props.today);
 
-const displayedDate = computed(() => {
-    const options = { weekday: 'short', day: 'numeric',  };
-    return selectedDate.value ? selectedDate.value.toLocaleDateString(undefined, options) : props.today.toLocaleDateString(undefined, options);
-});
-
-const displayedMonthYear = computed(() => {
-    const options = { month: 'short', year: 'numeric' };
-    return selectedDate.value ? selectedDate.value.toLocaleDateString(undefined, options) : props.today.toLocaleDateString(undefined, options);
-});
-
 
 function getDaysInMonth(month, year) {
     return new Date(year, month + 1, 0).getDate();
@@ -129,10 +123,17 @@ function goToToday() {
 
 
 function handleDayClick(day) {
+    /**
+     * This function is called when a day is clicked on the calendar.
+     */
+
     // Check if the day is from the current month before selecting it
     if (day.isCurrentMonth) {
         selectedDate.value = new Date(day.date);
         days.value = generateDays(currentMonth.value, currentYear.value);  // refresh days
+
+        // Emit the selected date to the parent component
+        emit('update:selected-day', selectedDate.value);
     }
 }
 
@@ -145,7 +146,7 @@ function generateDays(month, year) {
 
     // Add days from the previous month to fill up the grid
     for (let i = startDay; i > 0; i--) {
-        days.push({ date: `${year}-${month + 1}-${prevMonthDays - i + 1}`, isCurrentMonth: false });
+        days.push({ date: `${year}-${month}-${prevMonthDays - i + 1}`, isCurrentMonth: false });
     }
 
     // Add the days of the current month

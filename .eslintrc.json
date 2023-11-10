@@ -19,6 +19,12 @@
     ],
     "rules": {
         "prettier/prettier": "error",
-        "vue/no-unused-vars": "warn"
+        "vue/no-unused-vars": "warn",
+        "vue/html-indent": ["error", 2, {
+            "baseIndent": 1,
+            "alignAttributesVertically": true,
+            "ignores": []
+        }]
+
     }
 }

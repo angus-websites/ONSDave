@@ -10,8 +10,15 @@
 
         <template v-else>
             <!-- No entries -->
-            <div v-if="entries.length < 1" class="py-5 mt-2">
-                <MultiMessage  message="No entries for this day" type="info" />
+            <div v-if="entries.length < 1">
+                <!-- Day stats -->
+                <div class="py-5 text-center">
+                    <p>Total worked time: 0</p>
+                </div>
+                <!-- Entries table -->
+                <div class="mt-2 relative overflow-x-auto shadow-md dark:shadow-none sm:rounded-lg">
+                    <MultiMessage  message="No entries for this day" type="info" />
+                </div>
             </div>
             <!-- Display entries -->
             <div v-else>
@@ -68,7 +75,6 @@
                 </PrimaryButton>
             </div>
 
-            {{ entries_new }}
         </template>
     </div>
 </template>
@@ -104,31 +110,21 @@ const entries = computed(() => {
 });
 
 
-
-const entries_old = [
-    {
-        id: 1,
-        start: '8:00',
-        end: '12:00',
-        duration: '4h'
-    },
-    {
-        id: 2,
-        start: '12:45',
-        end: '17:00',
-        duration: '4h 15m'
-    },
-    {
-        id: 3,
-        start: '18:00',
-        ongoing: true,
-        duration: '2h'
-    },
-]
-
 // Create a computed property to calculate the total worked time
 const totalWorkedTime = computed(() => {
-    return "8h 15m"
-})
+    // Create a variable to store the total time
+    let total_in_seconds = 0;
+
+    // Loop through the entries
+    for (let entry of entries.value) {
+        // Get the duration in seconds property
+        const duration = entry['duration_in_seconds'];
+        total_in_seconds += duration;
+    }
+
+    return total_in_seconds;
+
+});
+
 
 </script>

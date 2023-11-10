@@ -57,7 +57,9 @@
             </button>
 
         </div>
+
         <SecondaryButton @click="goToToday" class="mt-8">Today</SecondaryButton>
+        
     </div>
 </template>
 
@@ -78,17 +80,16 @@ const props = defineProps({
 // Define the custom event that will be emitted
 const emit = defineEmits(['update:selected-day']);
 
-
-
 let daysStatus = ref([]);
 
-// Update the daysStatus based on the timeRecordsThisMonth prop
+// Update the daysStatus based on the monthSessions prop
 const updateDaysStatus = () => {
-    if (props.monthSessions.days) { // make sure the days attribute exists
-        for (let day of props.monthSessions.days) {
-            if (day.sessions && Object.keys(day.sessions).length > 0) { // check if records object is not empty
-                daysStatus.value.push({ date: day.date, type: 'worked' });
-            }
+    /**
+     * Get the days that have worked sessions and add them to the daysStatus array
+     */
+    for (let day of props.monthSessions.days) {
+        if (day.sessions.length > 0) { // check if records object is not empty
+            daysStatus.value.push({ date: day.date, type: 'worked' });
         }
     }
 }
@@ -96,9 +97,30 @@ const updateDaysStatus = () => {
 // Call the updateDaysStatus function when the component is mounted
 onMounted(updateDaysStatus);
 
+
+function compareDates(date1, date2) {
+    /**
+     * Compare two dates and return true if they are the same
+     */
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+
+    return d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate();
+}
+
 const getDayStatus = (date) => {
-    const dayInfo = daysStatus.value.find(day => day.date === date);
-    return dayInfo ? dayInfo.type : null;
+
+    // Loop through the daysStatus array
+    for (const i in daysStatus.value) {
+        const dayStatus = daysStatus.value[i];
+        if (compareDates(dayStatus.date, date)) {
+            return dayStatus.type;
+        }
+    }
+    return null;
+
 };
 
 
@@ -119,6 +141,9 @@ function goToToday() {
     currentYear.value = props.today.getFullYear();
     selectedDate.value = props.today;
     days.value = generateDays(currentMonth.value, currentYear.value);
+
+    // Emit the selected date to the parent component
+    emit('update:selected-day', props.today);
 }
 
 

@@ -46,7 +46,7 @@
                         dayIdx === days.length - 1 && 'rounded-br-lg'
                     ]">
                 <!-- The tiny dot -->
-                <span v-if="getDayStatus(day.date) === 'worked'" class="absolute top-1 right-1 w-2 h-2 rounded-full bg-green-600"></span>
+                <span v-if="getDayStatus(day.date) === 'worked'" class="absolute top-1 right-1 w-2 h-2 rounded-full bg-green-600 opacity-50"></span>
                 <span v-if="getDayStatus(day.date) === 'leave'" class="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-600"></span>
                 <time
                     :datetime="day.date"
@@ -59,7 +59,7 @@
         </div>
 
         <SecondaryButton @click="goToToday" class="mt-8">Today</SecondaryButton>
-        
+
     </div>
 </template>
 

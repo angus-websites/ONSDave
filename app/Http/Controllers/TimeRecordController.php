@@ -64,6 +64,8 @@ class TimeRecordController extends Controller
             // If clock out time is less than 5 seconds after previous clock in, delete the previous clock in
             if ($clockTime->diffInSeconds($latestRecord->recorded_at) <= 5) {
                 $latestRecord->delete();
+
+                // Redirect back with an info message and parameter to controller
                 return redirect()->back()->with('info', 'As this session was less than 5 seconds, it was deleted.');
             }
 

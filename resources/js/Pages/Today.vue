@@ -65,7 +65,6 @@
 import AppLayout from '@/Layouts/AppLayout.vue'
 import PageContainer from '@/Components/_util/PageContainer.vue'
 import {computed, ref, reactive} from 'vue'
-import PrimaryButton from '@/Components/buttons/PrimaryButton.vue'
 import MultiLoader from '@/Components/loader/MultiLoader.vue'
 import {useForm} from '@inertiajs/vue3'
 import ConfettiExplosion from 'vue-confetti-explosion'
@@ -129,7 +128,8 @@ const toggleClock = () => {
         },
         onSuccess: () => {
             // Only call confetti if we are clocking out
-            if (wasClockingIn) {
+            if (!props.isClockedIn) {
+
                 explodeConfetti()
             }
         },

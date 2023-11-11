@@ -28,6 +28,10 @@ class RouteTest extends TestCase
 
     public function test_today_route_require_authentication()
     {
+
+        // Seed Roles
+        $this->seed(\Database\Seeders\RoleSeeder::class);
+
         // Check the 'today' route
         $response = $this->get('/today');
         $response->assertRedirect('/login');

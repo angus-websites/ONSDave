@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('time_records', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('employee_id')
+            $table->foreignId('employee_id')
                 ->references('id')
                 ->on('employees')
                 ->onUpdate('cascade')

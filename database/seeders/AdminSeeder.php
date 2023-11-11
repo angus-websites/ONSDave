@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Employee;
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -18,8 +17,6 @@ class AdminSeeder extends Seeder
     public function run()
     {
 
-        $superAdminRole = Role::where('name', '=', 'Super Admin')->firstOrFail();
-
         if (config('admin.admin_name')) {
             $admin = User::create([
                 'name' => config('admin.admin_name'),
@@ -27,10 +24,16 @@ class AdminSeeder extends Seeder
                 'password' => Hash::make(config('admin.admin_password')),
             ]);
 
-            Employee::create([
+            // Assign the super admin role
+            $admin->assignRole('super admin');
+
+            $admin_employee = Employee::create([
                 'user_id' => $admin->id,
-                'role_id' => $superAdminRole->id,
             ]);
+
+            // Assign the manager role
+            $admin_employee->assignRole('employee manager');
+
         }
 
     }

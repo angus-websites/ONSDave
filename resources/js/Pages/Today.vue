@@ -10,6 +10,7 @@
 
         <PageContainer class="">
             <div class="mx-auto max-w-2xl text-center">
+                <FlashMessages />
                 <h1
                     class="text-5xl font-bold tracking-tight text-gray-900 sm:text-5xl"
                 >
@@ -25,8 +26,12 @@
                 </p>
                 <hr class="my-10" />
 
-                <div class="my-10">
-                   <TimePicker @update-time="handleUpdateTime" class="mx-auto" />
+                <div v-if="canSpecifyClockTime" class="my-10">
+                    <TimePicker
+                        @update-time="handleUpdateTime"
+                        @manual-update="handleManualTimeChange"
+                        class="mx-auto"
+                    />
                 </div>
 
                 <div class="mt-10">
@@ -46,9 +51,6 @@
                     >
                         {{ isClockedIn ? 'Clock out' : 'Clock in' }}
                     </button>
-
-                    <p> Clock time {{ clockTime }}</p>
-
                 </div>
             </div>
 
@@ -67,16 +69,17 @@ import PrimaryButton from '@/Components/buttons/PrimaryButton.vue'
 import MultiLoader from '@/Components/loader/MultiLoader.vue'
 import {useForm} from '@inertiajs/vue3'
 import ConfettiExplosion from 'vue-confetti-explosion'
-import TimePicker from "@/Components/TimePicker.vue";
-
+import TimePicker from '@/Components/TimePicker.vue'
+import FlashMessages from '@/Components/FlashMessages.vue'
 
 const props = defineProps({
     isClockedIn: Boolean,
+    canSpecifyClockTime: Boolean,
 })
 
-// Store clock in / out time as the current time
-let clockTime = ref(new Date().toLocaleTimeString())
-
+// If the user specifies a specific time
+let timeHasBeenManuallySpecified = ref(false)
+let manualClockTime = ref(null)
 
 const form = useForm({
     isClockedIn: props.isClockedIn,
@@ -107,7 +110,18 @@ const toggleClock = () => {
         loading.clockLoading = true
     }, 250)
 
-    form.post(route('time-records.store'), {
+    form.transform((data) => {
+        // Initialize a new object for transformed data
+        let transformedData = {...data}
+
+        // Conditionally add clockTime only if manualClockTime exists and it's been manually specified
+        if (manualClockTime.value && timeHasBeenManuallySpecified.value) {
+            // Create a new object to avoid mutating the original data
+            transformedData.clock_time = manualClockTime.value
+        }
+
+        return transformedData
+    }).post(route('time-records.store'), {
         preserveScroll: true,
         onFinish: () => {
             clearTimeout(loading.clockTimeoutId)
@@ -124,9 +138,13 @@ const toggleClock = () => {
 
 function handleUpdateTime(time) {
     // Update the clock in time
-    clockTime.value = time
+    manualClockTime.value = time
 }
 
+function handleManualTimeChange(value) {
+    // Has the user manually specified a time?
+    timeHasBeenManuallySpecified.value = value
+}
 
 const greeting = computed(() => {
     if (currentHour >= 5 && currentHour < 12) {

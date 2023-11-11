@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Employee;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,8 +17,14 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
         // Create the admin
         $this->call(AdminSeeder::class);
-        // Create 10 users
-        \App\Models\User::factory(10)->create();
+
+        // Create 10 empoyees and assign roles to each
+        Employee::factory(10)->create()->each(function (Employee $employee) {
+            $employee->assignRole('employee standard');
+            $employee->user->assignRole('user');
+        });
+
+
 
     }
 }

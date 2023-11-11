@@ -10,11 +10,12 @@ class TimeRecordPolicy
     /**
      * Should the user be able to specify the clock time?
      * @param Employee $employee
-     * @return mixed
+     * @return bool
      */
     public function canSpecifyClockTime(Employee $employee)
     {
-        return true;
+        // Check the employee has the permission
+        return $employee->hasPermissionTo('can specify clock time');
     }
 }
 

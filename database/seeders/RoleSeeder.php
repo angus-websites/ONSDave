@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\EmployeeRole;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -23,6 +24,7 @@ class RoleSeeder extends Seeder
         //Clear data
         User::query()->delete();
         Role::query()->delete();
+        EmployeeRole::query()->delete();
         Schema::enableForeignKeyConstraints();
 
         // User
@@ -48,6 +50,22 @@ class RoleSeeder extends Seeder
             'code' => 'Sam',
             'description' => 'The Goat',
             'changeable' => 0,
+        ]);
+
+        // ========= Employee Roles =========
+
+        EmployeeRole::create([
+            'id' => 1,
+            'name' => 'Standard User',
+            'code' => 'Usr',
+            'description' => 'A standard user that has the ability to manually enter their start and end times',
+        ]);
+
+        EmployeeRole::create([
+            'id' => 2,
+            'name' => 'Restricted User',
+            'code' => 'RUsr',
+            'description' => 'A user that does not have the ability to manually enter their start and end times',
         ]);
 
     }

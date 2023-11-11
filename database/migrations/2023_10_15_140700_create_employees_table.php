@@ -28,7 +28,7 @@ return new class extends Migration
             // Set the role_id as a foreign key.
             $table->foreign('role_id')
                 ->references('id')
-                ->on('roles')
+                ->on('employee_roles')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
         });

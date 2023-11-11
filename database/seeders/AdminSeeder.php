@@ -25,11 +25,11 @@ class AdminSeeder extends Seeder
                 'name' => config('admin.admin_name'),
                 'email' => config('admin.admin_email'),
                 'password' => Hash::make(config('admin.admin_password')),
+                'role_id' => $superAdminRole->id,
             ]);
 
             Employee::create([
                 'user_id' => $admin->id,
-                'role_id' => $superAdminRole->id,
             ]);
         }
 

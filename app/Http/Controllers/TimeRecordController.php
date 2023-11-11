@@ -30,7 +30,6 @@ class TimeRecordController extends Controller
             ? Carbon::parse($validatedData['clock_time'])
             : Carbon::now();
 
-
         // Get the latest time record for the user for today
         $latestRecord = TimeRecord::where('employee_id', $employee_id)
             ->whereDate('recorded_at', $today)
@@ -40,6 +39,13 @@ class TimeRecordController extends Controller
 
         // Check if there's no record for today or the latest is a clock-out
         if (! $latestRecord || $latestRecord->type === TimeRecordType::CLOCK_OUT) {
+
+            // If the previous record is a clock-out, ensure the clock time is after the previous clock-out
+            if ($latestRecord && $clockTime->isBefore($latestRecord->recorded_at)) {
+                // Redirect back with an error
+                return redirect()->back()->withErrors(['clock_time' => 'The clock in time must be after the previous clock out time']);
+            }
+
             // If there's no record for today or the latest is a clock-out, then create a clock-in
             TimeRecord::create([
                 'employee_id' => $employee_id,
@@ -47,6 +53,13 @@ class TimeRecordController extends Controller
                 'type' => TimeRecordType::CLOCK_IN,
             ]);
         } else {
+
+            // Ensure the clock time is after the latest record
+            if ($clockTime->isBefore($latestRecord->recorded_at)) {
+                // Redirect back with an error
+                return redirect()->back()->withErrors(['clock_time' => 'The clock out time must be after the previous clock in time']);
+            }
+
             // Otherwise, create a clock-out
             TimeRecord::create([
                 'employee_id' => $employee_id,

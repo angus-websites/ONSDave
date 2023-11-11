@@ -10,6 +10,8 @@
 
         <PageContainer class="">
             <div class="mx-auto max-w-2xl text-center">
+
+                <FlashMessages />
                 <h1
                     class="text-5xl font-bold tracking-tight text-gray-900 sm:text-5xl"
                 >
@@ -66,6 +68,7 @@ import MultiLoader from '@/Components/loader/MultiLoader.vue'
 import {useForm} from '@inertiajs/vue3'
 import ConfettiExplosion from 'vue-confetti-explosion'
 import TimePicker from "@/Components/TimePicker.vue";
+import FlashMessages from "@/Components/FlashMessages.vue";
 
 
 const props = defineProps({
@@ -106,7 +109,6 @@ const toggleClock = () => {
         loading.clockLoading = true
     }, 250)
 
-    console.log("DATA: ", manualClockTime.value)
     form
         .transform((data) => {
             // Initialize a new object for transformed data
@@ -124,7 +126,6 @@ const toggleClock = () => {
         .post(route('time-records.store'), {
             preserveScroll: true,
             onFinish: () => {
-                console.log("Finished")
                 clearTimeout(loading.clockTimeoutId);
                 loading.clockLoading = false;
             },
@@ -142,9 +143,9 @@ function handleUpdateTime(time) {
     manualClockTime.value = time
 }
 
-function handleManualTimeChange(){
-    // Set the flag to true
-    timeHasBeenManuallySpecified.value = true
+function handleManualTimeChange(value){
+    // Has the user manually specified a time?
+    timeHasBeenManuallySpecified.value = value
 }
 
 

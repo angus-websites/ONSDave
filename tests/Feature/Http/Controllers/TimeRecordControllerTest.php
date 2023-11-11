@@ -168,7 +168,73 @@ class TimeRecordControllerTest extends TestCase
             'type' => 'clock_in',
             'recorded_at' => '2021-01-01 09:00:00',
         ]);
+
     }
+
+    /**
+     * Test that when a user provides a clock out time before the previous clock in time, and error is returned
+     */
+    public function test_when_clock_out_time_provided_is_before_previous_clock_in_time_error_returned()
+    {
+        $employee = Employee::factory()->create();
+        $employee->assignRole('employee standard');
+        $this->actingAs($employee->user);
+
+        // Mock the Carbon today method to return a specific date
+        Carbon::setTestNow('2021-01-01 09:00:00');
+
+        // Clock in at 10am
+        $this->post(route('time-records.store', ['clock_time' => '2021-01-01 10:00:00']));
+
+        // Clock out at 9am
+        $response = $this->post(route('time-records.store', ['clock_time' => '2021-01-01 9:00:00']));
+
+        // Check an error is returned
+        $response->assertSessionHasErrors('clock_time');
+
+        // Check record is not created
+        $this->assertDatabaseMissing('time_records', [
+            'employee_id' => $employee->id,
+            'type' => 'clock_out',
+            'recorded_at' => '2021-01-01 09:00:00',
+        ]);
+
+
+    }
+
+    /**
+     * Test when a user provides a clock in time before the previous clock out time, an error is returned
+     */
+    public function test_when_clock_in_time_provided_is_before_previous_clock_out_time_error_returned()
+    {
+        $employee = Employee::factory()->create();
+        $employee->assignRole('employee standard');
+        $this->actingAs($employee->user);
+
+        // Mock the Carbon today method to return a specific date
+        Carbon::setTestNow('2021-01-01 09:00:00');
+
+        // Clock in at 10am
+        $this->post(route('time-records.store', ['clock_time' => '2021-01-01 10:00:00']));
+
+        // Clock out at 12pm
+        $response = $this->post(route('time-records.store', ['clock_time' => '2021-01-01 12:00:00']));
+
+        // Clock in at 11am
+        $response = $this->post(route('time-records.store', ['clock_time' => '2021-01-01 11:00:00']));
+
+        // Check an error is returned
+        $response->assertSessionHasErrors('clock_time');
+
+        // Check record is not created
+        $this->assertDatabaseMissing('time_records', [
+            'employee_id' => $employee->id,
+            'type' => 'clock_in',
+            'recorded_at' => '2021-01-01 11:00:00',
+        ]);
+    }
+
+
 
 
 }

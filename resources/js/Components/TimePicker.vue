@@ -51,15 +51,29 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, defineEmits } from 'vue';
+import { ref, watch, onMounted, onUnmounted, defineEmits } from 'vue';
 
-const hours = ref('');
-const minutes = ref('');
-const manualInteraction = ref(false);
+let hours = ref('');
+let minutes = ref('');
+let manualInteraction = ref(false);
+let inactivityTimer = ref(null);
 const emit = defineEmits(['update-time', 'manual-update']);
 
+const resetInactivityTimer = () => {
+    clearTimeout(inactivityTimer.value);
+    inactivityTimer.value = setTimeout(() => {
+        console.log("Inactivity timer triggered")
+        manualInteraction.value = false;
+        emit('manual-update', false);
+        updateTime();
+    }, 30000); // 30 seconds
+};
+
 const updateTimeEmit = () => {
-    emit('update-time', `${hours.value}:${minutes.value}`);
+    // Create a dateime object from the time string
+    const now = new Date();
+    const time = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours.value, minutes.value);
+    emit('update-time', time);
 };
 
 const updateTime = () => {
@@ -75,8 +89,12 @@ watch([hours, minutes], updateTimeEmit);
 
 onMounted(() => {
     updateTime();
-    // Update time every second
-    setInterval(updateTime, 1000);
+    setInterval(updateTime, 1000); // Update time every second
+    resetInactivityTimer(); // Initialize inactivity timer
+});
+
+onUnmounted(() => {
+    clearTimeout(inactivityTimer.value); // Clear timer when component unmounts
 });
 
 const incrementHours = () => {
@@ -104,8 +122,10 @@ const decrementMinutes = () => {
 };
 
 const manualUpdate = () => {
-    emit('manual-update');
+    emit('manual-update', true);
+    manualInteraction.value = true;
     updateTimeEmit();
+    resetInactivityTimer(); // Reset the timer on each user interaction
 };
 </script>
 

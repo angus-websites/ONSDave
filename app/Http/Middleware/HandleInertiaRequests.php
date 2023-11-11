@@ -44,6 +44,15 @@ class HandleInertiaRequests extends Middleware
 
             // Should the main login button be visible
             'showLogin' => config('app.show_login_button'),
+
+            // Flash messages
+            'flash' => function () use ($request) {
+                return [
+                    'success' => $request->session()->get('success'),
+                    'error' => $request->session()->get('error'),
+                    'info' => $request->session()->get('info'),
+                ];
+            },
         ]);
     }
 }

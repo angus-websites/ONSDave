@@ -10,7 +10,6 @@
 
         <PageContainer class="">
             <div class="mx-auto max-w-2xl text-center">
-
                 <FlashMessages />
                 <h1
                     class="text-5xl font-bold tracking-tight text-gray-900 sm:text-5xl"
@@ -28,7 +27,11 @@
                 <hr class="my-10" />
 
                 <div v-if="canSpecifyClockTime" class="my-10">
-                   <TimePicker @update-time="handleUpdateTime" @manual-update="handleManualTimeChange" class="mx-auto" />
+                    <TimePicker
+                        @update-time="handleUpdateTime"
+                        @manual-update="handleManualTimeChange"
+                        class="mx-auto"
+                    />
                 </div>
 
                 <div class="mt-10">
@@ -48,7 +51,6 @@
                     >
                         {{ isClockedIn ? 'Clock out' : 'Clock in' }}
                     </button>
-
                 </div>
             </div>
 
@@ -67,9 +69,8 @@ import PrimaryButton from '@/Components/buttons/PrimaryButton.vue'
 import MultiLoader from '@/Components/loader/MultiLoader.vue'
 import {useForm} from '@inertiajs/vue3'
 import ConfettiExplosion from 'vue-confetti-explosion'
-import TimePicker from "@/Components/TimePicker.vue";
-import FlashMessages from "@/Components/FlashMessages.vue";
-
+import TimePicker from '@/Components/TimePicker.vue'
+import FlashMessages from '@/Components/FlashMessages.vue'
 
 const props = defineProps({
     isClockedIn: Boolean,
@@ -78,7 +79,7 @@ const props = defineProps({
 
 // If the user specifies a specific time
 let timeHasBeenManuallySpecified = ref(false)
-let manualClockTime = ref(null);
+let manualClockTime = ref(null)
 
 const form = useForm({
     isClockedIn: props.isClockedIn,
@@ -109,33 +110,30 @@ const toggleClock = () => {
         loading.clockLoading = true
     }, 250)
 
-    form
-        .transform((data) => {
-            // Initialize a new object for transformed data
-            let transformedData = { ...data };
+    form.transform((data) => {
+        // Initialize a new object for transformed data
+        let transformedData = {...data}
 
-            // Conditionally add clockTime only if manualClockTime exists and it's been manually specified
-            if (manualClockTime.value && timeHasBeenManuallySpecified.value) {
-                // Create a new object to avoid mutating the original data
-                transformedData.clock_time = manualClockTime.value;
+        // Conditionally add clockTime only if manualClockTime exists and it's been manually specified
+        if (manualClockTime.value && timeHasBeenManuallySpecified.value) {
+            // Create a new object to avoid mutating the original data
+            transformedData.clock_time = manualClockTime.value
+        }
+
+        return transformedData
+    }).post(route('time-records.store'), {
+        preserveScroll: true,
+        onFinish: () => {
+            clearTimeout(loading.clockTimeoutId)
+            loading.clockLoading = false
+        },
+        onSuccess: () => {
+            // Only call confetti if we are clocking out
+            if (wasClockingIn) {
+                explodeConfetti()
             }
-
-            return transformedData
-
-        })
-        .post(route('time-records.store'), {
-            preserveScroll: true,
-            onFinish: () => {
-                clearTimeout(loading.clockTimeoutId);
-                loading.clockLoading = false;
-            },
-            onSuccess: () => {
-                // Only call confetti if we are clocking out
-                if (wasClockingIn) {
-                    explodeConfetti();
-                }
-            },
-        });
+        },
+    })
 }
 
 function handleUpdateTime(time) {
@@ -143,11 +141,10 @@ function handleUpdateTime(time) {
     manualClockTime.value = time
 }
 
-function handleManualTimeChange(value){
+function handleManualTimeChange(value) {
     // Has the user manually specified a time?
     timeHasBeenManuallySpecified.value = value
 }
-
 
 const greeting = computed(() => {
     if (currentHour >= 5 && currentHour < 12) {

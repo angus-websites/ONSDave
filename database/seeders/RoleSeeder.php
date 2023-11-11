@@ -23,8 +23,8 @@ class RoleSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Creating permissions
-        Permission::create(['name' => 'can specify clock time']);
-        Permission::create(['name' => 'can manage other employees']);
+        Permission::create(['name' => 'can specify clock time', 'guard_name' => 'employee']);
+        Permission::create(['name' => 'can manage other employees', 'guard_name' => 'employee']);
 
 
         // Creating roles for users
@@ -32,12 +32,12 @@ class RoleSeeder extends Seeder
         Role::create(['name' => 'admin']);
         Role::create(['name' => 'user']);
 
-        // Creating roles for employees
-        Role::create(['name' => 'employee manager'])
+        // Creating roles for employees (NOTE, all employee roles and permissions need the employee guard)
+        Role::create(['name' => 'employee manager', 'guard_name' => 'employee'])
             ->syncPermissions(['can manage other employees', 'can specify clock time']);
-        Role::create(['name' => 'employee standard'])
+        Role::create(['name' => 'employee standard', 'guard_name' => 'employee'])
             ->syncPermissions(['can specify clock time']);;
-        Role::create(['name' => 'employee restricted']);
+        Role::create(['name' => 'employee restricted', 'guard_name' => 'employee' ]);
 
 
 

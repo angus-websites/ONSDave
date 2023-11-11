@@ -88,7 +88,7 @@ class TimeRecordControllerTest extends TestCase
     public function test_store_uses_clock_time_if_provided()
     {
         $employee = Employee::factory()->create();
-        // Give the employee a standard role so they can specify clock time
+        // Give the employee a standard role, so they can specify clock time
         $employee->assignRole('employee standard');
         $this->actingAs($employee->user);
 
@@ -122,7 +122,8 @@ class TimeRecordControllerTest extends TestCase
     }
 
     /**
-     * Test an employee with restricted clock time cannot specify a clock time
+     * Test an employee with restricted clock time cannot manually specify a clock time
+     * and the current time is used instead
      */
     public function test_employee_with_restricted_role_cannot_specify_clock_in_time()
     {
@@ -136,6 +137,30 @@ class TimeRecordControllerTest extends TestCase
 
         // Attempt clock in with a specified time
         $this->post(route('time-records.store', ['clock_time' => '2021-01-01 07:00:00']));
+
+        // Check the database should ignore the specified time and use the current time
+        $this->assertDatabaseHas('time_records', [
+            'employee_id' => $employee->id,
+            'type' => 'clock_in',
+            'recorded_at' => '2021-01-01 09:00:00',
+        ]);
+    }
+
+    /**
+     * Test an employee that has necessary permissions that doesnt specify a clock time will use the current time
+     *
+     */
+    public function test_employee_with_necessary_permissions_uses_current_time_if_no_clock_time_specified()
+    {
+        $employee = Employee::factory()->create();
+        $employee->assignRole('employee standard');
+        $this->actingAs($employee->user);
+
+        // Set the mock time to 9am
+        Carbon::setTestNow('2021-01-01 09:00:00');
+
+        // Attempt clock in with a specified time
+        $this->post(route('time-records.store'));
 
         // Check the database should ignore the specified time and use the current time
         $this->assertDatabaseHas('time_records', [

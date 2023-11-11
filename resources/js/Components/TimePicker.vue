@@ -56,10 +56,10 @@ import { ref, watch, onMounted, defineEmits } from 'vue';
 const hours = ref('');
 const minutes = ref('');
 const manualInteraction = ref(false);
-const emit = defineEmits(['update-time']);
+const emit = defineEmits(['update-time', 'manual-update']);
 
 const updateTimeEmit = () => {
-    emit('updateTime', `${hours.value}:${minutes.value}`);
+    emit('update-time', `${hours.value}:${minutes.value}`);
 };
 
 const updateTime = () => {
@@ -75,6 +75,7 @@ watch([hours, minutes], updateTimeEmit);
 
 onMounted(() => {
     updateTime();
+    // Update time every second
     setInterval(updateTime, 1000);
 });
 
@@ -103,7 +104,7 @@ const decrementMinutes = () => {
 };
 
 const manualUpdate = () => {
-    manualInteraction.value = true;
+    emit('manual-update');
     updateTimeEmit();
 };
 </script>

@@ -15,7 +15,8 @@ class TimeRecordController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the request data
+
+        // Validate the request data, default clockTimeManuallySet to true
         $validatedData = $request->validate([
             'clock_time' => 'sometimes|date',
         ]);
@@ -24,19 +25,20 @@ class TimeRecordController extends Controller
         $employee_id = $employee->id;
         $today = Carbon::today();
 
-        $a = $employee->can('canSpecifyClockTime', TimeRecord::class);
-
-
+        // If the employee can specify the clock time and the clock time is set, then use that
         $clockTime = ($employee->can('canSpecifyClockTime', TimeRecord::class) && isset($validatedData['clock_time']))
             ? Carbon::parse($validatedData['clock_time'])
             : Carbon::now();
 
 
+        // Get the latest time record for the user for today
         $latestRecord = TimeRecord::where('employee_id', $employee_id)
             ->whereDate('recorded_at', $today)
             ->orderBy('recorded_at', 'desc')
             ->first();
 
+
+        // Check if there's no record for today or the latest is a clock-out
         if (! $latestRecord || $latestRecord->type === TimeRecordType::CLOCK_OUT) {
             // If there's no record for today or the latest is a clock-out, then create a clock-in
             TimeRecord::create([

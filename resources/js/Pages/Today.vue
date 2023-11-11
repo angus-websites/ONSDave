@@ -25,8 +25,8 @@
                 </p>
                 <hr class="my-10" />
 
-                <div class="my-10">
-                   <TimePicker @update-time="handleUpdateTime" class="mx-auto" />
+                <div v-if="canSpecifyClockTime" class="my-10">
+                   <TimePicker @update-time="handleUpdateTime" @manual-update="handleManualTimeChange" class="mx-auto" />
                 </div>
 
                 <div class="mt-10">
@@ -46,8 +46,6 @@
                     >
                         {{ isClockedIn ? 'Clock out' : 'Clock in' }}
                     </button>
-
-                    <p> Clock time {{ clockTime }}</p>
 
                 </div>
             </div>
@@ -72,11 +70,12 @@ import TimePicker from "@/Components/TimePicker.vue";
 
 const props = defineProps({
     isClockedIn: Boolean,
+    canSpecifyClockTime: Boolean,
 })
 
-// Store clock in / out time as the current time
-let clockTime = ref(new Date().toLocaleTimeString())
-
+// If the user specifies a specific time
+let timeHasBeenManuallySpecified = ref(false)
+let manualClockTime = ref(null);
 
 const form = useForm({
     isClockedIn: props.isClockedIn,
@@ -107,24 +106,45 @@ const toggleClock = () => {
         loading.clockLoading = true
     }, 250)
 
-    form.post(route('time-records.store'), {
-        preserveScroll: true,
-        onFinish: () => {
-            clearTimeout(loading.clockTimeoutId)
-            loading.clockLoading = false
-        },
-        onSuccess: () => {
-            // Only call confetti if we are clocking out
-            if (wasClockingIn) {
-                explodeConfetti()
+    console.log("DATA: ", manualClockTime.value)
+    form
+        .transform((data) => {
+            // Initialize a new object for transformed data
+            let transformedData = { ...data };
+
+            // Conditionally add clockTime only if manualClockTime exists and it's been manually specified
+            if (manualClockTime.value && timeHasBeenManuallySpecified.value) {
+                // Create a new object to avoid mutating the original data
+                transformedData.clock_time = manualClockTime.value;
             }
-        },
-    })
+
+            return transformedData
+
+        })
+        .post(route('time-records.store'), {
+            preserveScroll: true,
+            onFinish: () => {
+                console.log("Finished")
+                clearTimeout(loading.clockTimeoutId);
+                loading.clockLoading = false;
+            },
+            onSuccess: () => {
+                // Only call confetti if we are clocking out
+                if (wasClockingIn) {
+                    explodeConfetti();
+                }
+            },
+        });
 }
 
 function handleUpdateTime(time) {
     // Update the clock in time
-    clockTime.value = time
+    manualClockTime.value = time
+}
+
+function handleManualTimeChange(){
+    // Set the flag to true
+    timeHasBeenManuallySpecified.value = true
 }
 
 

@@ -2,71 +2,44 @@
 
 namespace Database\Seeders;
 
-use App\Models\EmployeeRole;
-use App\Models\Role;
-use App\Models\User;
+
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
+
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class RoleSeeder extends Seeder
 {
     /**
      * Create the roles
-     * for the users
-     * in the application
-     *
+     * and permissions
      * @return void
      */
     public function run()
     {
 
-        Schema::disableForeignKeyConstraints();
-        //Clear data
-        User::query()->delete();
-        Role::query()->delete();
-        EmployeeRole::query()->delete();
-        Schema::enableForeignKeyConstraints();
+        // Reset cached roles and permissions
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // User
-        Role::create([
-            'id' => 1,
-            'name' => 'User',
-            'code' => 'Usr',
-            'description' => 'A normal user of the application',
-        ]);
+        // Creating permissions
+        Permission::create(['name' => 'can specify clock time']);
+        Permission::create(['name' => 'can manage other employees']);
 
-        // Admin
-        Role::create([
-            'id' => 2,
-            'name' => 'Admin',
-            'code' => 'Am',
-            'description' => 'As an admin you have full control of the application',
-        ]);
 
-        // Super Admin
-        Role::create([
-            'id' => 3,
-            'name' => 'Super Admin',
-            'code' => 'Sam',
-            'description' => 'The Goat',
-            'changeable' => 0,
-        ]);
+        // Creating roles for users
+        Role::create(['name' => 'super admin']);
+        Role::create(['name' => 'admin']);
+        Role::create(['name' => 'user']);
 
-        // ========= Employee Roles =========
+        // Creating roles for employees
+        Role::create(['name' => 'employee manager'])
+            ->syncPermissions(['can manage other employees', 'can specify clock time']);
+        Role::create(['name' => 'employee standard'])
+            ->syncPermissions(['can specify clock time']);;
+        Role::create(['name' => 'employee restricted']);
 
-        EmployeeRole::create([
-            'id' => 1,
-            'name' => 'Standard User',
-            'code' => 'Usr',
-            'description' => 'A standard user that has the ability to manually enter their start and end times',
-        ]);
 
-        EmployeeRole::create([
-            'id' => 2,
-            'name' => 'Restricted User',
-            'code' => 'RUsr',
-            'description' => 'A user that does not have the ability to manually enter their start and end times',
-        ]);
 
     }
 }

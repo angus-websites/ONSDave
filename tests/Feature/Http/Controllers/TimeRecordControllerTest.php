@@ -4,6 +4,7 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\User;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
@@ -11,6 +12,13 @@ use Tests\TestCase;
 class TimeRecordControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    /** setup */
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(RoleSeeder::class);
+    }
 
     /**
      * Test that the store method creates a clock-in record if there is no record for today
@@ -80,6 +88,8 @@ class TimeRecordControllerTest extends TestCase
     public function test_store_uses_clock_time_if_provided()
     {
         $employee = Employee::factory()->create();
+        // Give the employee a standard role so they can specify clock time
+        $employee->assignRole('employee standard');
         $this->actingAs($employee->user);
 
         // Clock in
@@ -109,6 +119,30 @@ class TimeRecordControllerTest extends TestCase
         $response->assertSessionHasErrors('clock_time');
 
 
+    }
+
+    /**
+     * Test an employee with restricted clock time cannot specify a clock time
+     */
+    public function test_employee_with_restricted_role_cannot_specify_clock_in_time()
+    {
+
+        $employee = Employee::factory()->create();
+        $employee->assignRole('employee restricted');
+        $this->actingAs($employee->user);
+
+        // Set the mock time to 9am
+        Carbon::setTestNow('2021-01-01 09:00:00');
+
+        // Attempt clock in with a specified time
+        $this->post(route('time-records.store', ['clock_time' => '2021-01-01 07:00:00']));
+
+        // Check the database should ignore the specified time and use the current time
+        $this->assertDatabaseHas('time_records', [
+            'employee_id' => $employee->id,
+            'type' => 'clock_in',
+            'recorded_at' => '2021-01-01 09:00:00',
+        ]);
     }
 
 

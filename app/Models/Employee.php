@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Spatie\Permission\Traits\HasRoles;
 
-class Employee extends Model
+class Employee extends Model implements AuthorizableContract
 {
     use HasFactory;
     use Authorizable;

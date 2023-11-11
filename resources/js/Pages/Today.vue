@@ -10,7 +10,7 @@
 
         <PageContainer class="">
             <div class="mx-auto max-w-2xl text-center">
-                <FlashMessages />
+                <FlashMessages class="text-left" />
                 <h1
                     class="text-5xl font-bold tracking-tight text-gray-900 sm:text-5xl"
                 >

@@ -20,15 +20,19 @@ class TimeRecordController extends Controller
             'clock_time' => 'sometimes|date',
         ]);
 
-        $clockTime = isset($validatedData['clock_time'])
+        $employee = Auth::user()->employee;
+        $employee_id = $employee->id;
+        $today = Carbon::today();
+
+        $a = $employee->can('canSpecifyClockTime', TimeRecord::class);
+
+
+        $clockTime = ($employee->can('canSpecifyClockTime', TimeRecord::class) && isset($validatedData['clock_time']))
             ? Carbon::parse($validatedData['clock_time'])
             : Carbon::now();
 
 
-        $userId = Auth::user()->employee->id;
-        $today = Carbon::today();
-
-        $latestRecord = TimeRecord::where('employee_id', $userId)
+        $latestRecord = TimeRecord::where('employee_id', $employee_id)
             ->whereDate('recorded_at', $today)
             ->orderBy('recorded_at', 'desc')
             ->first();
@@ -36,14 +40,14 @@ class TimeRecordController extends Controller
         if (! $latestRecord || $latestRecord->type === TimeRecordType::CLOCK_OUT) {
             // If there's no record for today or the latest is a clock-out, then create a clock-in
             TimeRecord::create([
-                'employee_id' => $userId,
+                'employee_id' => $employee_id,
                 'recorded_at' => $clockTime,
                 'type' => TimeRecordType::CLOCK_IN,
             ]);
         } else {
             // Otherwise, create a clock-out
             TimeRecord::create([
-                'employee_id' => $userId,
+                'employee_id' => $employee_id,
                 'recorded_at' => $clockTime,
                 'type' => TimeRecordType::CLOCK_OUT,
             ]);

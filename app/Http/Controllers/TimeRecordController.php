@@ -15,6 +15,16 @@ class TimeRecordController extends Controller
      */
     public function store(Request $request)
     {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'clock_time' => 'sometimes|date',
+        ]);
+
+        $clockTime = isset($validatedData['clock_time'])
+            ? Carbon::parse($validatedData['clock_time'])
+            : Carbon::now();
+
+
         $userId = Auth::user()->employee->id;
         $today = Carbon::today();
 
@@ -27,15 +37,15 @@ class TimeRecordController extends Controller
             // If there's no record for today or the latest is a clock-out, then create a clock-in
             TimeRecord::create([
                 'employee_id' => $userId,
-                'recorded_at' => Carbon::now(),
+                'recorded_at' => $clockTime,
                 'type' => TimeRecordType::CLOCK_IN,
             ]);
         } else {
             // Otherwise, create a clock-out
             TimeRecord::create([
                 'employee_id' => $userId,
-                'recorded_at' => Carbon::now(),
-                'type' => 'clock_out',
+                'recorded_at' => $clockTime,
+                'type' => TimeRecordType::CLOCK_OUT,
             ]);
         }
 

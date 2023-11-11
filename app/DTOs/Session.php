@@ -27,10 +27,21 @@ class Session implements JsonSerializable
         return $this->clockOut;
     }
 
-    public function getDuration(): ?DateInterval
+
+    public function getDurationInSeconds(): int
     {
-        return $this->duration;
+        // Check if the DateInterval property is not null
+        if ($this->duration !== null) {
+            // Calculate total seconds
+            return ($this->duration->h * 3600) +
+                ($this->duration->i * 60) +
+                $this->duration->s;
+        }
+
+        // If the DateInterval is null, return 0
+        return 0;
     }
+
 
     public function getDurationString(): ?string
     {
@@ -62,8 +73,9 @@ class Session implements JsonSerializable
     {
         return [
             'clock_in' => $this->getClockIn()->format('Y-m-d H:i:s'),
-            'clock_out' => $this->getClockOut()->format('Y-m-d H:i:s'),
+            'clock_out' => $this->getClockOut()?->format('Y-m-d H:i:s'),
             'duration' => $this->getDurationString(),
+            'duration_in_seconds' => $this->getDurationInSeconds(),
             'ongoing' => $this->isOngoing(),
             'auto_clock_out' => $this->isAutoClockOut(),
         ];

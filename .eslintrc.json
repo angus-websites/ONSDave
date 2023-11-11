@@ -1,0 +1,30 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "plugin:vue/vue3-essential",
+        "eslint:recommended",
+        "plugin:prettier/recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 12,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "vue",
+        "prettier"
+    ],
+    "rules": {
+        "prettier/prettier": "error",
+        "vue/no-unused-vars": "warn",
+        "vue/html-indent": ["error", 2, {
+            "baseIndent": 1,
+            "alignAttributesVertically": true,
+            "ignores": []
+        }]
+
+    }
+}

@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\Access\Authorizable;
 
-class Employee extends Model
+class Employee extends Model implements AuthorizableContract
 {
     use HasFactory;
     use HasUuids;
+    use Authorizable;
 
     public function user()
     {
@@ -34,4 +37,5 @@ class Employee extends Model
 
         return false;
     }
+
 }

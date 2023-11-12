@@ -41,14 +41,12 @@ class TimeRecordOrganiserServiceByDayTest extends TestCase
             Session::fromArray([
                 'clock_in' => Carbon::parse('2023-04-15 09:00:00'),
                 'clock_out' => Carbon::parse('2023-04-15 13:00:00'),
-                'duration' => new DateInterval('PT4H'),
                 'ongoing' => false,
                 'auto_clock_out' => false,
             ]),
             Session::fromArray([
                 'clock_in' => Carbon::parse('2023-04-15 14:00:00'),
                 'clock_out' => Carbon::parse('2023-04-15 18:00:00'),
-                'duration' => new DateInterval('PT4H'),
                 'ongoing' => false,
                 'auto_clock_out' => true,
             ]),
@@ -90,7 +88,6 @@ class TimeRecordOrganiserServiceByDayTest extends TestCase
             Session::fromArray([
                 'clock_in' => Carbon::parse('2023-04-15 09:00:00'),
                 'clock_out' => null,
-                'duration' => null,
                 'ongoing' => true,
                 'auto_clock_out' => false,
             ]),
@@ -139,14 +136,12 @@ class TimeRecordOrganiserServiceByDayTest extends TestCase
             Session::fromArray([
                 'clock_in' => Carbon::parse('2023-04-15 09:00:00'),
                 'clock_out' => null,
-                'duration' => null,
                 'ongoing' => true,
                 'auto_clock_out' => false,
             ]),
             Session::fromArray([
                 'clock_in' => Carbon::parse('2023-04-15 14:00:00'),
                 'clock_out' => null,
-                'duration' => null,
                 'ongoing' => true,
                 'auto_clock_out' => false,
             ]),

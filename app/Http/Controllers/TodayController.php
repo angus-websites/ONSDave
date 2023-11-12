@@ -26,7 +26,7 @@ class TodayController extends Controller
         $isClockedIn = ($latestRecord && $latestRecord->type === TimeRecordType::CLOCK_IN);
 
 
-        $canSpecifyClockTime = $employee->can('canSpecifyClockTime', TimeRecord::class);
+        $canSpecifyClockTime = $employee->can('specifyClockTime', TimeRecord::class);
 
         return Inertia::render('Today', ['isClockedIn' => $isClockedIn, 'canSpecifyClockTime' => $canSpecifyClockTime ]);
     }

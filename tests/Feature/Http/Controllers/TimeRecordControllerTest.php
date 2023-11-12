@@ -7,7 +7,6 @@ use App\Models\User;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
-use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class TimeRecordControllerTest extends TestCase

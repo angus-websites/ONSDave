@@ -33,7 +33,7 @@ class TimeRecordController extends Controller
         $today = Carbon::today();
 
         // If the employee can specify the clock time and the clock time is set, then use that
-        $clockTime = ($employee->can('canSpecifyClockTime', TimeRecord::class) && isset($validatedData['clock_time']))
+        $clockTime = ($employee->can('specifyClockTime', TimeRecord::class) && isset($validatedData['clock_time']))
             ? Carbon::parse($validatedData['clock_time'])
             : Carbon::now();
 

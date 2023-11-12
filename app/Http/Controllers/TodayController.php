@@ -5,12 +5,20 @@ namespace App\Http\Controllers;
 use App\Enums\TimeRecordType;
 use App\Facades\EmployeeAuth;
 use App\Models\TimeRecord;
+use App\Services\TimeRecordStatService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 
 class TodayController extends Controller
 {
+    private TimeRecordStatService $timeRecordStatService;
+
+    public function __construct()
+    {
+        $this->timeRecordStatService = new TimeRecordStatService();
+    }
+
     public function index(Request $request)
     {
         $employee = EmployeeAuth::employee();
@@ -24,7 +32,6 @@ class TodayController extends Controller
             ->first();
 
         $isClockedIn = ($latestRecord && $latestRecord->type === TimeRecordType::CLOCK_IN);
-
 
         $canSpecifyClockTime = $employee->can('specifyClockTime', TimeRecord::class);
 

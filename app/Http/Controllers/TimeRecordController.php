@@ -46,6 +46,7 @@ class TimeRecordController extends Controller
                 return redirect()->back()->withErrors(['clock_time' => 'The clock in time must be after the previous clock out time']);
             }
 
+
             // If there's no record for today or the latest is a clock-out, then create a clock-in
             TimeRecord::create([
                 'employee_id' => $employee_id,
@@ -58,6 +59,14 @@ class TimeRecordController extends Controller
             if ($clockTime->isBefore($latestRecord->recorded_at)) {
                 // Redirect back with an error
                 return redirect()->back()->withErrors(['clock_time' => 'The clock out time must be after the previous clock in time']);
+            }
+
+            // If clock out time is less than 5 seconds after previous clock in, delete the previous clock in
+            if ($clockTime->diffInSeconds($latestRecord->recorded_at) <= 5) {
+                $latestRecord->delete();
+
+                // Redirect back with an info message and parameter to controller
+                return redirect()->back()->with('info', 'As this session was less than 5 seconds, it was deleted.');
             }
 
             // Otherwise, create a clock-out

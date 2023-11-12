@@ -1,147 +1,84 @@
 <template>
-    <div>
-        <!-- Success flash messages -->
-        <div
-            v-if="$page.props.flash.success && show"
-            class="rounded-md bg-green-50 border border-green-700 p-4"
-        >
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <CheckCircleIcon
-                        class="h-5 w-5 text-green-400"
-                        aria-hidden="true"
-                    />
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm font-medium text-green-800">
-                        {{ $page.props.flash.success }}
-                    </p>
-                </div>
-                <div class="ml-auto pl-3">
-                    <div class="-mx-1.5 -my-1.5">
-                        <button
-                            @click="show = false"
-                            type="button"
-                            class="inline-flex rounded-md bg-green-50 p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-green-50"
-                        >
-                            <span class="sr-only">Dismiss</span>
-                            <XMarkIcon class="h-5 w-5" aria-hidden="true" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="my-5">
+    <!-- Success flash messages -->
+    <MultiMessage
+      v-if="showSuccess && $page.props.flash.success"
+      @dismiss="showSuccess = false"
+      type="success"
+      :message="$page.props.flash.success"
+    />
 
-        <!-- Error flash messages -->
-        <div
-            v-if="
-                ($page.props.flash.error ||
-                    Object.keys($page.props.errors).length > 0) &&
-                show &&
-                !hideErrors
-            "
-            class="rounded-md border border-red-700 bg-red-50 p-4"
-        >
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <XCircleIcon
-                        class="h-5 w-5 text-red-400"
-                        aria-hidden="true"
-                    />
-                </div>
-                <div class="ml-3">
-                    <p
-                        v-if="$page.props.flash.error"
-                        class="text-sm font-medium text-red-800"
-                    >
-                        {{ $page.props.flash.error }}
-                    </p>
-                    <div v-else>
-                        <p class="text-sm font-medium text-red-800">
-                            Some problems...
-                        </p>
-                        <div class="mt-2 text-sm text-red-700">
-                            <ul role="list" class="list-disc space-y-1 pl-5">
-                                <li
-                                    v-for="(error, index) in $page.props.errors"
-                                    :key="index"
-                                >
-                                    {{ error }}
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Info messages -->
-        <div
-            v-if="$page.props.flash.info && show"
-            class="rounded-md border border-blue-700 bg-blue-50 p-4"
-        >
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <InformationCircleIcon
-                        class="h-5 w-5 text-blue-400"
-                        aria-hidden="true"
-                    />
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm text-blue-700">
-                        {{ $page.props.flash.info }}
-                    </p>
-                </div>
-                <div class="ml-auto pl-3">
-                    <div class="-mx-1.5 -my-1.5">
-                        <button
-                            @click="show = false"
-                            type="button"
-                            class="inline-flex rounded-md bg-blue-50 p-1.5 text-blue-500 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-blue-50"
-                        >
-                            <span class="sr-only">Dismiss</span>
-                            <XMarkIcon class="h-5 w-5" aria-hidden="true" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Multi error messages -->
+    <div
+      v-if="showError && Object.keys($page.props.errors).length > 0 && !hideErrors"
+      role="alert"
+      class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400">
+      <svg class="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+      </svg>
+      <span class="sr-only">Errors</span>
+      <div>
+        <span class="font-medium">Errors...</span>
+        <ul class="mt-1.5 list-disc list-inside">
+          <li v-for="(error, index) in $page.props.errors" :key="index">
+            {{ error }}
+          </li>
+        </ul>
+      </div>
     </div>
+
+    <!-- Single error message -->
+    <MultiMessage
+      v-if="showErrorSingle && $page.props.flash.error && !hideErrors"
+      @dismiss="showErrorSingle = false"
+      type="danger"
+      :message="$page.props.flash.error"
+    />
+
+    <!-- Info messages -->
+    <MultiMessage
+      v-if="showInfo && $page.props.flash.info"
+      @dismiss="showInfo = false"
+      type="info"
+      :message="$page.props.flash.info"
+    />
+  </div>
 </template>
 
 <script>
-import {
-    CheckCircleIcon,
-    XMarkIcon,
-    XCircleIcon,
-    InformationCircleIcon,
-} from '@heroicons/vue/20/solid'
-export default {
-    props: {
-        hideErrors: {
-            type: Boolean,
-            default: false,
-        },
-    },
-    components: {
-        CheckCircleIcon,
-        XMarkIcon,
-        XCircleIcon,
-        InformationCircleIcon,
-    },
+import MultiMessage from "./messages/MultiMessage.vue";
 
-    data() {
-        return {
-            show: true,
-        }
+export default {
+  props: {
+    hideErrors: {
+      type: Boolean,
+      default: false,
     },
-    watch: {
-        '$page.props.flash': {
-            handler() {
-                this.show = true
-            },
-            deep: true,
-        },
+  },
+  components: {
+    MultiMessage,
+  },
+  data() {
+    return {
+      showSuccess: true,
+      showError: true,
+      showErrorSingle: true,
+      showInfo: true,
+    }
+  },
+  watch: {
+    '$page.props.flash': {
+      handler() {
+        this.showSuccess = !!this.$page.props.flash.success;
+        this.showErrorSingle = !!this.$page.props.flash.error;
+        this.showInfo = !!this.$page.props.flash.info;
+      },
+      deep: true,
+      immediate: true
     },
+    '$page.props.errors': function () {
+      this.showError = Object.keys(this.$page.props.errors).length > 0;
+    },
+  },
 }
 </script>

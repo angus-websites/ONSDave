@@ -10,7 +10,7 @@
 
         <PageContainer class="">
             <div class="mx-auto max-w-2xl text-center">
-                <FlashMessages />
+                <FlashMessages class="text-left" />
                 <h1
                     class="text-5xl font-bold tracking-tight text-gray-900 sm:text-5xl"
                 >
@@ -65,7 +65,6 @@
 import AppLayout from '@/Layouts/AppLayout.vue'
 import PageContainer from '@/Components/_util/PageContainer.vue'
 import {computed, ref, reactive} from 'vue'
-import PrimaryButton from '@/Components/buttons/PrimaryButton.vue'
 import MultiLoader from '@/Components/loader/MultiLoader.vue'
 import {useForm} from '@inertiajs/vue3'
 import ConfettiExplosion from 'vue-confetti-explosion'
@@ -129,7 +128,8 @@ const toggleClock = () => {
         },
         onSuccess: () => {
             // Only call confetti if we are clocking out
-            if (wasClockingIn) {
+            if (!props.isClockedIn) {
+
                 explodeConfetti()
             }
         },

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TimeRecordType;
+use App\Facades\EmployeeAuth;
 use App\Models\TimeRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -21,7 +22,7 @@ class TimeRecordController extends Controller
             'clock_time' => 'sometimes|date',
         ]);
 
-        $employee = Auth::user()->employee;
+        $employee = EmployeeAuth::employee();
         $employee_id = $employee->id;
         $today = Carbon::today();
 

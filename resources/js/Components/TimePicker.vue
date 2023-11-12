@@ -79,14 +79,15 @@ const resetInactivityTimer = () => {
 }
 
 const updateTimeEmit = () => {
-    // Create a dateime object from the time string
+    // Create a datetime object from the time string
     const now = new Date()
     const time = new Date(
         now.getFullYear(),
         now.getMonth(),
         now.getDate(),
         hours.value,
-        minutes.value
+        minutes.value,
+        now.getSeconds()
     )
     emit('update-time', time)
 }

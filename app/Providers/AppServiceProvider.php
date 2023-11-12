@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\EmployeeAuthService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +12,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register the employee auth service as a singleton
+        $this->app->singleton('employeeauth', function ($app) {
+            return new EmployeeAuthService();
+        });
     }
 
     /**

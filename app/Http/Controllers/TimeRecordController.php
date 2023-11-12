@@ -3,30 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TimeRecordType;
+use App\Facades\EmployeeAuth;
 use App\Models\TimeRecord;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 
 class TimeRecordController extends Controller
 {
+
     /**
-     * Store a newly created resource in storage.
+     * Store a new time record in the database
+     * @throws AuthorizationException
      */
     public function store(Request $request)
     {
+        $employee = EmployeeAuth::employee();
+
+        // Authorise the employee to create a time record
+        $this->authorizeForUser($employee, 'create', TimeRecord::class);
 
         // Validate the request data, default clockTimeManuallySet to true
         $validatedData = $request->validate([
             'clock_time' => 'sometimes|date',
         ]);
 
-        $employee = Auth::user()->employee;
+
         $employee_id = $employee->id;
         $today = Carbon::today();
 
         // If the employee can specify the clock time and the clock time is set, then use that
-        $clockTime = ($employee->can('canSpecifyClockTime', TimeRecord::class) && isset($validatedData['clock_time']))
+        $clockTime = ($employee->can('specifyClockTime', TimeRecord::class) && isset($validatedData['clock_time']))
             ? Carbon::parse($validatedData['clock_time'])
             : Carbon::now();
 

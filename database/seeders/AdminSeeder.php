@@ -31,8 +31,8 @@ class AdminSeeder extends Seeder
                 'user_id' => $admin->id,
             ]);
 
-            // Assign the manager role
-            $admin_employee->assignRole('employee manager');
+            // Assign the manage and employee role
+            $admin_employee->assignRole(['manager', 'employee']);
 
         }
 

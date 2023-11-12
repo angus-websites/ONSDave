@@ -18,6 +18,10 @@ class TimeRecordControllerTest extends TestCase
     {
         parent::setUp();
         $this->seed(RoleSeeder::class);
+
+        $this->standard_employee = Employee::factory()->withRole('employee')->create();
+        $this->restricted_employee = Employee::factory()->withRole('employee restricted')->create();
+
     }
 
     /**
@@ -25,7 +29,7 @@ class TimeRecordControllerTest extends TestCase
      */
     public function test_store_creates_clock_in_if_no_record_for_today()
     {
-        $employee = Employee::factory()->create();
+        $employee = $this->standard_employee;
         $this->actingAs($employee->user);
 
         // Set the mock time to 9am
@@ -48,7 +52,7 @@ class TimeRecordControllerTest extends TestCase
      */
     public function test_store_creates_clock_out_if_latest_record_is_clock_in()
     {
-        $employee = Employee::factory()->create();
+        $employee = $this->standard_employee;
         $this->actingAs($employee->user);
 
         // Set the mock time to 9am
@@ -87,9 +91,7 @@ class TimeRecordControllerTest extends TestCase
      */
     public function test_store_uses_clock_time_if_provided()
     {
-        $employee = Employee::factory()->create();
-        // Give the employee a standard role, so they can specify clock time
-        $employee->assignRole('employee standard');
+        $employee = $this->standard_employee;
         $this->actingAs($employee->user);
 
         // Clock in
@@ -109,7 +111,7 @@ class TimeRecordControllerTest extends TestCase
      */
     public function test_store_with_invalid_clock_time()
     {
-        $employee = Employee::factory()->create();
+        $employee = $this->standard_employee;
         $this->actingAs($employee->user);
 
         // Clock in
@@ -125,11 +127,10 @@ class TimeRecordControllerTest extends TestCase
      * Test an employee with restricted clock time cannot manually specify a clock time
      * and the current time is used instead
      */
-    public function test_employee_with_restricted_role_cannot_specify_clock_in_time()
+    public function test_store_with_employee_with_restricted_role_cannot_specify_clock_in_time()
     {
 
-        $employee = Employee::factory()->create();
-        $employee->assignRole('employee restricted');
+        $employee = $this->restricted_employee;
         $this->actingAs($employee->user);
 
         // Set the mock time to 9am
@@ -150,10 +151,9 @@ class TimeRecordControllerTest extends TestCase
      * Test an employee that has necessary permissions that doesnt specify a clock time will use the current time
      *
      */
-    public function test_employee_with_necessary_permissions_uses_current_time_if_no_clock_time_specified()
+    public function test_store_with_employee_with_necessary_permissions_uses_current_time_if_no_clock_time_specified()
     {
-        $employee = Employee::factory()->create();
-        $employee->assignRole('employee standard');
+        $employee = $this->standard_employee;
         $this->actingAs($employee->user);
 
         // Set the mock time to 9am
@@ -174,10 +174,9 @@ class TimeRecordControllerTest extends TestCase
     /**
      * Test that when a user provides a clock out time before the previous clock in time, and error is returned
      */
-    public function test_when_clock_out_time_provided_is_before_previous_clock_in_time_error_returned()
+    public function test_store_when_clock_out_time_provided_is_before_previous_clock_in_time_error_returned()
     {
-        $employee = Employee::factory()->create();
-        $employee->assignRole('employee standard');
+        $employee = $this->standard_employee;
         $this->actingAs($employee->user);
 
         // Mock the Carbon today method to return a specific date
@@ -205,10 +204,9 @@ class TimeRecordControllerTest extends TestCase
     /**
      * Test when a user provides a clock in time before the previous clock out time, an error is returned
      */
-    public function test_when_clock_in_time_provided_is_before_previous_clock_out_time_error_returned()
+    public function test_store_when_clock_in_time_provided_is_before_previous_clock_out_time_error_returned()
     {
-        $employee = Employee::factory()->create();
-        $employee->assignRole('employee standard');
+        $employee = $this->standard_employee;
         $this->actingAs($employee->user);
 
         // Mock the Carbon today method to return a specific date
@@ -237,10 +235,9 @@ class TimeRecordControllerTest extends TestCase
     /**
      * Test that when a user clocks out within 5 seconds of clocking in both records are deleted
      */
-    public function test_when_clock_out_time_provided_is_within_5_seconds_of_previous_clock_in_time_both_records_deleted()
+    public function test_store_when_clock_out_time_provided_is_within_5_seconds_of_previous_clock_in_time_both_records_deleted()
     {
-        $employee = Employee::factory()->create();
-        $employee->assignRole('employee standard');
+        $employee = $this->standard_employee;
         $this->actingAs($employee->user);
 
         // Mock the Carbon today method to return a specific date
@@ -268,6 +265,63 @@ class TimeRecordControllerTest extends TestCase
             'type' => 'clock_out',
             'recorded_at' => '2021-01-01 10:00:05',
         ]);
+    }
+
+    /**
+     * Test that a user without create permission cannot create a time record
+     */
+    public function test_store_when_employee_without_create_permission_cannot_create_time_record()
+    {
+        $employee = Employee::factory()->create();
+        $this->actingAs($employee->user);
+
+        // Mock the Carbon today method to return a specific date
+        Carbon::setTestNow('2021-01-01 09:00:00');
+
+        // Clock in at 10am
+        $response = $this->post(route('time-records.store'));
+
+        $response->assertForbidden();
+
+        // Check record is not created
+        $this->assertDatabaseMissing('time_records', [
+            'employee_id' => $employee->id,
+            'type' => 'clock_in',
+            'recorded_at' => '2021-01-01 09:00:00',
+        ]);
+    }
+
+    /**
+     * Test an error is thrown when a user without an employee record tries to clock in
+     */
+    public function test_store_when_user_without_employee_record_cannot_clock_in()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        // Mock the Carbon today method to return a specific date
+        Carbon::setTestNow('2021-01-01 09:00:00');
+
+        // Clock in at 10am
+        $response = $this->post(route('time-records.store'));
+
+        $response->assertForbidden();
+
+        // Check record is not created
+        $this->assertDatabaseMissing('time_records', [
+            'employee_id' => $user->id,
+            'type' => 'clock_in',
+            'recorded_at' => '2021-01-01 09:00:00',
+        ]);
+    }
+
+    /**
+     * Test store with an unauthorized user will redirect to login
+     */
+    public function test_store_with_unauthorized_user_redirects_to_login()
+    {
+        $response = $this->post(route('time-records.store'));
+        $response->assertRedirect(route('login'));
     }
 
 

@@ -22,23 +22,66 @@ class RoleSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Creating permissions
-        Permission::create(['name' => 'can specify clock time', 'guard_name' => 'employee']);
-        Permission::create(['name' => 'can manage other employees', 'guard_name' => 'employee']);
+        $permissions = [
+            'time_records.*' => 'employee',
+            'time_records.specify_clock_time' => 'employee',
+            'time_records.create' => 'employee',
+            'time_records.read' => 'employee',
+            'time_records.update' => 'employee',
+            'time_records.delete' => 'employee',
+            'others.time_records.*' => 'employee',
+            'others.time_records.create' => 'employee',
+            'others.time_records.read' => 'employee',
+            'others.time_records.update' => 'employee',
+            'others.time_records.delete' => 'employee',
+        ];
 
+        // Define roles with their guard and permissions
+        $roles = [
+            'super admin' => [
+                'guard' => 'web',
+                'permissions' => [],
+            ],
+            'admin' => [
+                'guard' => 'web',
+                'permissions' => [],
+            ],
+            'user' => [
+                'guard' => 'web',
+                'permissions' => [],
+            ],
+            'employee' => [
+                'guard' => 'employee',
+                'permissions' => [
+                    'time_records.*',
+                ],
+            ],
+            'manager' => [
+                'guard' => 'employee',
+                'permissions' => [
+                    'others.time_records.*',
+                ],
+            ],
+            'employee restricted' => [
+                'guard' => 'employee',
+                'permissions' => [
+                    'time_records.create',
+                ],
+            ],
+        ];
 
-        // Creating roles for users
-        Role::create(['name' => 'super admin']);
-        Role::create(['name' => 'admin']);
-        Role::create(['name' => 'user']);
-
-        // Creating roles for employees (NOTE, all employee roles and permissions need the employee guard)
-        Role::create(['name' => 'employee manager', 'guard_name' => 'employee'])
-            ->syncPermissions(['can manage other employees', 'can specify clock time']);
-        Role::create(['name' => 'employee standard', 'guard_name' => 'employee'])
-            ->syncPermissions(['can specify clock time']);;
-        Role::create(['name' => 'employee restricted', 'guard_name' => 'employee' ]);
-
+        // Create the permissions
+        foreach ($permissions as $permission => $guard) {
+            Permission::create(['name' => $permission, 'guard_name' => $guard]);
+        }
+        // Create the roles
+        foreach ($roles as $role => $data) {
+            $role = Role::create(['name' => $role, 'guard_name' => $data['guard']]);
+            // Assign the permissions to the role
+            foreach ($data['permissions'] as $permission) {
+                $role->givePermissionTo($permission);
+            }
+        }
 
 
     }

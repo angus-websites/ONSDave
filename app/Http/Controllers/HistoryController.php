@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\EmployeeAuth;
 use App\Http\Resources\TimeRecordByDayResource;
 use App\Http\Resources\TimeRecordByMonthResource;
 use App\Models\TimeRecord;
@@ -14,14 +15,14 @@ class HistoryController extends Controller
 {
     public function index()
     {
-        $userId = Auth::user()->employee->id;
+        $employeeId = EmployeeAuth::employee()->id;
 
         $currentMonth = today()->month;
         $currentYear = today()->year;
 
         $timeRecords = TimeRecord::whereMonth('recorded_at', $currentMonth)
             ->whereYear('recorded_at', $currentYear)
-            ->where('employee_id', $userId)
+            ->where('employee_id', $employeeId)
             ->orderBy('recorded_at', 'asc')
             ->get();
 
@@ -38,10 +39,10 @@ class HistoryController extends Controller
             'date' => 'required|date',
         ]);
 
-        $userId = Auth::user()->employee->id;
+        $employeeId = EmployeeAuth::employee()->id;
 
         $timeRecords = TimeRecord::whereDate('recorded_at', $data['date'])
-            ->where('employee_id', $userId)
+            ->where('employee_id', $employeeId)
             ->orderBy('recorded_at', 'asc')
             ->get();
 
@@ -59,11 +60,11 @@ class HistoryController extends Controller
         // Create a Carbon instance from the provided month and year
         $date = Carbon::createFromDate($validated['year'], $validated['month'], 1);
 
-        $userId = Auth::user()->employee->id;
+        $employeeId = EmployeeAuth::employee()->id;
 
         $timeRecords = TimeRecord::whereMonth('recorded_at', $validated['month'])
             ->whereYear('recorded_at', $validated['year'])
-            ->where('employee_id', $userId)
+            ->where('employee_id', $employeeId)
             ->orderBy('recorded_at', 'asc')
             ->get();
 

@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TimeRecordType;
+use App\Facades\EmployeeAuth;
 use App\Models\TimeRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class TodayController extends Controller
 {
     public function index(Request $request)
     {
-        $employee = Auth::user()->employee;
+        $employee = EmployeeAuth::employee();
         $employee_id = $employee->id;
         $today = Carbon::today();
 

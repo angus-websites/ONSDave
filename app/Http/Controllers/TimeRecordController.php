@@ -5,24 +5,31 @@ namespace App\Http\Controllers;
 use App\Enums\TimeRecordType;
 use App\Facades\EmployeeAuth;
 use App\Models\TimeRecord;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 
 class TimeRecordController extends Controller
 {
+
     /**
      * Store a newly created resource in storage.
+     * @throws AuthorizationException
      */
     public function store(Request $request)
     {
+        $employee = EmployeeAuth::employee();
+        $a = $employee->hasPermissionTo('time_records.create');
+
+        // Authorise the employee to create a time record with the employee gate
+        $this->authorize('create', [$employee, TimeRecord::class]);
 
         // Validate the request data, default clockTimeManuallySet to true
         $validatedData = $request->validate([
             'clock_time' => 'sometimes|date',
         ]);
 
-        $employee = EmployeeAuth::employee();
+
         $employee_id = $employee->id;
         $today = Carbon::today();
 

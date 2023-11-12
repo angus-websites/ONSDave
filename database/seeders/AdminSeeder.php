@@ -32,7 +32,7 @@ class AdminSeeder extends Seeder
             ]);
 
             // Assign the manager role
-            $admin_employee->assignRole('employee manager');
+            $admin_employee->assignRole('manager');
 
         }
 

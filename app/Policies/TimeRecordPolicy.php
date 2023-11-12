@@ -16,7 +16,7 @@ class TimeRecordPolicy
     public function canSpecifyClockTime(Employee $employee)
     {
         // Check the employee has the permission
-        return $employee->hasPermissionTo('can specify clock time');
+        return $employee->hasPermissionTo('time_records.specify_clock_time');
     }
 
     /**
@@ -40,7 +40,8 @@ class TimeRecordPolicy
      */
     public function create(Employee $employee): bool
     {
-        return false;
+        return true;
+        return $employee->hasPermissionTo('time_records.create');
     }
 
     /**

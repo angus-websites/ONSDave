@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Employee;
 use App\Models\TimeRecord;
+use App\Models\User;
 
 class TimeRecordPolicy
 {
@@ -40,7 +41,6 @@ class TimeRecordPolicy
      */
     public function create(Employee $employee): bool
     {
-        return true;
         return $employee->hasPermissionTo('time_records.create');
     }
 

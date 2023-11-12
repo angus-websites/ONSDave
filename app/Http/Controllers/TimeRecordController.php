@@ -19,10 +19,9 @@ class TimeRecordController extends Controller
     public function store(Request $request)
     {
         $employee = EmployeeAuth::employee();
-        $a = $employee->hasPermissionTo('time_records.create');
 
-        // Authorise the employee to create a time record with the employee gate
-        $this->authorize('create', [$employee, TimeRecord::class]);
+        // Authorise the employee to create a time record
+        $this->authorizeForUser($employee, 'create', TimeRecord::class);
 
         // Validate the request data, default clockTimeManuallySet to true
         $validatedData = $request->validate([

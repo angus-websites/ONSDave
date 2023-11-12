@@ -8,13 +8,18 @@ use JsonSerializable;
 
 class Session implements JsonSerializable
 {
+    private ?DateInterval $duration = null;
+
     public function __construct(
         public Carbon $clockIn,
         public ?Carbon $clockOut,
-        public ?DateInterval $duration,
         public bool $ongoing,
         public bool $autoClockOut,
     ) {
+        // Calculate the duration if the clock out time is not null
+        if ($this->clockOut !== null) {
+            $this->duration = $this->clockIn->diff($this->clockOut);
+        }
     }
 
     public function getClockIn(): Carbon
@@ -63,7 +68,6 @@ class Session implements JsonSerializable
         return new Session(
             $data['clock_in'],
             $data['clock_out'],
-            $data['duration'],
             $data['ongoing'],
             $data['auto_clock_out'],
         );

@@ -5,6 +5,7 @@
       v-if="showSuccess && $page.props.flash.success"
       @dismiss="showSuccess = false"
       type="success"
+      :show-dismiss="true"
       :message="$page.props.flash.success"
     />
 
@@ -32,6 +33,7 @@
       v-if="showErrorSingle && $page.props.flash.error && !hideErrors"
       @dismiss="showErrorSingle = false"
       type="danger"
+      :show-dismiss="true"
       :message="$page.props.flash.error"
     />
 
@@ -40,6 +42,7 @@
       v-if="showInfo && $page.props.flash.info"
       @dismiss="showInfo = false"
       type="info"
+      :show-dismiss="true"
       :message="$page.props.flash.info"
     />
   </div>

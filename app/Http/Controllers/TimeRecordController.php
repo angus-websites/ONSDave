@@ -13,7 +13,7 @@ class TimeRecordController extends Controller
 {
 
     /**
-     * Store a newly created resource in storage.
+     * Store a new time record in the database
      * @throws AuthorizationException
      */
     public function store(Request $request)

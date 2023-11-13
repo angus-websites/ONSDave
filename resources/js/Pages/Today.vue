@@ -74,6 +74,7 @@ import FlashMessages from '@/Components/FlashMessages.vue'
 const props = defineProps({
     isClockedIn: Boolean,
     canSpecifyClockTime: Boolean,
+    timeWorkedToday: Object,
 })
 
 // If the user specifies a specific time

@@ -56,7 +56,7 @@ class TotalWorkedTodayResourceTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'data' => [
-                    'hours' => '7',
+                    'hours' => '07',
                     'minutes' => '44',
                     'seconds' => '38',
                 ],

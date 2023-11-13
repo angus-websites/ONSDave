@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\TimeRecordType;
 use App\Facades\EmployeeAuth;
+use App\Http\Resources\TotalWorkedTodayResource;
 use App\Models\TimeRecord;
 use App\Services\TimeRecordOrganiserService;
 use App\Services\TimeRecordStatService;
@@ -43,11 +44,13 @@ class TodayController extends Controller
             ->where('employee_id', $employee_id)
             ->orderBy('recorded_at', 'asc')
             ->get();
-
-        $timeWorkedToday = $this->timeRecordStatService->calculateTotalTimeWorkedForDay(
-            $this->timeRecordOrganiserService->organiseRecordsByDay(
-                $timeRecords,
-                $today
+        
+        $timeWorkedToday = new TotalWorkedTodayResource(
+            $this->timeRecordStatService->calculateTotalTimeWorkedForDay(
+                $this->timeRecordOrganiserService->organiseRecordsByDay(
+                    $timeRecords,
+                    $today
+                )
             )
         );
 

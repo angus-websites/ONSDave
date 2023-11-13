@@ -22,7 +22,7 @@
                 <p
                     class="text-5xl font-bold tracking-tight text-gray-900 sm:text-8xl"
                 >
-                    00:00:00
+                    {{ getTotalTimeWorkedToday }}
                 </p>
                 <hr class="my-10" />
 
@@ -136,6 +136,16 @@ const toggleClock = () => {
         },
     })
 }
+
+const getTotalTimeWorkedToday = computed(() => {
+    if (props.timeWorkedToday) {
+        // Return a formatted time string
+        const timeData = props.timeWorkedToday.data
+        return `${timeData.hours}:${timeData.minutes}:${timeData.seconds}`
+    }
+
+    return '00:00:00'
+})
 
 function handleUpdateTime(time) {
     // Update the clock in time

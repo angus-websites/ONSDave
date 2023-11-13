@@ -16,11 +16,11 @@ class TotalWorkedTodayResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // Return the hours, minutes and seconds worked today
+        // Return the hours, minutes and seconds worked today all as two digit strings
         return [
-            'hours' => $this->resource["hours"],
-            'minutes' => $this->resource["minutes"],
-            'seconds' => $this->resource["seconds"],
+            'hours' => sprintf('%02d', $this->resource['hours']),
+            'minutes' => sprintf('%02d', $this->resource['minutes']),
+            'seconds' => sprintf('%02d', $this->resource['seconds']),
         ];
     }
 }

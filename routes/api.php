@@ -22,4 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/sessions/day', [SessionController::class, 'fetchDaySessions'])->name('api.sessions.day');
     Route::post('/sessions/month', [SessionController::class, 'fetchMonthSessions'])->name('api.sessions.month');
+    Route::post('/sessions/total/day', [SessionController::class, 'calculateTotalWorkedTimeForDay'])->name('api.sessions.total.day');
 });

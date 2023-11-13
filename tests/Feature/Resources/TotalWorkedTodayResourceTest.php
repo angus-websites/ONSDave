@@ -56,23 +56,9 @@ class TotalWorkedTodayResourceTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'data' => [
-                    'date' => '2023-04-15',
-                    'sessions' => [
-                        [
-                            'clock_in' => '2023-04-15 09:00:00',
-                            'clock_out' => '2023-04-15 13:00:00',
-                            'duration' => '04:00:00',
-                            'ongoing' => false,
-                            'auto_clock_out' => false,
-                        ],
-                        [
-                            'clock_in' => '2023-04-15 14:00:00',
-                            'clock_out' => '2023-04-15 18:00:00',
-                            'duration' => '04:00:00',
-                            'ongoing' => false,
-                            'auto_clock_out' => true,
-                        ],
-                    ],
+                    'hours' => '7',
+                    'minutes' => '44',
+                    'seconds' => '38',
                 ],
             ]);
 

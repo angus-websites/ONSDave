@@ -7,6 +7,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class TotalWorkedTodayResource extends JsonResource
 {
+
+
     /**
      * Transform the resource into an array.
      *
@@ -16,9 +18,9 @@ class TotalWorkedTodayResource extends JsonResource
     {
         // Return the hours, minutes and seconds worked today
         return [
-            'hours' => $this->hours,
-            'minutes' => $this->minutes,
-            'seconds' => $this->seconds,
+            'hours' => $this->resource["hours"],
+            'minutes' => $this->resource["minutes"],
+            'seconds' => $this->resource["seconds"],
         ];
     }
 }

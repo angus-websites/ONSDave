@@ -19,9 +19,9 @@ class TimeRecordStatService
         }
 
         // Calculate the total hours, minutes, and seconds
-        $totalHours = floor($total_seconds / 3600);
-        $totalMinutes = floor(($total_seconds / 60) % 60);
-        $totalSeconds = $total_seconds % 60;
+        $totalHours = (int)floor($total_seconds / 3600);
+        $totalMinutes = (int)floor(floor($total_seconds / 60) % 60);
+        $totalSeconds = (int)$total_seconds % 60;
 
         return [
             'hours' => $totalHours,

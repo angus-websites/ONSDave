@@ -21,6 +21,15 @@ abstract class DaySessionsCollection implements JsonSerializable
 
     public abstract function toArray(): array;
 
+
+    /**
+     * @return Carbon
+     */
+    public function getDate(): Carbon
+    {
+        return $this->date;
+    }
+
     /**
      * Get a DaySessions object for a given date
      *

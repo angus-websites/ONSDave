@@ -15,13 +15,10 @@ class TimeRecordStatService
         $total_seconds = 0;
 
         foreach ($daySessions->sessions as $session) {
-            $seconds = $session->getDurationInSeconds();
             $total_seconds += $session->getDurationInSeconds();
         }
 
         // Calculate the total hours, minutes, and seconds
-
-        // Get total hours as an integer
         $totalHours = floor($total_seconds / 3600);
         $totalMinutes = floor(($total_seconds / 60) % 60);
         $totalSeconds = $total_seconds % 60;
@@ -32,5 +29,6 @@ class TimeRecordStatService
             'seconds' => $totalSeconds,
         ];
     }
+
 
 }

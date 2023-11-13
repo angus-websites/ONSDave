@@ -34,7 +34,6 @@ class TimeRecordOrganiserService
                 $session = new Session(
                     clockIn: $record->recorded_at,
                     clockOut: $clockOutTime,
-                    duration: $this->calculateDuration($record->recorded_at, $clockOutTime),
                     ongoing: $ongoing,
                     autoClockOut: $isAutoClockOut,
                 );

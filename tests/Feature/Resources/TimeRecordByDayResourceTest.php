@@ -4,13 +4,10 @@ namespace Tests\Feature\Resources;
 
 use App\DTOs\Session;
 use App\Enums\TimeRecordType;
-use App\Http\Resources\TimeRecordByDayResource;
 use App\Models\Employee;
 use App\Models\TimeRecord;
-use DateInterval;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class TimeRecordByDayResourceTest extends TestCase
@@ -51,7 +48,7 @@ class TimeRecordByDayResourceTest extends TestCase
         ]);
 
         // Make an HTTP request to the desired endpoint
-        $response = $this->post(route('history.day.fetch', ['date' => '2023-04-15']));
+        $response = $this->post(route('api.sessions.day', ['date' => '2023-04-15']));
 
         $response->assertStatus(200)
             ->assertJson([
@@ -93,9 +90,8 @@ class TimeRecordByDayResourceTest extends TestCase
             'recorded_at' => Carbon::parse('2023-04-15 09:00:00'),
         ]);
 
-
         // Make an HTTP request to the desired endpoint
-        $response = $this->post(route('history.day.fetch', ['date' => '2023-04-15']));
+        $response = $this->post(route('api.sessions.day', ['date' => '2023-04-15']));
 
         $response->assertStatus(200)
             ->assertJson([

@@ -70,7 +70,7 @@ class TimeRecordOrganiserServiceByMonthTest extends TestCase
         $monthSessions = $service->organiseRecordsByMonth($records, $month);
 
         // Assert the month is correct
-        $this->assertEquals('2023-04', $monthSessions->getMonth()->format('Y-m'));
+        $this->assertEquals('2023-04', $monthSessions->getDate()->format('Y-m'));
 
         // Assert the sessions are correct for the 15th
         $dayFifteen = $monthSessions->getDay(Carbon::parse('2023-04-15'));

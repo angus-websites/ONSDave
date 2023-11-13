@@ -85,7 +85,6 @@ class TimeRecordControllerTest extends TestCase
         Carbon::setTestNow();
     }
 
-
     /**
      * Test when a clockTime is provided, it is used in the record
      */
@@ -120,7 +119,6 @@ class TimeRecordControllerTest extends TestCase
         // Check an error is returned
         $response->assertSessionHasErrors('clock_time');
 
-
     }
 
     /**
@@ -149,7 +147,6 @@ class TimeRecordControllerTest extends TestCase
 
     /**
      * Test an employee that has necessary permissions that doesnt specify a clock time will use the current time
-     *
      */
     public function test_store_with_employee_with_necessary_permissions_uses_current_time_if_no_clock_time_specified()
     {
@@ -197,7 +194,6 @@ class TimeRecordControllerTest extends TestCase
             'type' => 'clock_out',
             'recorded_at' => '2021-01-01 09:00:00',
         ]);
-
 
     }
 
@@ -323,8 +319,4 @@ class TimeRecordControllerTest extends TestCase
         $response = $this->post(route('time-records.store'));
         $response->assertRedirect(route('login'));
     }
-
-
-
-
 }

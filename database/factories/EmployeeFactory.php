@@ -27,7 +27,7 @@ class EmployeeFactory extends Factory
     /**
      * Assign a role to the employee after creation.
      *
-     * @param string $roleName
+     * @param  string  $roleName
      */
     public function withRole($roleName)
     {

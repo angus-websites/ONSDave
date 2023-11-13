@@ -4,9 +4,8 @@ namespace App\DTOs;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use JsonSerializable;
 
-class MonthSessions implements JsonSerializable
+class MonthSessions extends DaySessionsCollection
 {
     /**
      * @param  Carbon  $month [Month]
@@ -16,22 +15,15 @@ class MonthSessions implements JsonSerializable
         public Carbon $month,
         public Collection $days,
     ) {
+        parent::__construct($month, $days);
     }
 
-    /**
-     * Get the month for this object
-     */
-    public function getMonth(): Carbon
+    public function toArray(): array
     {
-        return $this->month;
-    }
-
-    /**
-     * Get a DaySessions object for a given date
-     */
-    public function getDay(Carbon $date): ?DaySessions
-    {
-        return $this->days->first(fn (DaySessions $day) => $day->date->isSameDay($date));
+        return [
+            'month' => $this->month->format('Y-m'),
+            'days' => $this->days,
+        ];
     }
 
     /**
@@ -43,18 +35,5 @@ class MonthSessions implements JsonSerializable
             $data['date'],
             $data['days'],
         );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'month' => $this->month->format('Y-m'),
-            'days' => $this->days,
-        ];
-    }
-
-    public function jsonSerialize(): array
-    {
-        return $this->toArray();
     }
 }

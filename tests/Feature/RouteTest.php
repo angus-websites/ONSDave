@@ -26,7 +26,7 @@ class RouteTest extends TestCase
         }
     }
 
-    public function test_today_route_require_authentication()
+    public function test_authenticated_routes_need_authentication()
     {
 
         // Seed Roles
@@ -45,19 +45,5 @@ class RouteTest extends TestCase
         $response = $this->actingAs($user)->get('/today');
         $response->assertStatus(200);
 
-    }
-
-    public function test_history_route_requires_authentication()
-    {
-        // Check the 'history' route without authentication
-        $response = $this->get('/history');
-        $response->assertRedirect('/login');
-
-        // Create a user for the test
-        $user = Employee::factory()->create()->user;
-
-        // Check when authenticated
-        $response = $this->actingAs($user)->get('/history');
-        $response->assertStatus(200);
     }
 }

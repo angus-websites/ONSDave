@@ -40,10 +40,7 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 import PageContainer from '@/Components/_util/PageContainer.vue'
 import MonthCalendar from '@/Components/calendar/MonthCalendar.vue'
 import TimeSheetSection from '@/Components/calendar/TimeSheetSection.vue'
-import {
-    ChevronLeftIcon,
-    ChevronRightIcon,
-} from '@heroicons/vue/20/solid/index.js'
+
 import {computed, ref} from 'vue'
 
 const props = defineProps({

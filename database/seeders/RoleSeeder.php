@@ -2,18 +2,16 @@
 
 namespace Database\Seeders;
 
-
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Schema;
-
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleSeeder extends Seeder
 {
     /**
      * Create the roles
      * and permissions
+     *
      * @return void
      */
     public function run()
@@ -82,7 +80,6 @@ class RoleSeeder extends Seeder
                 $role->givePermissionTo($permission);
             }
         }
-
 
     }
 }

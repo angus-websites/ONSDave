@@ -11,9 +11,9 @@ use Illuminate\Support\Carbon;
 
 class TimeRecordController extends Controller
 {
-
     /**
      * Store a new time record in the database
+     *
      * @throws AuthorizationException
      */
     public function store(Request $request)
@@ -27,7 +27,6 @@ class TimeRecordController extends Controller
         $validatedData = $request->validate([
             'clock_time' => 'sometimes|date',
         ]);
-
 
         $employee_id = $employee->id;
         $today = Carbon::today();
@@ -43,7 +42,6 @@ class TimeRecordController extends Controller
             ->orderBy('recorded_at', 'desc')
             ->first();
 
-
         // Check if there's no record for today or the latest is a clock-out
         if (! $latestRecord || $latestRecord->type === TimeRecordType::CLOCK_OUT) {
 
@@ -52,7 +50,6 @@ class TimeRecordController extends Controller
                 // Redirect back with an error
                 return redirect()->back()->withErrors(['clock_time' => 'The clock in time must be after the previous clock out time']);
             }
-
 
             // If there's no record for today or the latest is a clock-out, then create a clock-in
             TimeRecord::create([

@@ -20,7 +20,7 @@ abstract class DaySessionsCollection implements JsonSerializable
 
 
     public abstract function toArray(): array;
-
+    public abstract static function fromArray(array $data): DaySessionsCollection;
 
     /**
      * @return Carbon
@@ -31,7 +31,7 @@ abstract class DaySessionsCollection implements JsonSerializable
     }
 
     /**
-     * Get a DaySessions object for a given date
+     * Get a DaySessionsCollection object for a given date
      *
      */
     public function getDay(Carbon $date): ?DaySessions
@@ -39,18 +39,6 @@ abstract class DaySessionsCollection implements JsonSerializable
         return $this->days->first(fn (DaySessions $day) => $day->date->isSameDay($date));
     }
 
-    /**
-     * Create a MonthSessions object from an array
-     * @param array $data
-     * @return MonthSessions
-     */
-    public static function fromArray(array $data): MonthSessions
-    {
-        return new MonthSessions(
-            $data['date'],
-            $data['days'],
-        );
-    }
 
     public function jsonSerialize(): array
     {

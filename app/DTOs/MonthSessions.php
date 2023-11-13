@@ -28,4 +28,18 @@ class MonthSessions extends DaySessionsCollection
         ];
     }
 
+    /**
+     * Create a MonthSessions object from an array
+     * @param array $data
+     * @return MonthSessions
+     */
+    public static function fromArray(array $data): MonthSessions
+    {
+        return new MonthSessions(
+            $data['date'],
+            $data['days'],
+        );
+    }
+
+
 }

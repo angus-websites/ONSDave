@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('leave_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('code');
             $table->string('description');
-            $table->boolean('from_balance')->default(false); // Does this leave type deduct from the employee's leave balance?
+            $table->boolean('has_balance')->default(false); // Does this leave have a balance for each employee?
             $table->timestamps();
         });
     }

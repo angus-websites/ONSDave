@@ -6,7 +6,6 @@ use App\DTOs\DaySessions;
 use App\DTOs\Session;
 use App\Services\TimeRecordStatService;
 use Carbon\Carbon;
-use DateInterval;
 use PHPUnit\Framework\TestCase;
 
 class TimeRecordStatServiceTest extends TestCase

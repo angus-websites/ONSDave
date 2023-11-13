@@ -10,6 +10,7 @@ class EmployeeAuthService
     public function employee(): ?Employee
     {
         $user = Auth::user();
+
         return $user ? $user->employee : null;
     }
 }

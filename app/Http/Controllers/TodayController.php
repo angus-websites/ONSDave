@@ -15,6 +15,7 @@ use Inertia\Inertia;
 class TodayController extends Controller
 {
     private TimeRecordStatService $timeRecordStatService;
+
     private TimeRecordOrganiserService $timeRecordOrganiserService;
 
     public function __construct()
@@ -44,7 +45,7 @@ class TodayController extends Controller
             ->where('employee_id', $employee_id)
             ->orderBy('recorded_at', 'asc')
             ->get();
-        
+
         $timeWorkedToday = new TotalWorkedTodayResource(
             $this->timeRecordStatService->calculateTotalTimeWorkedForDay(
                 $this->timeRecordOrganiserService->organiseRecordsByDay(

@@ -8,10 +8,9 @@ use App\Models\User;
 
 class TimeRecordPolicy
 {
-
     /**
      * Should the user be able to specify the clock time?
-     * @param Employee $employee
+     *
      * @return bool
      */
     public function specifyClockTime(Employee $employee)
@@ -60,4 +59,3 @@ class TimeRecordPolicy
         return false;
     }
 }
-

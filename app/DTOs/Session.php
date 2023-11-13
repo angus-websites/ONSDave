@@ -32,7 +32,6 @@ class Session implements JsonSerializable
         return $this->clockOut;
     }
 
-
     public function getDurationInSeconds(): int
     {
         // Check if the DateInterval property is not null
@@ -46,7 +45,6 @@ class Session implements JsonSerializable
         // If the DateInterval is null, return 0
         return 0;
     }
-
 
     public function getDurationString(): ?string
     {

@@ -44,5 +44,4 @@ class SessionTest extends TestCase
 
         $this->assertEquals(16792, $session->getDurationInSeconds());
     }
-
 }

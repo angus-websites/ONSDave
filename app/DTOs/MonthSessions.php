@@ -4,7 +4,6 @@ namespace App\DTOs;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use JsonSerializable;
 
 class MonthSessions extends DaySessionsCollection
 {
@@ -19,7 +18,6 @@ class MonthSessions extends DaySessionsCollection
         parent::__construct($month, $days);
     }
 
-
     public function toArray(): array
     {
         return [
@@ -30,8 +28,6 @@ class MonthSessions extends DaySessionsCollection
 
     /**
      * Create a MonthSessions object from an array
-     * @param array $data
-     * @return MonthSessions
      */
     public static function fromArray(array $data): MonthSessions
     {
@@ -40,6 +36,4 @@ class MonthSessions extends DaySessionsCollection
             $data['days'],
         );
     }
-
-
 }

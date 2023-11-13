@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-
 use App\DTOs\DaySessions;
 
 class TimeRecordStatService
@@ -19,9 +18,9 @@ class TimeRecordStatService
         }
 
         // Calculate the total hours, minutes, and seconds
-        $totalHours = (int)floor($total_seconds / 3600);
-        $totalMinutes = (int)floor(floor($total_seconds / 60) % 60);
-        $totalSeconds = (int)$total_seconds % 60;
+        $totalHours = (int) floor($total_seconds / 3600);
+        $totalMinutes = (int) floor(floor($total_seconds / 60) % 60);
+        $totalSeconds = (int) $total_seconds % 60;
 
         return [
             'hours' => $totalHours,
@@ -29,6 +28,4 @@ class TimeRecordStatService
             'seconds' => $totalSeconds,
         ];
     }
-
-
 }

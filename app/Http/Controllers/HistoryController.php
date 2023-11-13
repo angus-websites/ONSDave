@@ -3,12 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Facades\EmployeeAuth;
-use App\Http\Resources\TimeRecordByDayResource;
 use App\Http\Resources\TimeRecordByMonthResource;
 use App\Models\TimeRecord;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class HistoryController extends Controller
@@ -32,5 +28,4 @@ class HistoryController extends Controller
             'monthSessions' => $timeRecordsThisMonth,
         ]);
     }
-
 }

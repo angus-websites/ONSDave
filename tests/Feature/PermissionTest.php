@@ -4,7 +4,6 @@ namespace Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Employee;
-use Database\Factories\EmployeeFactory;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -47,8 +46,4 @@ class PermissionTest extends TestCase
         $this->assertTrue($employee->hasPermissionTo('time_records.update'));
         $this->assertTrue($employee->hasPermissionTo('time_records.delete'));
     }
-
-
-
-
 }

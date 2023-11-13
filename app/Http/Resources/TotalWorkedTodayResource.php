@@ -7,8 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class TotalWorkedTodayResource extends JsonResource
 {
-
-
     /**
      * Transform the resource into an array.
      *

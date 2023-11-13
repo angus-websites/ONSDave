@@ -7,7 +7,6 @@ use App\DTOs\Session;
 use App\Enums\TimeRecordType;
 use App\Services\TimeRecordOrganiserService;
 use Carbon\Carbon;
-use DateInterval;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\TestCase;
 

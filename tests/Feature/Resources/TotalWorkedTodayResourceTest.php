@@ -2,15 +2,11 @@
 
 namespace Feature\Resources;
 
-use App\DTOs\Session;
 use App\Enums\TimeRecordType;
-use App\Http\Resources\TimeRecordByDayResource;
 use App\Models\Employee;
 use App\Models\TimeRecord;
-use DateInterval;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class TotalWorkedTodayResourceTest extends TestCase
@@ -63,5 +59,4 @@ class TotalWorkedTodayResourceTest extends TestCase
             ]);
 
     }
-
 }

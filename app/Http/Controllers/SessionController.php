@@ -16,8 +16,6 @@ class SessionController extends Controller
 {
     /**
      * Fetch all sessions for the current employee for the given date
-     * @param Request $request
-     * @return TimeRecordByDayResource
      */
     public function fetchDaySessions(Request $request): TimeRecordByDayResource
     {
@@ -37,8 +35,6 @@ class SessionController extends Controller
 
     /**
      * Fetch all sessions for the current employee for the given month
-     * @param Request $request
-     * @return TimeRecordByMonthResource
      */
     public function fetchMonthSessions(Request $request): TimeRecordByMonthResource
     {

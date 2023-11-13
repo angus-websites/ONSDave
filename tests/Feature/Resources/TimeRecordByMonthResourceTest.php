@@ -56,7 +56,7 @@ class TimeRecordByMonthResourceTest extends TestCase
         ]);
 
         // Make an HTTP request to the month endpoint
-        $response = $this->post(route('history.month.fetch', ['month' => '4', 'year' => '2023']));
+        $response = $this->post(route('api.sessions.month', ['month' => '4', 'year' => '2023']));
 
         // Assert the response is correct
         $response->assertStatus(200);

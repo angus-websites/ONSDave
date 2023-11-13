@@ -33,42 +33,4 @@ class HistoryController extends Controller
         ]);
     }
 
-    public function fetchByDate(Request $request)
-    {
-        $data = $request->validate([
-            'date' => 'required|date',
-        ]);
-
-        $employeeId = EmployeeAuth::employee()->id;
-
-        $timeRecords = TimeRecord::whereDate('recorded_at', $data['date'])
-            ->where('employee_id', $employeeId)
-            ->orderBy('recorded_at', 'asc')
-            ->get();
-
-        return new TimeRecordByDayResource($timeRecords, Carbon::parse($data['date']));
-    }
-
-    public function fetchByMonth(Request $request)
-    {
-        // Validate the provided month and year
-        $validated = $request->validate([
-            'month' => 'required|integer|between:1,12',
-            'year' => 'required|integer',
-        ]);
-
-        // Create a Carbon instance from the provided month and year
-        $date = Carbon::createFromDate($validated['year'], $validated['month'], 1);
-
-        $employeeId = EmployeeAuth::employee()->id;
-
-        $timeRecords = TimeRecord::whereMonth('recorded_at', $validated['month'])
-            ->whereYear('recorded_at', $validated['year'])
-            ->where('employee_id', $employeeId)
-            ->orderBy('recorded_at', 'asc')
-            ->get();
-
-        return new TimeRecordByMonthResource($timeRecords, $date);
-
-    }
 }

@@ -42,7 +42,7 @@ class TotalWorkedForDayResourceTest extends TestCase
 
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => TimeRecordType::CLOCK_OUT,
+            'type' => TimeRecordType::AUTO_CLOCK_OUT,
             'recorded_at' => Carbon::parse('2023-04-15 18:00:00'),
         ]);
 
@@ -51,11 +51,9 @@ class TotalWorkedForDayResourceTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'data' => [
-                    'hours' => '07',
-                    'minutes' => '44',
-                    'seconds' => '38',
-                ],
+                'hours' => '07',
+                'minutes' => '44',
+                'seconds' => '38',
             ]);
 
     }

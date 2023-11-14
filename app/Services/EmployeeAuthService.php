@@ -11,6 +11,6 @@ class EmployeeAuthService
     {
         $user = Auth::user();
 
-        return $user ? $user->employee : null;
+        return $user?->employee;
     }
 }

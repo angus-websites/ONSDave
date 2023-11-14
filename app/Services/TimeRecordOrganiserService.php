@@ -78,18 +78,5 @@ class TimeRecordOrganiserService
 
     }
 
-    /**
-     * Calculate the duration between two dates.
-     *
-     * @return Carbon|null
-     */
-    private function calculateDuration(?string $start, ?string $end): ?DateInterval
-    {
-        if (! $start || ! $end) {
-            return null;
-        }
 
-        // Return the difference between the two dates as a Carbon instance
-        return Carbon::parse($start)->diff(Carbon::parse($end));
-    }
 }

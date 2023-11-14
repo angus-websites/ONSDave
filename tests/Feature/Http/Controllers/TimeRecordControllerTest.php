@@ -319,4 +319,37 @@ class TimeRecordControllerTest extends TestCase
         $response = $this->post(route('time-records.store'));
         $response->assertRedirect(route('login'));
     }
+
+    /**
+     * Test when a user clocks out after midnight, the clock out is recorded the next day
+     */
+    public function test_store_when_clock_out_after_midnight_recorded_next_day()
+    {
+        $employee = $this->standard_employee;
+        $this->actingAs($employee->user);
+
+        // Mock the Carbon today method to return a specific date
+        Carbon::setTestNow('2021-01-01 23:00:00');
+
+        // Clock in at 11pm
+        $this->post(route('time-records.store', ['clock_time' => '2021-01-01 23:00:00']));
+
+        // Clock out at 1am the next day
+        $this->post(route('time-records.store', ['clock_time' => '2021-01-02 01:00:00']));
+
+        // Check both records are created
+        $this->assertDatabaseHas('time_records', [
+            'employee_id' => $employee->id,
+            'type' => 'clock_in',
+            'recorded_at' => '2021-01-01 23:00:00',
+        ]);
+
+        $this->assertDatabaseHas('time_records', [
+            'employee_id' => $employee->id,
+            'type' => 'clock_out',
+            'recorded_at' => '2021-01-02 01:00:00',
+        ]);
+
+
+    }
 }

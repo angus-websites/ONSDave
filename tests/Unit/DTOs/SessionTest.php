@@ -22,6 +22,7 @@ class SessionTest extends TestCase
             clockOut: $clockOut,
             ongoing: false,
             autoClockOut: false,
+            multiDay: false,
         );
 
         $this->assertEquals(3600, $session->getDurationInSeconds());
@@ -40,6 +41,7 @@ class SessionTest extends TestCase
             clockOut: $clockOut,
             ongoing: false,
             autoClockOut: false,
+            multiDay: false,
         );
 
         $this->assertEquals(16792, $session->getDurationInSeconds());

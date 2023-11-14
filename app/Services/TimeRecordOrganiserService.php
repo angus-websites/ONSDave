@@ -22,20 +22,29 @@ class TimeRecordOrganiserService
 
         for ($i = 0; $i < $count; $i++) {
             $record = $records[$i];
+            $isMultiDay = false;
 
             if ($record->type === TimeRecordType::CLOCK_IN) {
                 $nextRecord = ($i + 1) < $count ? $records[$i + 1] : null;
 
+                // If the next record is the next day then the session is multi-day
+                if ($nextRecord && $nextRecord->recorded_at->diffInDays($record->recorded_at) > 0) {
+                    $isMultiDay = true;
+                }
+
                 $ongoing = ! $nextRecord || ! in_array($nextRecord->type, [TimeRecordType::CLOCK_OUT, TimeRecordType::AUTO_CLOCK_OUT]);
                 $isAutoClockOut = $nextRecord && $nextRecord->type === TimeRecordType::AUTO_CLOCK_OUT;
-                $clockOutTime = $ongoing ? null : $nextRecord->recorded_at;
+                $clockOut = $ongoing ? null : $nextRecord->recorded_at;
+
+
 
                 // Create a new session object using named parameters
                 $session = new Session(
                     clockIn: $record->recorded_at,
-                    clockOut: $clockOutTime,
+                    clockOut: $clockOut,
                     ongoing: $ongoing,
                     autoClockOut: $isAutoClockOut,
+                    multiDay: $isMultiDay
                 );
 
                 $organizedSessions->push($session);

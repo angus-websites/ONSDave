@@ -23,6 +23,7 @@ class TimeRecordService
             ->orderBy('recorded_at', 'asc')
             ->get();
 
+        // TODO maybe wrap resources in the controller instead of here
         return new TotalWorkedForDayResource(
             $this->timeRecordStatService->calculateTotalTimeWorkedForDay(
                 $this->timeRecordOrganiserService->organiseRecordsByDay($timeRecords, $date)

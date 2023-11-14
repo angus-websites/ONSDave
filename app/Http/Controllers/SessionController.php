@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Facades\EmployeeAuth;
 use App\Http\Resources\TimeRecordByDayResource;
 use App\Http\Resources\TimeRecordByMonthResource;
-use App\Http\Resources\TotalWorkedTodayResource;
+use App\Http\Resources\TotalWorkedForDayResource;
 use App\Models\TimeRecord;
 use App\Services\TimeRecordOrganiserService;
 use App\Services\TimeRecordStatService;
@@ -62,7 +62,7 @@ class SessionController extends Controller
     /**
      * Calculate the total time worked for a given day
      */
-    public function calculateTotalWorkedTimeForDay(Request $request, TimeRecordStatService $timeRecordStatService, TimeRecordOrganiserService $timeRecordOrganiserService): TotalWorkedTodayResource
+    public function calculateTotalWorkedTimeForDay(Request $request, TimeRecordStatService $timeRecordStatService, TimeRecordOrganiserService $timeRecordOrganiserService): TotalWorkedForDayResource
     {
         $data = $request->validate([
             'date' => 'required|date',
@@ -83,6 +83,6 @@ class SessionController extends Controller
             )
         );
 
-        return new TotalWorkedTodayResource($timeWorkedToday);
+        return new TotalWorkedForDayResource($timeWorkedToday);
     }
 }

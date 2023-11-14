@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
-class TotalWorkedTodayResourceTest extends TestCase
+class TotalWorkedForDayResourceTest extends TestCase
 {
     use RefreshDatabase;
 

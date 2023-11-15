@@ -352,4 +352,43 @@ class TimeRecordControllerTest extends TestCase
 
 
     }
+
+    /**
+     * Test store with a clock time in a different timezone
+     * here we test within and outside of daylight savings time
+     */
+    public function test_store_clock_time_conversion_with_dst()
+    {
+        $employee = $this->standard_employee;
+        $this->actingAs($employee->user);
+
+        // Date within DST period in London (e.g., July 1)
+        $this->postAndCheckTime('2021-07-01 09:00:00', 'Europe/London', '2021-07-01 08:00:00');
+
+        // Date outside DST period in London (e.g., November 1)
+        $this->postAndCheckTime('2021-11-01 09:00:00', 'Europe/London', '2021-11-01 09:00:00');
+
+        // Test with a different timezone
+        $this->postAndCheckTime('2021-07-01 09:00:00', 'America/New_York', '2021-07-01 13:00:00');
+
+        // Test with an asian timezone
+
+    }
+
+    private function postAndCheckTime($localTime, $timezone, $expectedUTCTime): void
+    {
+        $employee = $this->standard_employee;
+
+        $this->post(route('time-records.store'), [
+            'clock_time' => $localTime,
+            'type' => 'clock_in',
+            'time_zone' => $timezone,
+        ]);
+
+        $this->assertDatabaseHas('time_records', [
+            'employee_id' => $employee->id,
+            'type' => 'clock_in',
+            'recorded_at' => $expectedUTCTime,
+        ]);
+    }
 }

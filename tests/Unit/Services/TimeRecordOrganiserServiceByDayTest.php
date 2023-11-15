@@ -106,6 +106,8 @@ class TimeRecordOrganiserServiceByDayTest extends TestCase
     /**
      * Test the service with some missing data
      * the clock_out records are missing
+     *
+     * TODO this should throw a warning or error somewhere
      */
     public function test_organise_records_by_day_with_some_missing_data(): void
     {
@@ -184,5 +186,52 @@ class TimeRecordOrganiserServiceByDayTest extends TestCase
 
         // Assert that the entire structure matches our expectation
         $this->assertEquals($expectedDaySessions, $actualDaySessions);
+    }
+
+    /**
+     * Test multi day sessions
+     */
+    public function test_organise_records_by_day_with_multi_day_sessions(): void
+    {
+        // Mockup a time record that spans two days
+        $records = new Collection([
+            (object) [
+                'type' => TimeRecordType::CLOCK_IN,
+                'recorded_at' => Carbon::parse('2023-04-15 23:00:00'),
+            ],
+            (object) [
+                'type' => TimeRecordType::CLOCK_OUT,
+                'recorded_at' => Carbon::parse('2023-04-16 02:15:00'),
+            ],
+        ]);
+
+        // Set date to the date of clock in
+        $date = Carbon::parse('2023-04-15');
+
+        // Create a new instance of the service
+        $service = new TimeRecordOrganiserService();
+
+        // Pass the records to the service
+        $actualDaySessions = $service->organiseRecordsByDay($records, $date);
+
+        // Create a collection with the expected sessions
+        $expectedSessions = collect([
+            Session::fromArray([
+                'clock_in' => Carbon::parse('2023-04-15 23:00:00'),
+                'clock_out' => Carbon::parse('2023-04-16 02:15:00'),
+                'ongoing' => false,
+                'auto_clock_out' => false,
+            ]),
+        ]);
+
+        // Expected result
+        $expectedDaySessions = new DaySessions(
+            date: $date,
+            sessions: $expectedSessions,
+        );
+
+        // Assert that the entire structure matches our expectation
+        $this->assertEquals($expectedDaySessions, $actualDaySessions);
+
     }
 }

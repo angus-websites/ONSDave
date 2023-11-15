@@ -9,17 +9,22 @@ use JsonSerializable;
 class Session implements JsonSerializable
 {
     private ?DateInterval $duration = null;
+    private bool $multiDay = false;
 
     public function __construct(
         public Carbon $clockIn,
         public ?Carbon $clockOut,
         public bool $ongoing,
         public bool $autoClockOut,
-        public bool $multiDay,
     ) {
         // Calculate the duration if the clock out time is not null
         if ($this->clockOut !== null) {
             $this->duration = $this->clockIn->diff($this->clockOut);
+        }
+
+        // Check if the session is multi-day
+        if ($this->clockOut && $this->clockOut->format('Y-m-d') > $this->clockIn->format('Y-m-d')) {
+            $this->multiDay = true;
         }
     }
 
@@ -57,6 +62,11 @@ class Session implements JsonSerializable
         return $this->ongoing;
     }
 
+    public function isMultiDay(): bool
+    {
+        return $this->multiDay;
+    }
+
     public function isAutoClockOut(): bool
     {
         return $this->autoClockOut;
@@ -69,7 +79,6 @@ class Session implements JsonSerializable
             $data['clock_out'],
             $data['ongoing'],
             $data['auto_clock_out'],
-            $data['multi_day'] ?? false,
         );
     }
 
@@ -82,7 +91,7 @@ class Session implements JsonSerializable
             'duration_in_seconds' => $this->getDurationInSeconds(),
             'ongoing' => $this->isOngoing(),
             'auto_clock_out' => $this->isAutoClockOut(),
-            'multi_day' => $this->multiDay,
+            'multi_day' => $this->isMultiDay(),
         ];
     }
 

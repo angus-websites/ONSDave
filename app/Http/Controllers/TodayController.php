@@ -4,24 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Enums\TimeRecordType;
 use App\Facades\EmployeeAuth;
-use App\Http\Resources\TotalWorkedTodayResource;
 use App\Models\TimeRecord;
-use App\Services\TimeRecordOrganiserService;
-use App\Services\TimeRecordStatService;
+use App\Services\TimeRecordService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 
 class TodayController extends Controller
 {
-    private TimeRecordStatService $timeRecordStatService;
+    private TimeRecordService $timeRecordService;
 
-    private TimeRecordOrganiserService $timeRecordOrganiserService;
-
-    public function __construct()
+    public function __construct(TimeRecordService $timeRecordService)
     {
-        $this->timeRecordStatService = new TimeRecordStatService();
-        $this->timeRecordOrganiserService = new TimeRecordOrganiserService();
+        $this->timeRecordService = $timeRecordService;
     }
 
     public function index(Request $request)
@@ -40,20 +35,7 @@ class TodayController extends Controller
 
         $canSpecifyClockTime = $employee->can('specifyClockTime', TimeRecord::class);
 
-        // TODO this is a duplicate of the code in HistoryController.php put into a service
-        $timeRecords = TimeRecord::whereDate('recorded_at', $today)
-            ->where('employee_id', $employee_id)
-            ->orderBy('recorded_at', 'asc')
-            ->get();
-
-        $timeWorkedToday = new TotalWorkedTodayResource(
-            $this->timeRecordStatService->calculateTotalTimeWorkedForDay(
-                $this->timeRecordOrganiserService->organiseRecordsByDay(
-                    $timeRecords,
-                    $today
-                )
-            )
-        );
+        $timeWorkedToday = $this->timeRecordService->getTimeWorkedForDate($employee_id, $today);
 
         return Inertia::render('Today', ['isClockedIn' => $isClockedIn, 'canSpecifyClockTime' => $canSpecifyClockTime, 'timeWorkedToday' => $timeWorkedToday]);
     }

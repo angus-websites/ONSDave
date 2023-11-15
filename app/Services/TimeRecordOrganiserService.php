@@ -7,13 +7,14 @@ use App\DTOs\MonthSessions;
 use App\DTOs\Session;
 use App\Enums\TimeRecordType;
 use Carbon\Carbon;
-use DateInterval;
 use Illuminate\Support\Collection;
 
 class TimeRecordOrganiserService
 {
     /**
      * Organize the records into sessions with clock in, clock out, and duration.
+     * the $records collection is assumed to be ordered by recorded_at ascending
+     * and contain the necessary records for the given date including any multi-day records.
      */
     public function organiseRecordsByDay(Collection $records, Carbon $date): DaySessions
     {
@@ -28,12 +29,12 @@ class TimeRecordOrganiserService
 
                 $ongoing = ! $nextRecord || ! in_array($nextRecord->type, [TimeRecordType::CLOCK_OUT, TimeRecordType::AUTO_CLOCK_OUT]);
                 $isAutoClockOut = $nextRecord && $nextRecord->type === TimeRecordType::AUTO_CLOCK_OUT;
-                $clockOutTime = $ongoing ? null : $nextRecord->recorded_at;
+                $clockOut = $ongoing ? null : $nextRecord->recorded_at;
 
                 // Create a new session object using named parameters
                 $session = new Session(
                     clockIn: $record->recorded_at,
-                    clockOut: $clockOutTime,
+                    clockOut: $clockOut,
                     ongoing: $ongoing,
                     autoClockOut: $isAutoClockOut,
                 );
@@ -76,20 +77,5 @@ class TimeRecordOrganiserService
             days: $monthSessions,
         );
 
-    }
-
-    /**
-     * Calculate the duration between two dates.
-     *
-     * @return Carbon|null
-     */
-    private function calculateDuration(?string $start, ?string $end): ?DateInterval
-    {
-        if (! $start || ! $end) {
-            return null;
-        }
-
-        // Return the difference between the two dates as a Carbon instance
-        return Carbon::parse($start)->diff(Carbon::parse($end));
     }
 }

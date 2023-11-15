@@ -6,6 +6,7 @@ use App\DTOs\Session;
 use App\Enums\TimeRecordType;
 use App\Models\Employee;
 use App\Models\TimeRecord;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
@@ -14,13 +15,23 @@ class TimeRecordByDayResourceTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(RoleSeeder::class);
+
+        $this->standard_employee = Employee::factory()->withRole('employee')->create();
+        $this->restricted_employee = Employee::factory()->withRole('employee restricted')->create();
+
+    }
+
     /**
      * Test the resource at a http endpoint
      */
     public function test_resource_fetch_by_date_endpoint_works()
     {
-        $employee = Employee::factory()->create();
-        $this->actingAs($employee->user);
+        $employee = $this->standard_employee;
+        $this->actingAs($this->standard_employee->user);
 
         // Insert some records into the database
         TimeRecord::create([
@@ -80,7 +91,7 @@ class TimeRecordByDayResourceTest extends TestCase
      */
     public function test_resource_fetch_by_date_endpoint_works_with_ongoing_session()
     {
-        $employee = Employee::factory()->create();
+        $employee = $this->standard_employee;
         $this->actingAs($employee->user);
 
         // Insert some records into the database

@@ -319,4 +319,90 @@ class TimeRecordControllerTest extends TestCase
         $response = $this->post(route('time-records.store'));
         $response->assertRedirect(route('login'));
     }
+
+    /**
+     * Test when a user clocks out after midnight, the clock out is recorded the next day
+     */
+    public function test_store_when_clock_out_after_midnight_recorded_next_day()
+    {
+        $employee = $this->standard_employee;
+        $this->actingAs($employee->user);
+
+        // Mock the Carbon today method to return a specific date
+        Carbon::setTestNow('2021-01-01 23:00:00');
+
+        // Clock in at 11pm
+        $this->post(route('time-records.store', ['clock_time' => '2021-01-01 23:00:00']));
+
+        // Clock out at 1am the next day
+        $this->post(route('time-records.store', ['clock_time' => '2021-01-02 01:00:00']));
+
+        // Check both records are created
+        $this->assertDatabaseHas('time_records', [
+            'employee_id' => $employee->id,
+            'type' => 'clock_in',
+            'recorded_at' => '2021-01-01 23:00:00',
+        ]);
+
+        $this->assertDatabaseHas('time_records', [
+            'employee_id' => $employee->id,
+            'type' => 'clock_out',
+            'recorded_at' => '2021-01-02 01:00:00',
+        ]);
+
+    }
+
+    /**
+     * Test store with a clock time in a different timezone
+     * here we test within and outside of daylight savings time
+     */
+    public function test_store_clock_time_conversion_with_dst()
+    {
+        // Date within DST period in London (e.g., July 1)
+        $this->postAndCheckTime('2021-07-01 09:00:00', 'Europe/London', '2021-07-01 08:00:00');
+
+        // Date outside DST period in London (e.g., November 1)
+        $this->postAndCheckTime('2021-11-01 09:00:00', 'Europe/London', '2021-11-01 09:00:00');
+
+    }
+
+    /**
+     * Test store with a clock time in a different timezone
+     */
+    public function test_store_clock_time_conversion_with_different_timezones()
+    {
+        // Test America/New_York timezone
+        $this->postAndCheckTime('2021-07-01 09:00:00', 'America/New_York', '2021-07-01 13:00:00');
+
+        // Test Asia/Tokyo timezone
+        $this->postAndCheckTime('2021-07-01 09:00:00', 'Asia/Tokyo', '2021-07-01 00:00:00');
+
+    }
+
+    /**
+     * Test store when local timezeone clock time is a different day to UTC
+     */
+    public function test_store_clock_time_timezone_conversion_with_different_days()
+    {
+        // Test Australia/Sydney timezone
+        $this->postAndCheckTime('2021-07-01 09:00:00', 'Australia/Sydney', '2021-06-30 23:00:00');
+    }
+
+    private function postAndCheckTime($localTime, $timezone, $expectedUTCTime): void
+    {
+        $employee = $this->standard_employee;
+        $this->actingAs($employee->user);
+
+        $this->post(route('time-records.store'), [
+            'clock_time' => $localTime,
+            'type' => 'clock_in',
+            'time_zone' => $timezone,
+        ]);
+
+        $this->assertDatabaseHas('time_records', [
+            'employee_id' => $employee->id,
+            'type' => 'clock_in',
+            'recorded_at' => $expectedUTCTime,
+        ]);
+    }
 }

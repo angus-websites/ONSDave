@@ -140,7 +140,7 @@ const toggleClock = () => {
 const getTotalTimeWorkedToday = computed(() => {
     if (props.timeWorkedToday) {
         // Return a formatted time string
-        const timeData = props.timeWorkedToday.data
+        const timeData = props.timeWorkedToday
         return `${timeData.hours}:${timeData.minutes}:${timeData.seconds}`
     }
 

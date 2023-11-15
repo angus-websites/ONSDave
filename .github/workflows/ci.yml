@@ -2,9 +2,9 @@ name: CI Pipeline
 
 on:
   workflow_dispatch:
-#  pull_request:
-#    branches:
-#      - main
+  pull_request:
+    branches:
+      - main
 
 env:
   IMAGE_NAME: dave-test-image # Needs to be lowercase
@@ -22,7 +22,7 @@ jobs:
       - name: Convert repository name to lowercase
         run: echo "REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      #- name: create env.testing file # - Uncomment this to load testing env vars from secrets (then add --env-file .env.testing to docker run below)
+        #- name: create env.testing file # - Uncomment this to load testing env vars from secrets (then add --env-file .env.testing to docker run below)
         #run: echo "${{ secrets.ENV_FILE_TESTING }}" > .env.testing
 
       - name: Build Docker image

@@ -12,6 +12,22 @@ use Illuminate\Support\Carbon;
 class TimeRecordController extends Controller
 {
     /**
+     * Covert the provided clock time to UTC
+     * based on the user's time zone
+     */
+    private function convertToUtc($clockTime, $userTimeZone)
+    {
+        // TODO handle null clock time, maybe here ir elksewhere
+        $userTimeZone = $userTimeZone ?? 'Europe/London';
+        if (! in_array($userTimeZone, timezone_identifiers_list())) {
+            $userTimeZone = 'Europe/London';
+        }
+
+        return Carbon::createFromFormat('Y-m-d H:i:s', $clockTime, $userTimeZone)
+            ->setTimezone('UTC');
+    }
+
+    /**
      * Store a new time record in the database
      *
      * @throws AuthorizationException
@@ -19,69 +35,57 @@ class TimeRecordController extends Controller
     public function store(Request $request)
     {
         $employee = EmployeeAuth::employee();
-
-        // Authorise the employee to create a time record
         $this->authorizeForUser($employee, 'create', TimeRecord::class);
 
-        // Validate the request data, default clockTimeManuallySet to true
         $validatedData = $request->validate([
             'clock_time' => 'sometimes|date',
+            'time_zone' => 'sometimes|string',
         ]);
+
+        // If the employee can specify the clock time, use the provided clock time and convert it to UTC
+        if ($employee->can('specifyClockTime', TimeRecord::class) && isset($validatedData['clock_time'])) {
+            $clockTime = $this->convertToUtc($validatedData['clock_time'], $validatedData['time_zone'] ?? null);
+        }
+        // Otherwise, use the current time
+        else {
+            $clockTime = Carbon::now('UTC');
+        }
 
         $employee_id = $employee->id;
         $today = Carbon::today();
 
-        // If the employee can specify the clock time and the clock time is set, then use that
-        $clockTime = ($employee->can('specifyClockTime', TimeRecord::class) && isset($validatedData['clock_time']))
-            ? Carbon::parse($validatedData['clock_time'])
-            : Carbon::now();
-
-        // Get the latest time record for the user for today
         $latestRecord = TimeRecord::where('employee_id', $employee_id)
             ->whereDate('recorded_at', $today)
             ->orderBy('recorded_at', 'desc')
             ->first();
 
-        // Check if there's no record for today or the latest is a clock-out
-        if (! $latestRecord || $latestRecord->type === TimeRecordType::CLOCK_OUT) {
+        // Determine whether to clock in or out
+        $type = (! $latestRecord || $latestRecord->type === TimeRecordType::CLOCK_OUT)
+            ? TimeRecordType::CLOCK_IN : TimeRecordType::CLOCK_OUT;
 
-            // If the previous record is a clock-out, ensure the clock time is after the previous clock-out
-            if ($latestRecord && $clockTime->isBefore($latestRecord->recorded_at)) {
-                // Redirect back with an error
-                return redirect()->back()->withErrors(['clock_time' => 'The clock in time must be after the previous clock out time']);
-            }
+        // Validate clock time against the latest record
+        if ($latestRecord && $clockTime->isBefore($latestRecord->recorded_at)) {
+            $error = $type === TimeRecordType::CLOCK_IN ? 'The clock in time must be after the previous clock out time' : 'The clock out time must be after the previous clock in time';
 
-            // If there's no record for today or the latest is a clock-out, then create a clock-in
-            TimeRecord::create([
-                'employee_id' => $employee_id,
-                'recorded_at' => $clockTime,
-                'type' => TimeRecordType::CLOCK_IN,
-            ]);
-        } else {
-
-            // Ensure the clock time is after the latest record
-            if ($clockTime->isBefore($latestRecord->recorded_at)) {
-                // Redirect back with an error
-                return redirect()->back()->withErrors(['clock_time' => 'The clock out time must be after the previous clock in time']);
-            }
-
-            // If clock out time is less than 5 seconds after previous clock in, delete the previous clock in
-            if ($clockTime->diffInSeconds($latestRecord->recorded_at) <= 5) {
-                $latestRecord->delete();
-
-                // Redirect back with an info message and parameter to controller
-                return redirect()->back()->with('info', 'As this session was less than 5 seconds, it was deleted.');
-            }
-
-            // Otherwise, create a clock-out
-            TimeRecord::create([
-                'employee_id' => $employee_id,
-                'recorded_at' => $clockTime,
-                'type' => TimeRecordType::CLOCK_OUT,
-            ]);
+            return redirect()->back()->withErrors(['clock_time' => $error]);
         }
 
-        return redirect()->route('today');  // Redirect back to the today view
+        // Handle the short-duration session case
+        if ($type === TimeRecordType::CLOCK_OUT && $clockTime->diffInSeconds($latestRecord->recorded_at) <= 5) {
+            $latestRecord->delete();
+
+            return redirect()->back()->with('info', 'As this session was less than 5 seconds, it was deleted.');
+        }
+
+        // Create the time record
+        // TODO move this to a service
+        TimeRecord::create([
+            'employee_id' => $employee_id,
+            'recorded_at' => $clockTime,
+            'type' => $type,
+        ]);
+
+        return redirect()->route('today');
     }
 
     /**

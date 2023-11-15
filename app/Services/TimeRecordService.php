@@ -6,6 +6,7 @@ use App\Enums\TimeRecordType;
 use App\Http\Resources\TotalWorkedForDayResource;
 use App\Models\TimeRecord;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class TimeRecordService
 {
@@ -79,16 +80,17 @@ class TimeRecordService
 
     /**
      * Get the time records for a given month
+     * the provided month should be a Carbon instance of the first day of the month
      */
-    public function getTimeRecordsForMonth($employeeId, $month, $year): \Illuminate\Support\Collection
+    public function getTimeRecordsForMonth($employeeId, Carbon $month): \Illuminate\Support\Collection
     {
         // Go through every day of the month and fetch the time records for that day
-        $days = Carbon::parse($month)->daysInMonth;
+        $days = $month->daysInMonth;
         $timeRecords = collect();
 
         for ($i = 1; $i <= $days; $i++) {
             // Create a Carbon instance for the current day based on the month and year
-            $date = Carbon::createFromDate($year, $month, $i)->toDateString();
+            $date = Carbon::createFromDate($month->year, $month->month, $i)->toDateString();
             $timeRecords = $timeRecords->merge($this->getTimeRecordsForDate($employeeId, $date));
         }
 

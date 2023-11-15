@@ -6,6 +6,7 @@ use App\Facades\EmployeeAuth;
 use App\Http\Resources\TimeRecordByMonthResource;
 use App\Models\TimeRecord;
 use App\Services\TimeRecordService;
+use Carbon\Carbon;
 use Inertia\Inertia;
 
 class HistoryController extends Controller
@@ -22,10 +23,10 @@ class HistoryController extends Controller
     {
         $employeeId = EmployeeAuth::employee()->id;
 
-        $currentMonth = today()->month;
-        $currentYear = today()->year;
+        // Get the first day of the current month
+        $currentMonth = Carbon::today()->firstOfMonth();
 
-        $timeRecords = $this->timeRecordService->getTimeRecordsForMonth($employeeId, $currentMonth, $currentYear);
+        $timeRecords = $this->timeRecordService->getTimeRecordsForMonth($employeeId, $currentMonth);
 
         $timeRecordsThisMonth = new TimeRecordByMonthResource($timeRecords, today());
 

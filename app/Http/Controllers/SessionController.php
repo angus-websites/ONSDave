@@ -54,12 +54,7 @@ class SessionController extends Controller
 
         $employeeId = EmployeeAuth::employee()->id;
 
-        // TODO move this to the service
-        $timeRecords = TimeRecord::whereMonth('recorded_at', $validated['month'])
-            ->whereYear('recorded_at', $validated['year'])
-            ->where('employee_id', $employeeId)
-            ->orderBy('recorded_at', 'asc')
-            ->get();
+        $timeRecords = $this->timeRecordService->getTimeRecordsForMonth($employeeId, $date);
 
         return new TimeRecordByMonthResource($timeRecords, $date);
 

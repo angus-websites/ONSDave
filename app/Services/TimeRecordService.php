@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Enums\TimeRecordType;
 use App\Models\TimeRecord;
 use App\Http\Resources\TotalWorkedForDayResource;
 use Carbon\Carbon;
@@ -37,7 +38,7 @@ class TimeRecordService
      * Will fetch the TimeRecords for the given date and employee, if the last record is a clock in, it will fetch the
      * first record of the next day and append it to the collection
      */
-    private function getTimeRecordsForDate($employeeId, $date)
+    public function getTimeRecordsForDate($employeeId, $date): \Illuminate\Database\Eloquent\Collection
     {
         // Fetch records for the specified date
         $dateRecords = TimeRecord::whereDate('recorded_at', $date)
@@ -46,14 +47,14 @@ class TimeRecordService
             ->get();
 
         // Check and append the first record of the next day if the last record is a clock in
-        if ($dateRecords->isNotEmpty() && $dateRecords->last()->isClockIn()) {
+        if ($dateRecords->isNotEmpty() && $dateRecords->last()->type === TimeRecordType::CLOCK_IN) {
             $nextDay = Carbon::parse($date)->addDay()->toDateString();
             $firstRecordNextDay = TimeRecord::whereDate('recorded_at', $nextDay)
                 ->where('employee_id', $employeeId)
                 ->orderBy('recorded_at', 'asc')
                 ->first();
 
-            if ($firstRecordNextDay && $firstRecordNextDay->isClockOut()) {
+            if ($firstRecordNextDay && $firstRecordNextDay->type === TimeRecordType::CLOCK_OUT) {
                 $dateRecords->push($firstRecordNextDay);
             }
         }

@@ -31,6 +31,9 @@ class TimeRecordService
         return ($latestRecord && $latestRecord->type === TimeRecordType::CLOCK_IN);
     }
 
+    /**
+     * Get the total time worked for the given date, returns an array of hours, minutes and seconds
+     */
     public function getTimeWorkedForDate($employeeId, $date): array
     {
         // TODO write specific test for this method
@@ -72,5 +75,23 @@ class TimeRecordService
         }
 
         return $dateRecords;
+    }
+
+    /**
+     * Get the time records for a given month
+     */
+    public function getTimeRecordsForMonth($employeeId, $month, $year): \Illuminate\Support\Collection
+    {
+        // Go through every day of the month and fetch the time records for that day
+        $days = Carbon::parse($month)->daysInMonth;
+        $timeRecords = collect();
+
+        for ($i = 1; $i <= $days; $i++) {
+            // Create a Carbon instance for the current day based on the month and year
+            $date = Carbon::createFromDate($year, $month, $i)->toDateString();
+            $timeRecords = $timeRecords->merge($this->getTimeRecordsForDate($employeeId, $date));
+        }
+
+        return $timeRecords;
     }
 }

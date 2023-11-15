@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controllers;
 use App\Models\Employee;
 use App\Models\TimeRecord;
 use Carbon\Carbon;
+use Database\Factories\UserFactory;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -105,5 +106,18 @@ class TodayControllerTest extends TestCase
             ->where('canSpecifyClockTime', false)
             ->where('timeWorkedToday', $expectedTimeWorked)
         );
+    }
+
+    /**
+     * Test going to the today page with a user that is not an employee
+     */
+    public function test_cannot_get_today_page_as_non_employee()
+    {
+        $user  = UserFactory::new()->create();
+        $this->actingAs($user)
+            ->get(route('today'))
+            ->assertStatus(403);
+
+
     }
 }

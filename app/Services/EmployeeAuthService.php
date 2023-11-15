@@ -11,6 +11,12 @@ class EmployeeAuthService
     {
         $user = Auth::user();
 
-        return $user?->employee;
+        // Throw a 403 if the user is not an employee
+        if (!$user?->employee) {
+            abort(403);
+        }
+
+        // Otherwise return the employee
+        return $user->employee;
     }
 }

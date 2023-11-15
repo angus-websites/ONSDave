@@ -8,12 +8,20 @@ use App\Http\Resources\TimeRecordByMonthResource;
 use App\Http\Resources\TotalWorkedForDayResource;
 use App\Models\TimeRecord;
 use App\Services\TimeRecordOrganiserService;
+use App\Services\TimeRecordService;
 use App\Services\TimeRecordStatService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SessionController extends Controller
 {
+    private TimeRecordService $timeRecordService;
+
+    public function __construct(TimeRecordService $timeRecordService)
+    {
+        $this->timeRecordService = $timeRecordService;
+    }
+
     /**
      * Fetch all sessions for the current employee for the given date
      */
@@ -25,10 +33,7 @@ class SessionController extends Controller
 
         $employeeId = EmployeeAuth::employee()->id;
 
-        $timeRecords = TimeRecord::whereDate('recorded_at', $data['date'])
-            ->where('employee_id', $employeeId)
-            ->orderBy('recorded_at', 'asc')
-            ->get();
+        $timeRecords = $this->timeRecordService->getTimeRecordsForDate($employeeId, $data['date']);
 
         return new TimeRecordByDayResource($timeRecords, Carbon::parse($data['date']));
     }
@@ -49,6 +54,7 @@ class SessionController extends Controller
 
         $employeeId = EmployeeAuth::employee()->id;
 
+        // TODO move this to the service
         $timeRecords = TimeRecord::whereMonth('recorded_at', $validated['month'])
             ->whereYear('recorded_at', $validated['year'])
             ->where('employee_id', $employeeId)
@@ -70,10 +76,7 @@ class SessionController extends Controller
 
         $employeeId = EmployeeAuth::employee()->id;
 
-        $timeRecords = TimeRecord::whereDate('recorded_at', $data['date'])
-            ->where('employee_id', $employeeId)
-            ->orderBy('recorded_at', 'asc')
-            ->get();
+        $timeRecords = $this->timeRecordService->getTimeRecordsForDate($employeeId, $data['date']);
 
         // Use the stat service to calculate the total time worked
         $timeWorkedToday = $timeRecordStatService->calculateTotalTimeWorkedForDay(

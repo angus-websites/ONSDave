@@ -7,7 +7,6 @@ use App\DTOs\MonthSessions;
 use App\DTOs\Session;
 use App\Enums\TimeRecordType;
 use Carbon\Carbon;
-use DateInterval;
 use Illuminate\Support\Collection;
 
 class TimeRecordOrganiserService
@@ -27,7 +26,6 @@ class TimeRecordOrganiserService
 
             if ($record->type === TimeRecordType::CLOCK_IN) {
                 $nextRecord = ($i + 1) < $count ? $records[$i + 1] : null;
-
 
                 $ongoing = ! $nextRecord || ! in_array($nextRecord->type, [TimeRecordType::CLOCK_OUT, TimeRecordType::AUTO_CLOCK_OUT]);
                 $isAutoClockOut = $nextRecord && $nextRecord->type === TimeRecordType::AUTO_CLOCK_OUT;
@@ -80,6 +78,4 @@ class TimeRecordOrganiserService
         );
 
     }
-
-
 }

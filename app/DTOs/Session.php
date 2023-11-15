@@ -9,6 +9,7 @@ use JsonSerializable;
 class Session implements JsonSerializable
 {
     private ?DateInterval $duration = null;
+
     private bool $multiDay = false;
 
     public function __construct(

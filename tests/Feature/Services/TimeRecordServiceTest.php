@@ -13,10 +13,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\MockObject\Exception;
 use Tests\TestCase;
 
-
 class TimeRecordServiceTest extends TestCase
 {
     use RefreshDatabase;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -29,6 +29,7 @@ class TimeRecordServiceTest extends TestCase
 
     /**
      * Test the getTimeRecordsForDate method
+     *
      * @throws Exception
      */
     public function test_get_time_records_for_date_on_multi_day()
@@ -114,10 +115,6 @@ class TimeRecordServiceTest extends TestCase
 
         // Assert the correct records are returned
         $this->assertEquals($expected, $actual);
-
-
-
-
 
     }
 }

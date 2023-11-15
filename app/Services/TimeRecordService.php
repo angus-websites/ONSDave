@@ -1,14 +1,16 @@
 <?php
+
 namespace App\Services;
 
 use App\Enums\TimeRecordType;
-use App\Models\TimeRecord;
 use App\Http\Resources\TotalWorkedForDayResource;
+use App\Models\TimeRecord;
 use Carbon\Carbon;
 
 class TimeRecordService
 {
     protected TimeRecordStatService $timeRecordStatService;
+
     protected TimeRecordOrganiserService $timeRecordOrganiserService;
 
     public function __construct(TimeRecordStatService $timeRecordStatService, TimeRecordOrganiserService $timeRecordOrganiserService)
@@ -61,5 +63,4 @@ class TimeRecordService
 
         return $dateRecords;
     }
-
 }

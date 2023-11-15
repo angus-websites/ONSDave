@@ -11,7 +11,6 @@ use Illuminate\Support\Carbon;
 
 class TimeRecordController extends Controller
 {
-
     /**
      * Covert the provided clock time to UTC
      * based on the user's time zone
@@ -20,7 +19,7 @@ class TimeRecordController extends Controller
     {
         // TODO handle null clock time, maybe here ir elksewhere
         $userTimeZone = $userTimeZone ?? 'Europe/London';
-        if (!in_array($userTimeZone, timezone_identifiers_list())) {
+        if (! in_array($userTimeZone, timezone_identifiers_list())) {
             $userTimeZone = 'Europe/London';
         }
 
@@ -40,7 +39,7 @@ class TimeRecordController extends Controller
 
         $validatedData = $request->validate([
             'clock_time' => 'sometimes|date',
-            'time_zone' => 'sometimes|string'
+            'time_zone' => 'sometimes|string',
         ]);
 
         // If the employee can specify the clock time, use the provided clock time and convert it to UTC
@@ -61,22 +60,25 @@ class TimeRecordController extends Controller
             ->first();
 
         // Determine whether to clock in or out
-        $type = (!$latestRecord || $latestRecord->type === TimeRecordType::CLOCK_OUT)
+        $type = (! $latestRecord || $latestRecord->type === TimeRecordType::CLOCK_OUT)
             ? TimeRecordType::CLOCK_IN : TimeRecordType::CLOCK_OUT;
 
         // Validate clock time against the latest record
         if ($latestRecord && $clockTime->isBefore($latestRecord->recorded_at)) {
             $error = $type === TimeRecordType::CLOCK_IN ? 'The clock in time must be after the previous clock out time' : 'The clock out time must be after the previous clock in time';
+
             return redirect()->back()->withErrors(['clock_time' => $error]);
         }
 
         // Handle the short-duration session case
         if ($type === TimeRecordType::CLOCK_OUT && $clockTime->diffInSeconds($latestRecord->recorded_at) <= 5) {
             $latestRecord->delete();
+
             return redirect()->back()->with('info', 'As this session was less than 5 seconds, it was deleted.');
         }
 
         // Create the time record
+        // TODO move this to a service
         TimeRecord::create([
             'employee_id' => $employee_id,
             'recorded_at' => $clockTime,
@@ -86,27 +88,27 @@ class TimeRecordController extends Controller
         return redirect()->route('today');
     }
 
-        /**
-         * Display the specified resource.
-         */
-        public function show(string $id)
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
     {
         //
     }
 
-        /**
-         * Update the specified resource in storage.
-         */
-        public function update(Request $request, string $id)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
     {
         //
     }
 
-        /**
-         * Remove the specified resource from storage.
-         */
-        public function destroy(string $id)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
     {
         //
     }
-    }
+}

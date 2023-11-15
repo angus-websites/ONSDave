@@ -350,7 +350,6 @@ class TimeRecordControllerTest extends TestCase
             'recorded_at' => '2021-01-02 01:00:00',
         ]);
 
-
     }
 
     /**
@@ -393,7 +392,6 @@ class TimeRecordControllerTest extends TestCase
     {
         $employee = $this->standard_employee;
         $this->actingAs($employee->user);
-
 
         $this->post(route('time-records.store'), [
             'clock_time' => $localTime,

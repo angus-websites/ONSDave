@@ -4,11 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\TimeRecordType;
 use App\Facades\EmployeeAuth;
-use App\Http\Resources\TotalWorkedForDayResource;
 use App\Models\TimeRecord;
-use App\Services\TimeRecordOrganiserService;
 use App\Services\TimeRecordService;
-use App\Services\TimeRecordStatService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;

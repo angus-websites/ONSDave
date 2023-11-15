@@ -13,6 +13,7 @@ use Tests\TestCase;
 class TotalWorkedForDayResourceTest extends TestCase
 {
     use RefreshDatabase;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -22,6 +23,7 @@ class TotalWorkedForDayResourceTest extends TestCase
         $this->restricted_employee = Employee::factory()->withRole('employee restricted')->create();
 
     }
+
     /**
      * Test the resource at a http endpoint
      */
@@ -89,10 +91,8 @@ class TotalWorkedForDayResourceTest extends TestCase
             'recorded_at' => Carbon::parse('2023-04-16 02:15:00'),
         ]);
 
-
         // Check the first day
         $day1Response = $this->post(route('api.sessions.total.day', ['date' => '2023-04-15']));
-
 
         // Duration is ALWAYS calculated on the day the clock in occurred
         $day1Response->assertStatus(200)

@@ -10,7 +10,6 @@ use Carbon\Carbon;
 class TimeRecordService
 {
     protected TimeRecordStatService $timeRecordStatService;
-
     protected TimeRecordOrganiserService $timeRecordOrganiserService;
 
     public function __construct(TimeRecordStatService $timeRecordStatService, TimeRecordOrganiserService $timeRecordOrganiserService)
@@ -19,19 +18,30 @@ class TimeRecordService
         $this->timeRecordOrganiserService = $timeRecordOrganiserService;
     }
 
-    public function getTimeWorkedForDate($employeeId, $date): TotalWorkedForDayResource
+    /**
+     * Determine if the employee is clocked in or not
+     */
+    public function isClockedIn($employeeId): bool
     {
+        $latestRecord = TimeRecord::where('employee_id', $employeeId)
+            ->whereDate('recorded_at', Carbon::today())
+            ->orderBy('recorded_at', 'desc')
+            ->first();
+
+        return ($latestRecord && $latestRecord->type === TimeRecordType::CLOCK_IN);
+    }
+
+    public function getTimeWorkedForDate($employeeId, $date): array
+    {
+        // TODO write specific test for this method
         $timeRecords = $this->getTimeRecordsForDate($employeeId, $date);
 
-        // TODO maybe wrap resources in the controller instead of here
-        return new TotalWorkedForDayResource(
-            $this->timeRecordStatService->calculateTotalTimeWorkedForDay(
-                $this->timeRecordOrganiserService->organiseRecordsByDay($timeRecords, $date)
-            )
+        return $this->timeRecordStatService->calculateTotalTimeWorkedForDay(
+            $this->timeRecordOrganiserService->organiseRecordsByDay($timeRecords, $date)
         );
     }
 
-    public function getTimeWorkedToday($employeeId): TotalWorkedForDayResource
+    public function getTimeWorkedToday($employeeId): array
     {
         return $this->getTimeWorkedForDate($employeeId, Carbon::today());
     }

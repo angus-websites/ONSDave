@@ -43,10 +43,12 @@ class TimeRecordController extends Controller
             'time_zone' => 'sometimes|string'
         ]);
 
-        // Set clock time based on user's permission and input
+        // If the employee can specify the clock time, use the provided clock time and convert it to UTC
         if ($employee->can('specifyClockTime', TimeRecord::class) && isset($validatedData['clock_time'])) {
             $clockTime = $this->convertToUtc($validatedData['clock_time'], $validatedData['time_zone'] ?? null);
-        } else {
+        }
+        // Otherwise, use the current time
+        else {
             $clockTime = Carbon::now('UTC');
         }
 

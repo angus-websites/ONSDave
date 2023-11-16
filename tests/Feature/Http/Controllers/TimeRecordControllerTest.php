@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Enums\TimeRecordType;
 use App\Models\Employee;
 use App\Models\User;
 use Database\Seeders\RoleSeeder;
@@ -42,7 +43,7 @@ class TimeRecordControllerTest extends TestCase
         // Check the database contains a clock in
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2021-01-01 09:00:00',
         ]);
 
@@ -71,14 +72,14 @@ class TimeRecordControllerTest extends TestCase
         // Check the database contains a clock in before the clock out
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2021-01-01 09:00:00',
         ]);
 
         // Check the database contains a clock out
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_out',
+            'type' => TimeRecordType::CLOCK_OUT,
             'recorded_at' => '2021-01-01 13:00:00',
         ]);
 
@@ -100,7 +101,7 @@ class TimeRecordControllerTest extends TestCase
         // Check the database contains a clock in before the clock out
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2021-01-01 09:00:00',
         ]);
 
@@ -120,7 +121,7 @@ class TimeRecordControllerTest extends TestCase
         // Check the database contains a clock in before the clock out
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2021-01-01 09:00:00',
         ]);
     }
@@ -158,7 +159,7 @@ class TimeRecordControllerTest extends TestCase
         // Check the database should ignore the specified time and use the current time
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2021-01-01 09:00:00',
         ]);
 
@@ -187,7 +188,7 @@ class TimeRecordControllerTest extends TestCase
         // Check record is not created
         $this->assertDatabaseMissing('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_out',
+            'type' => TimeRecordType::CLOCK_OUT,
             'recorded_at' => '2021-01-01 09:00:00',
         ]);
 
@@ -219,7 +220,7 @@ class TimeRecordControllerTest extends TestCase
         // Check record is not created
         $this->assertDatabaseMissing('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2021-01-01 11:00:00',
         ]);
     }
@@ -247,14 +248,14 @@ class TimeRecordControllerTest extends TestCase
         // Check record is not created
         $this->assertDatabaseMissing('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2021-01-01 10:00:00',
         ]);
 
         // Check record is not created
         $this->assertDatabaseMissing('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_out',
+            'type' => TimeRecordType::CLOCK_OUT,
             'recorded_at' => '2021-01-01 10:00:05',
         ]);
     }
@@ -278,7 +279,7 @@ class TimeRecordControllerTest extends TestCase
         // Check record is not created
         $this->assertDatabaseMissing('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2021-01-01 09:00:00',
         ]);
     }
@@ -302,7 +303,7 @@ class TimeRecordControllerTest extends TestCase
         // Check record is not created
         $this->assertDatabaseMissing('time_records', [
             'employee_id' => $user->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2021-01-01 09:00:00',
         ]);
     }
@@ -339,13 +340,13 @@ class TimeRecordControllerTest extends TestCase
         // Check both records are created
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2021-01-01 23:00:00',
         ]);
 
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_out',
+            'type' => TimeRecordType::CLOCK_OUT,
             'recorded_at' => '2021-01-02 01:00:00',
         ]);
 
@@ -509,7 +510,7 @@ class TimeRecordControllerTest extends TestCase
 
         $response = $this->post(route('time-records.store'), [
             'clock_time' => $localTime,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'time_zone' => $timezone,
         ]);
 
@@ -521,7 +522,7 @@ class TimeRecordControllerTest extends TestCase
             // Ensure the record is not created
             $this->assertDatabaseMissing('time_records', [
                 'employee_id' => $employee->id,
-                'type' => 'clock_in',
+                'type' => TimeRecordType::CLOCK_IN,
                 'recorded_at' => $expectedUTCTime,
             ]);
 
@@ -531,7 +532,7 @@ class TimeRecordControllerTest extends TestCase
         // Check the record is created
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => $expectedUTCTime,
         ]);
 

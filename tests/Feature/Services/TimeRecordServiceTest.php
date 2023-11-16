@@ -39,36 +39,36 @@ class TimeRecordServiceTest extends TestCase
         // Create some time records we want to be returned
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2023-04-15 12:00:00',
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => 'clock_out',
+            'type' => TimeRecordType::CLOCK_OUT,
             'recorded_at' => '2023-04-15 13:00:00',
         ]);
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2023-04-15 23:00:00',
         ]);
 
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => 'clock_out',
+            'type' => TimeRecordType::CLOCK_OUT,
             'recorded_at' => '2023-04-16 02:00:00',
         ]);
 
         // Create some extra time records we don't want to be returned
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => 'clock_in',
+            'type' => TimeRecordType::CLOCK_IN,
             'recorded_at' => '2023-04-18 15:00:00',
         ]);
         TimeRecord::create([
             'employee_id' => $employee->id,
-            'type' => 'clock_out',
+            'type' => TimeRecordType::CLOCK_OUT,
             'recorded_at' => '2023-04-18 16:00:00',
         ]);
 

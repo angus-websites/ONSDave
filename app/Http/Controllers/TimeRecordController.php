@@ -85,7 +85,7 @@ class TimeRecordController extends Controller
             'recorded_at' => $clockTime,
             'type' => $type,
         ]);
-        
+
         return redirect()->route('today');
     }
 

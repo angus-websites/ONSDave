@@ -390,12 +390,13 @@ class TimeRecordControllerTest extends TestCase
 
     /**
      * Test clock in with a range of different clock time formats
+     * and different timezones
      */
     public function test_store_with_different_datetime_formats_and_timezones()
     {
 
         // Define different datetime formats, all same day at midnight 11/16/2023
-        $testTimezones = [
+        $testFormats = [
             [
                 'format' => 'm/d/Y H:i:s',
                 'testDateTime' => '11/16/2023 00:00:00',
@@ -453,20 +454,39 @@ class TimeRecordControllerTest extends TestCase
             ],
         ];
 
+        // Different timezones to test and the expected UTC time
+        $testTimezones = [
+            [
+                'timezone' => 'Europe/London',
+                'expectedInUTC' => '2023-11-16 00:00:00',
+            ],
+            [
+                'timezone' => 'America/New_York',
+                'expectedInUTC' => '2023-11-16 05:00:00',
+            ],
+            [
+                'timezone' => 'Asia/Tokyo',
+                'expectedInUTC' => '2023-11-15 15:00:00',
+            ],
+            [
+                'timezone' => 'Australia/Sydney',
+                'expectedInUTC' => '2023-11-15 13:00:00',
+            ],
+        ];
+
+
         // Mock the Carbon today method to 11/16/2023
         Carbon::setTestNow('2023-11-16 00:00:00');
 
-
-        // The time used for testing is 2021-07-01 00:00:00
-        $timezone = 'Europe/London';
-
-        // The expected time in UTC
-        $expectedInUTC = '2023-11-16 00:00:00';
-
-
+        // Loop through each timezone and format
         foreach ($testTimezones as $testTimezone) {
-            echo 'Testing format: ' . $testTimezone['format'] . ' with timezone: ' . $timezone . ' and testDateTime: ' . $testTimezone['testDateTime'] . ' and expectedInUTC: ' . $expectedInUTC . ' and isValid: ' . $testTimezone['isValid'] . PHP_EOL;
-            $this->postAndCheckTime($testTimezone['testDateTime'], $timezone, $expectedInUTC, $testTimezone['isValid'] === false);
+            foreach ($testFormats as $testFormat) {
+                // Display the test
+                echo "Testing format: {$testFormat['format']} with timezone: {$testTimezone['timezone']}\n";
+                // Post the time record
+                $this->postAndCheckTime($testFormat['testDateTime'], $testTimezone['timezone'], $testTimezone['expectedInUTC'], !$testFormat['isValid']);
+
+            }
         }
 
     }

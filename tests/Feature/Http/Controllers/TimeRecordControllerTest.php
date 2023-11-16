@@ -510,7 +510,7 @@ class TimeRecordControllerTest extends TestCase
 
         $response = $this->post(route('time-records.store'), [
             'clock_time' => $localTime,
-            'type' => TimeRecordType::CLOCK_IN,
+            'type' => TimeRecordType::CLOCK_IN->value,
             'time_zone' => $timezone,
         ]);
 

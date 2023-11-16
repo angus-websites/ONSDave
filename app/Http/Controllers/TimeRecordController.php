@@ -68,7 +68,6 @@ class TimeRecordController extends Controller
         // Validate clock time against the latest record
         if ($latestRecord && $clockTime->isBefore($latestRecord->recorded_at)) {
             $error = $type === TimeRecordType::CLOCK_IN ? 'The clock in time must be after the previous clock out time' : 'The clock out time must be after the previous clock in time';
-
             return redirect()->back()->withErrors(['clock_time' => $error]);
         }
 

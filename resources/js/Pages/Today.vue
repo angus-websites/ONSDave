@@ -82,7 +82,7 @@ let timeHasBeenManuallySpecified = ref(false)
 let manualClockTime = ref(null)
 
 const form = useForm({
-    isClockedIn: props.isClockedIn,
+    'time_zone': Intl.DateTimeFormat().resolvedOptions().timeZone,
 })
 
 const currentHour = new Date().getHours()

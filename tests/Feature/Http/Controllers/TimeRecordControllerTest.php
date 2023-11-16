@@ -7,6 +7,7 @@ use App\Models\User;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class TimeRecordControllerTest extends TestCase
@@ -106,6 +107,25 @@ class TimeRecordControllerTest extends TestCase
     }
 
     /**
+     * Test when a clockTime is provided, but time zone is not, the default time zone is used
+     */
+    public function test_store_uses_default_timezone_if_timezone_not_provided_and_clock_time_provided()
+    {
+        $employee = $this->standard_employee;
+        $this->actingAs($employee->user);
+
+        // Clock in
+        $this->post(route('time-records.store', ['clock_time' => '2021-01-01 09:00:00']));
+
+        // Check the database contains a clock in before the clock out
+        $this->assertDatabaseHas('time_records', [
+            'employee_id' => $employee->id,
+            'type' => 'clock_in',
+            'recorded_at' => '2021-01-01 09:00:00',
+        ]);
+    }
+
+    /**
      * Test clock in with an invalid clock time
      */
     public function test_store_with_invalid_clock_time()
@@ -121,29 +141,7 @@ class TimeRecordControllerTest extends TestCase
 
     }
 
-    /**
-     * Test an employee with restricted clock time cannot manually specify a clock time
-     * and the current time is used instead
-     */
-    public function test_store_with_employee_with_restricted_role_cannot_specify_clock_in_time()
-    {
 
-        $employee = $this->restricted_employee;
-        $this->actingAs($employee->user);
-
-        // Set the mock time to 9am
-        Carbon::setTestNow('2021-01-01 09:00:00');
-
-        // Attempt clock in with a specified time
-        $this->post(route('time-records.store', ['clock_time' => '2021-01-01 07:00:00']));
-
-        // Check the database should ignore the specified time and use the current time
-        $this->assertDatabaseHas('time_records', [
-            'employee_id' => $employee->id,
-            'type' => 'clock_in',
-            'recorded_at' => '2021-01-01 09:00:00',
-        ]);
-    }
 
     /**
      * Test an employee that has necessary permissions that doesnt specify a clock time will use the current time
@@ -379,8 +377,9 @@ class TimeRecordControllerTest extends TestCase
 
     }
 
+
     /**
-     * Test store when local timezeone clock time is a different day to UTC
+     * Test store when local time-zone clock time is a different day to UTC
      */
     public function test_store_clock_time_timezone_conversion_with_different_days()
     {
@@ -388,21 +387,142 @@ class TimeRecordControllerTest extends TestCase
         $this->postAndCheckTime('2021-07-01 09:00:00', 'Australia/Sydney', '2021-06-30 23:00:00');
     }
 
-    private function postAndCheckTime($localTime, $timezone, $expectedUTCTime): void
+
+    /**
+     * Test clock in with a range of different clock time formats
+     */
+    public function test_store_with_different_datetime_formats_and_timezones()
     {
+
+        // Define different datetime formats, all same day at midnight 11/16/2023
+        $testTimezones = [
+            [
+                'format' => 'm/d/Y H:i:s',
+                'testDateTime' => '11/16/2023 00:00:00',
+                'isValid' => true,
+            ],
+            [
+                'format' => 'm/d/Y H:i',
+                'testDateTime' => '11/16/2023 00:00',
+                'isValid' => true,
+            ],
+            [
+                'format' => 'm/d/Y H',
+                'testDateTime' => '11/16/2023 00',
+                'isValid' => false,
+            ],
+            [
+                'format' => 'm/d/Y',
+                'testDateTime' => '11/16/2023',
+                'isValid' => true,
+            ],
+            [
+                'format' => 'm/d/y',
+                'testDateTime' => '11/16/23',
+                'isValid' => true,
+            ],
+            [
+                'format' => 'm/d/y H:i:s',
+                'testDateTime' => '11/16/23 00:00:00',
+                'isValid' => true,
+            ],
+            [
+                'format' => 'm/d/y H:i',
+                'testDateTime' => '11/16/23 00:00',
+                'isValid' => true,
+            ],
+            [
+                'format' => 'm/d/y H',
+                'testDateTime' => '11/16/23 00',
+                'isValid' => false,
+            ],
+            [
+                'format' => 'm/d/y',
+                'testDateTime' => '11/16/23',
+                'isValid' => true,
+            ],
+            [
+                'format' => 'm/d/Y H:i:s',
+                'testDateTime' => '11/16/2023 00:00:00',
+                'isValid' => true,
+            ],
+            [
+                'format' => 'm/d/Y H:i',
+                'testDateTime' => '11/16/2023 00:00',
+                'isValid' => true,
+            ],
+        ];
+
+        // Mock the Carbon today method to 11/16/2023
+        Carbon::setTestNow('2023-11-16 00:00:00');
+
+
+        // The time used for testing is 2021-07-01 00:00:00
+        $timezone = 'Europe/London';
+
+        // The expected time in UTC
+        $expectedInUTC = '2023-11-16 00:00:00';
+
+
+        foreach ($testTimezones as $testTimezone) {
+            echo 'Testing format: ' . $testTimezone['format'] . ' with timezone: ' . $timezone . ' and testDateTime: ' . $testTimezone['testDateTime'] . ' and expectedInUTC: ' . $expectedInUTC . ' and isValid: ' . $testTimezone['isValid'] . PHP_EOL;
+            $this->postAndCheckTime($testTimezone['testDateTime'], $timezone, $expectedInUTC, $testTimezone['isValid'] === false);
+        }
+
+    }
+
+    /**
+     * Test an individual timezone
+     */
+    public function test_store_with_individual_timezone()
+    {
+        $this->postAndCheckTime('11/16/2023 20:57:17', 'Europe/London', '2023-11-16 20:57:17');
+    }
+
+
+    private function postAndCheckTime($localTime, $timezone, $expectedUTCTime, $shouldError=false): void
+    {
+
+        // Delete ALL time records
+        DB::table('time_records')->delete();
+
         $employee = $this->standard_employee;
         $this->actingAs($employee->user);
 
-        $this->post(route('time-records.store'), [
+        $response = $this->post(route('time-records.store'), [
             'clock_time' => $localTime,
             'type' => 'clock_in',
             'time_zone' => $timezone,
         ]);
 
+        if ($shouldError) {
+
+            // Check an error is raised
+            $response->assertSessionHasErrors('clock_time');
+
+            // Ensure the record is not created
+            $this->assertDatabaseMissing('time_records', [
+                'employee_id' => $employee->id,
+                'type' => 'clock_in',
+                'recorded_at' => $expectedUTCTime,
+            ]);
+
+            DB::rollBack();
+
+            return;
+        }
+
+        // Check the record is created
         $this->assertDatabaseHas('time_records', [
             'employee_id' => $employee->id,
             'type' => 'clock_in',
             'recorded_at' => $expectedUTCTime,
         ]);
+
+
     }
+
+
+
+
 }

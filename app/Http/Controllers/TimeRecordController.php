@@ -15,15 +15,14 @@ class TimeRecordController extends Controller
      * Covert the provided clock time to UTC
      * based on the user's time zone
      */
-    private function convertToUtc($clockTime, $userTimeZone)
+    private function convertToUtc($clockTime, $userTimeZone): Carbon
     {
-        // TODO handle null clock time, maybe here ir elksewhere
         $userTimeZone = $userTimeZone ?? 'Europe/London';
         if (! in_array($userTimeZone, timezone_identifiers_list())) {
             $userTimeZone = 'Europe/London';
         }
 
-        return Carbon::createFromFormat('Y-m-d H:i:s', $clockTime, $userTimeZone)
+        return Carbon::parse($clockTime, $userTimeZone)
             ->setTimezone('UTC');
     }
 
@@ -54,6 +53,8 @@ class TimeRecordController extends Controller
         $employee_id = $employee->id;
         $today = Carbon::today();
 
+
+        //TODO move this to a service
         $latestRecord = TimeRecord::where('employee_id', $employee_id)
             ->whereDate('recorded_at', $today)
             ->orderBy('recorded_at', 'desc')
@@ -84,7 +85,7 @@ class TimeRecordController extends Controller
             'recorded_at' => $clockTime,
             'type' => $type,
         ]);
-
+        
         return redirect()->route('today');
     }
 

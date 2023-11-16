@@ -24,13 +24,21 @@ class TimeRecordService
      */
     public function isClockedIn($employeeId): bool
     {
-        $latestRecord = TimeRecord::where('employee_id', $employeeId)
-            ->whereDate('recorded_at', Carbon::today())
-            ->orderBy('recorded_at', 'desc')
-            ->first();
-
+        $latestRecord = $this->getLatestTimeRecordForEmployeeOnDate($employeeId, Carbon::today());
         return ($latestRecord && $latestRecord->type === TimeRecordType::CLOCK_IN);
     }
+
+    /**
+     * Fetch the latest time record for the given employee on the given date
+     */
+    public function getLatestTimeRecordForEmployeeOnDate($employeeId, Carbon $date): ?TimeRecord
+    {
+        return TimeRecord::where('employee_id', $employeeId)
+            ->whereDate('recorded_at', $date)
+            ->orderBy('recorded_at', 'desc')
+            ->first();
+    }
+
 
     /**
      * Get the total time worked for the given date, returns an array of hours, minutes and seconds

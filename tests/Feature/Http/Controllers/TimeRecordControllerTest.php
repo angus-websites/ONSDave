@@ -141,8 +141,6 @@ class TimeRecordControllerTest extends TestCase
 
     }
 
-
-
     /**
      * Test an employee that has necessary permissions that doesnt specify a clock time will use the current time
      */
@@ -332,6 +330,9 @@ class TimeRecordControllerTest extends TestCase
         // Clock in at 11pm
         $this->post(route('time-records.store', ['clock_time' => '2021-01-01 23:00:00']));
 
+        // Mock the Carbon today method to return a specific date
+        Carbon::setTestNow('2021-01-02 23:00:00');
+
         // Clock out at 1am the next day
         $this->post(route('time-records.store', ['clock_time' => '2021-01-02 01:00:00']));
 
@@ -377,7 +378,6 @@ class TimeRecordControllerTest extends TestCase
 
     }
 
-
     /**
      * Test store when local time-zone clock time is a different day to UTC
      */
@@ -386,7 +386,6 @@ class TimeRecordControllerTest extends TestCase
         // Test Australia/Sydney timezone
         $this->postAndCheckTime('2021-07-01 09:00:00', 'Australia/Sydney', '2021-06-30 23:00:00');
     }
-
 
     /**
      * Test clock in with a range of different clock time formats
@@ -482,7 +481,7 @@ class TimeRecordControllerTest extends TestCase
         foreach ($testTimezones as $testTimezone) {
             foreach ($testFormats as $testFormat) {
                 // Display the test
-                echo "Testing format: {$testFormat['format']} with timezone: {$testTimezone['timezone']}\n";
+                //echo "Testing format: {$testFormat['format']} with timezone: {$testTimezone['timezone']}\n";
                 // Post the time record
                 $this->postAndCheckTime($testFormat['testDateTime'], $testTimezone['timezone'], $testTimezone['expectedInUTC'], !$testFormat['isValid']);
 
@@ -498,7 +497,6 @@ class TimeRecordControllerTest extends TestCase
     {
         $this->postAndCheckTime('11/16/2023 20:57:17', 'Europe/London', '2023-11-16 20:57:17');
     }
-
 
     private function postAndCheckTime($localTime, $timezone, $expectedUTCTime, $shouldError=false): void
     {
@@ -526,8 +524,6 @@ class TimeRecordControllerTest extends TestCase
                 'type' => 'clock_in',
                 'recorded_at' => $expectedUTCTime,
             ]);
-
-            DB::rollBack();
 
             return;
         }

@@ -5,12 +5,20 @@ namespace App\Http\Controllers;
 use App\Enums\TimeRecordType;
 use App\Facades\EmployeeAuth;
 use App\Models\TimeRecord;
+use App\Services\TimeRecordService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class TimeRecordController extends Controller
 {
+    private TimeRecordService $timeRecordService;
+
+    public function __construct(TimeRecordService $timeRecordService)
+    {
+        $this->timeRecordService = $timeRecordService;
+    }
+
     /**
      * Covert the provided clock time to UTC
      * based on the user's time zone
@@ -51,18 +59,14 @@ class TimeRecordController extends Controller
         }
 
         $employee_id = $employee->id;
-        $today = Carbon::today();
 
 
-        //TODO move this to a service
-        $latestRecord = TimeRecord::where('employee_id', $employee_id)
-            ->whereDate('recorded_at', $today)
-            ->orderBy('recorded_at', 'desc')
-            ->first();
+        // Fetch the latest time record for the employee today
+        $latestRecord = $this->timeRecordService->getLatestTimeRecordForEmployeeOnDate($employee_id, Carbon::today());
 
-        // Determine whether to clock in or out
-        $type = (! $latestRecord || $latestRecord->type === TimeRecordType::CLOCK_OUT)
-            ? TimeRecordType::CLOCK_IN : TimeRecordType::CLOCK_OUT;
+        // Determine the type of time record
+        $type = $latestRecord && $latestRecord->type === TimeRecordType::CLOCK_IN ? TimeRecordType::CLOCK_OUT : TimeRecordType::CLOCK_IN;
+
 
         // Validate clock time against the latest record
         if ($latestRecord && $clockTime->isBefore($latestRecord->recorded_at)) {
@@ -79,7 +83,6 @@ class TimeRecordController extends Controller
         }
 
         // Create the time record
-        // TODO move this to a service
         TimeRecord::create([
             'employee_id' => $employee_id,
             'recorded_at' => $clockTime,

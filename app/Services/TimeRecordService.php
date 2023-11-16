@@ -24,17 +24,16 @@ class TimeRecordService
      */
     public function isClockedIn($employeeId): bool
     {
-        $latestRecord = $this->getLatestTimeRecordForEmployeeOnDate($employeeId, Carbon::today());
+        $latestRecord = $this->getLatestTimeRecordForEmployee($employeeId);
         return ($latestRecord && $latestRecord->type === TimeRecordType::CLOCK_IN);
     }
 
     /**
-     * Fetch the latest time record for the given employee on the given date
+     * Fetch the latest time record for the given employee
      */
-    public function getLatestTimeRecordForEmployeeOnDate($employeeId, Carbon $date): ?TimeRecord
+    public function getLatestTimeRecordForEmployee($employeeId): ?TimeRecord
     {
         return TimeRecord::where('employee_id', $employeeId)
-            ->whereDate('recorded_at', $date)
             ->orderBy('recorded_at', 'desc')
             ->first();
     }

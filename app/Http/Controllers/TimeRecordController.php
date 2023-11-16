@@ -58,11 +58,8 @@ class TimeRecordController extends Controller
             $clockTime = Carbon::now('UTC');
         }
 
-        $employee_id = $employee->id;
-
-
-        // Fetch the latest time record for the employee today
-        $latestRecord = $this->timeRecordService->getLatestTimeRecordForEmployeeOnDate($employee_id, Carbon::today());
+        // Fetch the latest time record for the employee
+        $latestRecord = $this->timeRecordService->getLatestTimeRecordForEmployee($employee->id);
 
         // Determine the type of time record
         $type = $latestRecord && $latestRecord->type === TimeRecordType::CLOCK_IN ? TimeRecordType::CLOCK_OUT : TimeRecordType::CLOCK_IN;
@@ -78,13 +75,12 @@ class TimeRecordController extends Controller
         // Handle the short-duration session case
         if ($type === TimeRecordType::CLOCK_OUT && $clockTime->diffInSeconds($latestRecord->recorded_at) <= 5) {
             $latestRecord->delete();
-
             return redirect()->back()->with('info', 'As this session was less than 5 seconds, it was deleted.');
         }
 
         // Create the time record
         TimeRecord::create([
-            'employee_id' => $employee_id,
+            'employee_id' => $employee->id,
             'recorded_at' => $clockTime,
             'type' => $type,
         ]);

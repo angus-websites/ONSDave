@@ -69,17 +69,21 @@ class TimeRecordService
             ->orderBy('recorded_at', 'asc')
             ->get();
 
+
         // Check and append the first record of the next day if the last record is a clock in
         if ($dateRecords->isNotEmpty() && $dateRecords->last()->type === TimeRecordType::CLOCK_IN) {
-            $nextDay = Carbon::parse($date)->addDay()->toDateString();
-            $firstRecordNextDay = TimeRecord::whereDate('recorded_at', $nextDay)
+
+            // Fetch the next record and see if it's a clock out
+            $nextRecord = TimeRecord::whereDate('recorded_at', '>', $date)
                 ->where('employee_id', $employeeId)
                 ->orderBy('recorded_at', 'asc')
                 ->first();
 
-            if ($firstRecordNextDay && $firstRecordNextDay->type === TimeRecordType::CLOCK_OUT) {
-                $dateRecords->push($firstRecordNextDay);
+            // if it exists, and it's a clock out, append it to the collection
+            if ($nextRecord && $nextRecord->type === TimeRecordType::CLOCK_OUT) {
+                $dateRecords->push($nextRecord);
             }
+
         }
 
         return $dateRecords;

@@ -155,6 +155,7 @@ class TimeRecordByDayResourceTest extends TestCase
                             'duration' => '48:00:00',
                             'ongoing' => false,
                             'auto_clock_out' => false,
+                            'multi_day' => true,
                         ],
                     ],
                 ],

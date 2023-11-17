@@ -44,7 +44,8 @@ class Session implements JsonSerializable
         // Check if the DateInterval property is not null
         if ($this->duration !== null) {
             // Calculate total seconds
-            return ($this->duration->h * 3600) +
+            return ($this->duration->days * 24 * 3600) +
+                ($this->duration->h * 3600) +
                 ($this->duration->i * 60) +
                 $this->duration->s;
         }
@@ -53,10 +54,24 @@ class Session implements JsonSerializable
         return 0;
     }
 
+    /**
+     * Get the duration as a string in the format HH:MM:SS
+     */
     public function getDurationString(): ?string
     {
-        return $this->duration?->format('%H:%I:%S');
+        // Check if the DateInterval property is not null
+        if ($this->duration !== null) {
+            // Convert the days to hours and add to the existing hours
+            $totalHours = $this->duration->days * 24 + $this->duration->h;
+
+            // Format the string to HH:MM:SS
+            return sprintf('%02d:%02d:%02d', $totalHours, $this->duration->i, $this->duration->s);
+        }
+
+        // If the DateInterval is null, return null
+        return null;
     }
+
 
     public function isOngoing(): bool
     {

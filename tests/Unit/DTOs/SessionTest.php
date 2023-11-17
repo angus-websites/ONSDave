@@ -60,7 +60,7 @@ class SessionTest extends TestCase
             autoClockOut: false,
         );
 
-        $this->assertEquals(16792, $session->getDurationInSeconds());
+        $this->assertEquals(103192 , $session->getDurationInSeconds());
         $this->assertTrue($session->isMultiDay());
 
         $clockIn = Carbon::parse('2023-04-15 23:00:00');

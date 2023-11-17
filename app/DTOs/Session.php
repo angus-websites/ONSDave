@@ -43,6 +43,8 @@ class Session implements JsonSerializable
     {
         // Check if the DateInterval property is not null
         if ($this->duration !== null) {
+
+            $b = $this->duration->days;
             // Calculate total seconds
             return ($this->duration->days * 24 * 3600) +
                 ($this->duration->h * 3600) +

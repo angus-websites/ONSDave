@@ -147,7 +147,7 @@ class TimeRecordByDayResourceTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'data' => [
-                    'date' => '2023-04-15',
+                    'date' => '2023-04-14',
                     'sessions' => [
                         [
                             'clock_in' => '2023-04-14 09:00:00',

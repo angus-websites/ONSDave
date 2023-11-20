@@ -79,6 +79,7 @@ class TimeRecordService
                 ->orderBy('recorded_at', 'asc')
                 ->first();
 
+
             // if it exists, and it's a clock out, append it to the collection
             if ($nextRecord && $nextRecord->type === TimeRecordType::CLOCK_OUT) {
                 $dateRecords->push($nextRecord);
@@ -102,6 +103,7 @@ class TimeRecordService
         for ($i = 1; $i <= $days; $i++) {
             // Create a Carbon instance for the current day based on the month and year
             $date = Carbon::createFromDate($month->year, $month->month, $i)->toDateString();
+            // TODO this is breaking and needs testing
             $timeRecords = $timeRecords->merge($this->getTimeRecordsForDate($employeeId, $date));
         }
 

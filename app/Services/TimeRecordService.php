@@ -70,21 +70,35 @@ class TimeRecordService
             ->get();
 
 
-        // Check and append the first record of the next day if the last record is a clock in
+        // If the last record is a clock in, append a clock out until midnight
         if ($dateRecords->isNotEmpty() && $dateRecords->last()->type === TimeRecordType::CLOCK_IN) {
 
-            // Fetch the next record and see if it's a clock out
-            $nextRecord = TimeRecord::whereDate('recorded_at', '>', $date)
-                ->where('employee_id', $employeeId)
-                ->orderBy('recorded_at', 'asc')
-                ->first();
+            // Create a time record for midnight
+            $midnight = Carbon::parse($date)->addDay()->startOfDay();
+            $midnightRecord = new TimeRecord([
+                'employee_id' => $employeeId,
+                'type' => TimeRecordType::CLOCK_OUT,
+                'recorded_at' => $midnight,
+            ]);
 
+            // Append the record to the collection
+            $dateRecords->push($midnightRecord);
 
-            // if it exists, and it's a clock out, append it to the collection
-            if ($nextRecord && $nextRecord->type === TimeRecordType::CLOCK_OUT) {
-                $dateRecords->push($nextRecord);
-            }
+        }
 
+        // If the first record is a clock out, prepend a clock in from midnight
+        if ($dateRecords->isNotEmpty() && $dateRecords->first()->type === TimeRecordType::CLOCK_OUT)
+        {
+            // Create a time record for midnight
+            $midnight = Carbon::parse($date)->startOfDay();
+            $midnightRecord = new TimeRecord([
+                'employee_id' => $employeeId,
+                'type' => TimeRecordType::CLOCK_IN,
+                'recorded_at' => $midnight,
+            ]);
+
+            // Prepend the record to the collection
+            $dateRecords->prepend($midnightRecord);
         }
 
         return $dateRecords;

@@ -19,6 +19,9 @@ class HistoryController extends Controller
         $this->timeRecordService = $timeRecordService;
     }
 
+    /**
+     * Show the history page.
+     */
     public function index()
     {
         $employeeId = EmployeeAuth::employee()->id;
@@ -26,8 +29,10 @@ class HistoryController extends Controller
         // Get the first day of the current month
         $currentMonth = Carbon::today()->firstOfMonth();
 
+        // Use the TimeRecordService to get time records for the current month
         $timeRecords = $this->timeRecordService->getTimeRecordsForMonth($employeeId, $currentMonth);
 
+        // Create a TimeRecordByMonthResource to format the time records
         $timeRecordsThisMonth = new TimeRecordByMonthResource($timeRecords, today());
 
         return Inertia::render('History', [

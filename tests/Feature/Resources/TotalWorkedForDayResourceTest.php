@@ -94,11 +94,11 @@ class TotalWorkedForDayResourceTest extends TestCase
         // Check the first day
         $day1Response = $this->post(route('api.sessions.total.day', ['date' => '2023-04-15']));
 
-        // Duration is ALWAYS calculated on the day the clock in occurred
+        // If a clock in and out occur on different days, the day ends at midnight
         $day1Response->assertStatus(200)
             ->assertJson([
-                'hours' => '03',
-                'minutes' => '15',
+                'hours' => '01',
+                'minutes' => '00',
                 'seconds' => '00',
             ]);
 
@@ -107,8 +107,8 @@ class TotalWorkedForDayResourceTest extends TestCase
 
         $day1Response->assertStatus(200)
             ->assertJson([
-                'hours' => '00',
-                'minutes' => '00',
+                'hours' => '02',
+                'minutes' => '15',
                 'seconds' => '00',
             ]);
     }

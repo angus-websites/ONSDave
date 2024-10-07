@@ -104,6 +104,7 @@ class TimeRecordByDayResourceTest extends TestCase
         // Make an HTTP request to the desired endpoint
         $response = $this->post(route('api.sessions.day', ['date' => '2023-04-15']));
 
+        // Assert the session should have ended automatically at midnight
         $response->assertStatus(200)
             ->assertJson([
                 'data' => [
@@ -111,10 +112,12 @@ class TimeRecordByDayResourceTest extends TestCase
                     'sessions' => [
                         [
                             'clock_in' => '2023-04-15 09:00:00',
-                            'clock_out' => null,
-                            'duration' => null,
-                            'ongoing' => true,
+                            'clock_out' => '2023-04-16 00:00:00',
+                            'duration' => '15:00:00',
+                            'duration_in_seconds' => 54000,
+                            'ongoing' => false,
                             'auto_clock_out' => false,
+                            'multi_day' => true
                         ],
                     ],
                 ],
@@ -143,7 +146,7 @@ class TimeRecordByDayResourceTest extends TestCase
         // Make an HTTP request to the desired endpoint
         $response = $this->post(route('api.sessions.day', ['date' => '2023-04-14']));
 
-        // Assert that the response is correct
+        // Assert the session should have ended automatically at midnight
         $response->assertStatus(200)
             ->assertJson([
                 'data' => [
@@ -151,15 +154,40 @@ class TimeRecordByDayResourceTest extends TestCase
                     'sessions' => [
                         [
                             'clock_in' => '2023-04-14 09:00:00',
-                            'clock_out' => '2023-04-16 09:00:00',
-                            'duration' => '48:00:00',
+                            'clock_out' => '2023-04-15 00:00:00',
+                            'duration' => '15:00:00',
+                            'duration_in_seconds' => 54000,
                             'ongoing' => false,
                             'auto_clock_out' => false,
-                            'multi_day' => true,
+                            'multi_day' => true
                         ],
                     ],
                 ],
             ]);
+
+
+        // TODO
+//        // Make another HTTP request for the day in the middle
+//        $response = $this->post(route('api.sessions.day', ['date' => '2023-04-15']));
+//
+//        // Assert the session for the middle day lasts all day
+//        $response->assertStatus(200)
+//            ->assertJson([
+//                'data' => [
+//                    'date' => '2023-04-15',
+//                    'sessions' => [
+//                        [
+//                            'clock_in' => '2023-04-15 00:00:00',
+//                            'clock_out' => '2023-04-16 00:00:00',
+//                            'duration' => '24:00:00',
+//                            'duration_in_seconds' => 86400,
+//                            'ongoing' => false,
+//                            'auto_clock_out' => false,
+//                            'multi_day' => true
+//                        ],
+//                    ],
+//                ],
+//            ]);
 
     }
 }

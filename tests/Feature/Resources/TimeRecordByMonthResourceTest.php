@@ -130,13 +130,14 @@ class TimeRecordByMonthResourceTest extends TestCase
         $dayOne = $response->json('data.days')[13]; // 13 because the array is zero indexed
         $this->assertEquals('2023-04-14', $dayOne['date']);
 
+        // We expect this session to end at midnight on the 15th
         $expectedSession = [
             'clock_in' => '2023-04-14 09:00:00',
-            'clock_out' => '2023-04-17 09:00:00',
-            'duration' => '72:00:00',
+            'clock_out' => '2023-04-15 00:00:00',
+            'duration' => '15:00:00',
             'ongoing' => false,
             'auto_clock_out' => false,
-            'duration_in_seconds' => 259200,
+            'duration_in_seconds' => '54000',
             'multi_day' => true,
         ];
 

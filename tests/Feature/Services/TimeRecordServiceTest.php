@@ -100,8 +100,8 @@ class TimeRecordServiceTest extends TestCase
             [
                 'employee_id' => $employee->id,
                 'type' => TimeRecordType::CLOCK_OUT,
-                'recorded_at' => '2023-04-16 02:00:00',
-            ],
+                'recorded_at' => '2023-04-16 00:00:00',
+            ]
         ];
 
         // Remove the unwanted fields from the records
@@ -116,6 +116,33 @@ class TimeRecordServiceTest extends TestCase
         // Assert the correct records are returned
         $this->assertEquals($expected, $actual);
 
+        // Check the day after for overlapping records
+        $timeRecordsDayAfter = $timeRecordService->getTimeRecordsForDate($employee->id, '2023-04-16');
+
+        $expected = [
+            [
+                'employee_id' => $employee->id,
+                'type' => TimeRecordType::CLOCK_IN,
+                'recorded_at' => '2023-04-16 00:00:00',
+            ],
+            [
+                'employee_id' => $employee->id,
+                'type' => TimeRecordType::CLOCK_OUT,
+                'recorded_at' => '2023-04-16 02:00:00',
+            ],
+        ];
+
+        // Remove the unwanted fields from the records
+        $actual = $timeRecordsDayAfter->map(function ($record) {
+            return [
+                'employee_id' => $record->employee_id,
+                'type' => $record->type,
+                'recorded_at' => $record->recorded_at->format('Y-m-d H:i:s'),
+            ];
+        })->toArray();
+
+        // Assert the correct records are returned
+        $this->assertEquals($expected, $actual);
     }
 }
 
